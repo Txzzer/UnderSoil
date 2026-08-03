@@ -1,10 +1,10 @@
 package network;
 
 import retrofit2.Call;
-import retrofit2.http.GET;
-
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 public interface ApiService {
 
-    @GET("api/v1/test")
-    Call<String> testConnection();
+    @POST("api/v1/telemetry/ingest")
+    Call<String> sendTelemetry(@Body TelemetryReading reading);
 }

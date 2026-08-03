@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import network.ApiClient;
 import network.ApiService;
+import network.TelemetryReading;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,10 +27,17 @@ public class MainActivity extends AppCompatActivity {
 
         testApiButton.setOnClickListener(view -> {
 
+            TelemetryReading reading = new TelemetryReading(
+                    "Android_Test",
+                    42.5,
+                    true,
+                    "2026-08-03T15:00:00"
+            );
+
             ApiService api = ApiClient.getClient()
                     .create(ApiService.class);
 
-            api.testConnection().enqueue(new Callback<String>() {
+            api.sendTelemetry(reading).enqueue(new Callback<String>() {
 
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
