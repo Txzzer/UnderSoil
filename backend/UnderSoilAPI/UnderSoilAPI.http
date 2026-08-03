@@ -1,0 +1,6 @@
+@UnderSoilAPI_HostAddress = http://localhost:5196
+
+GET {{UnderSoilAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
