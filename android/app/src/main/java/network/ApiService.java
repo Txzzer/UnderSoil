@@ -6,5 +6,5 @@ import retrofit2.http.POST;
 public interface ApiService {
 
     @POST("api/v1/telemetry/ingest")
-    Call<String> sendTelemetry(@Body TelemetryReading reading);
+    Call<ApiResponse> sendTelemetry(@Body TelemetryReading reading);
 }

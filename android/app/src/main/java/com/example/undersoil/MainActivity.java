@@ -5,6 +5,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import network.ApiClient;
+import network.ApiResponse;
 import network.ApiService;
 import network.TelemetryReading;
 
@@ -37,21 +38,44 @@ public class MainActivity extends AppCompatActivity {
             ApiService api = ApiClient.getClient()
                     .create(ApiService.class);
 
-            api.sendTelemetry(reading).enqueue(new Callback<String>() {
+            api.sendTelemetry(reading).enqueue(new Callback<ApiResponse>() {
+
+//                @Override
+//                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+//
+//                    Toast.makeText(
+//                            MainActivity.this,
+//                            "Success",
+//                            Toast.LENGTH_SHORT
+//                    ).show();
+//
+//                }
 
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<ApiResponse> call,
+                                       Response<ApiResponse> response) {
 
-                    Toast.makeText(
-                            MainActivity.this,
-                            "Success",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    if (response.isSuccessful() && response.body() != null) {
 
+                        Toast.makeText(
+                                MainActivity.this,
+                                response.body().getMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                    } else {
+
+                        Toast.makeText(
+                                MainActivity.this,
+                                "Server Error: " + response.code(),
+                                Toast.LENGTH_LONG
+                        ).show();
+
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<ApiResponse> call, Throwable t) {
 
                     Toast.makeText(
                             MainActivity.this,
