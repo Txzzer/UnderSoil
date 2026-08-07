@@ -3,7 +3,7 @@ from tensorflow.keras import layers, models
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 
 data = tf.keras.utils.image_dataset_from_directory(
-    "C:/Users/Zhawn/Desktop/University/2026/2nd Semester/ITPV302/Dummy Dataset",
+    "Dummy Dataset",
     labels = 'inferred',
     image_size = (256, 256),
     batch_size = 16,
