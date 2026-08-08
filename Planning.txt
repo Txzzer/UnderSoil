@@ -1,0 +1,68 @@
+# Project Planning & Business Case: Task Assignments
+
+To get this document completed efficiently, we are dividing the sections based on our project roles. Please review your assigned sections, read the context from the business case document, and complete the checklist of tasks.
+
+---
+
+## Phil
+
+**Assigned Section:** 1.4 Related systems analysis
+
+> **Document Context:**
+> The planning document requires us to analyze at least 3 software-based systems that address the same issue or use a similar process. It states we must provide screenshots with properly worded captions and explicitly refer to them in the text (e.g., "Figure 1.1 demonstrates...").
+
+**Your Tasks:**
+- [ ] Find 3 existing software systems related to our dashboard or mobile app functionality.
+- [ ] Provide the system name, platform (e.g., web, Android), and a description for each.
+- [ ] Take at least one screenshot per system, caption it correctly, and reference it in your text.
+- [ ] List specific features we should adapt for our system, and list features we should avoid.
+- [ ] Provide your reference links so they can be added to the final APA reference list.
+
+---
+
+## Chris
+
+**Assigned Sections:** 1.1 The problem & 1.6 Risk Analysis
+
+> **Document Context (1.1):**
+> The document requires a general description of the real-world problem we are addressing. It asks for the domain of the problem, who is encountering it, and enough information to make a financial backer care.
+
+> **Document Context (1.6):**
+> The document states we must identify at least 4 unexpected events or conditions that could negatively impact the project. We must categorize them and decide exactly what needs to be done to handle them.
+
+**Your Tasks:**
+- [ ] Write the general description of the real-world problem (e.g., agricultural data collection in areas with no connectivity).
+- [ ] Identify 4 specific risks to our project (e.g., hardware sensor failure in the field).
+- [ ] Categorize each risk into one of these four types: Acceptable, Avoidable, Minimizable, or Transferable.
+- [ ] State exactly how we will handle or treat each risk if it occurs.
+
+---
+
+## Keano
+
+**Assigned Sections:** 1.2 Project objectives, 1.3 Problem background, & 1.7 References
+
+> **Document Context (1.2 & 1.3):**
+> The document asks for a list of the real-world issues our software intervention will address. Section 1.3 is a literature review where we must provide an overview of the problem area using existing sources so a reader with no knowledge can understand the issue.
+
+> **Document Context (1.7):**
+> All existing sources must use proper APA referencing.
+
+**Your Tasks:**
+- [ ] List the main things our system will do to address the real-world issues.
+- [ ] Find existing literature (web references, journal articles, etc.) to explain the background of our problem area.
+- [ ] Ensure every source used in the document is formatted using proper APA referencing.
+- [ ] Compile the final reference list in Section 1.7.
+
+---
+
+## Shawn
+**Assigned Section:** 1.5 The project plan
+
+> **Document Context:**
+> The document requires a project scope and objective, typically represented as a Gantt chart. It must outline what we are delivering, milestones, task durations with start and end dates, and dependencies.
+
+**Your Tasks:**
+- [ ] Define the project milestones and deliverables.
+- [ ] Create a Gantt chart detailing the start and end dates for building the dual-architecture system.
+- [ ] Map out all task dependencies (e.g., showing that the database architecture must be finalized before the web dashboard can pull reports).
