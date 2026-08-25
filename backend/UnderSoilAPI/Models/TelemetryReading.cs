@@ -17,6 +17,11 @@ namespace UnderSoilAPI.Models
         // This represents the LED state (is the valve open or closed?)
         public bool ValveIsOpen { get; set; }
 
+        public double TemperatureCelsius { get; set; }
+
+        public double HumidityPercentage { get; set; }
+
+
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }
