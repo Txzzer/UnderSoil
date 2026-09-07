@@ -1,15 +1,11 @@
 using System.Net;
+using System.Text;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
-using MQTTnet.Protocol;
-using System.Text;
-using System.Text.Json;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using UnderSoilAPI.Models;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +18,12 @@ builder.Services.AddDbContext<UnderSoilContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Create MQTT client and options to connect to HiveMQ (or any broker)
+var factory = new MqttFactory();
+var mqttClient = factory.CreateMqttClient();
+
+builder.Services.AddSingleton<IMqttClient>(mqttClient);
 
 var app = builder.Build();
 
@@ -43,9 +45,6 @@ var topic = mqttSection.GetValue<string>("Topic") ?? "undersoil/telemetry";
 var clientId = mqttSection.GetValue<string>("ClientId") ?? $"UnderSoilClient-{Dns.GetHostName()}";
 
 
-// Create MQTT client and options to connect to HiveMQ (or any broker)
-var factory = new MqttFactory();
-var mqttClient = factory.CreateMqttClient();
 
 var optionsBuilder = new MqttClientOptionsBuilder()
     .WithClientId(clientId)
@@ -67,7 +66,7 @@ mqttClient.UseConnectedHandler(async e =>
         .WithTopic(topic)
         .WithAtLeastOnceQoS()
         .Build());
-    Console.WriteLine($"MQTT -> Subscribed to '{topic}'."); 
+    Console.WriteLine($"MQTT -> Subscribed to '{topic}'.");
 });
 
 mqttClient.UseDisconnectedHandler(async e =>
@@ -141,4 +140,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
+    

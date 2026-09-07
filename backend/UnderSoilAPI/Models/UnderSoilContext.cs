@@ -10,5 +10,6 @@ namespace UnderSoilAPI.Models
         }
 
         public DbSet<TelemetryReading> TelemetryReadings { get; set; } = null!;
+
     }
 }
