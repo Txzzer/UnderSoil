@@ -18,9 +18,5 @@
 
   <!-- If your .csproj has an explicit Compile include for the file inside a 'Program' folder,
        remove that and ensure the root Program.cs is included. Example adjustments: -->
-  <ItemGroup>
-    <Compile Remove="Program\Program.cs" />
-    <Compile Include="Program.cs" />
-  </ItemGroup>
 
 </Project>
