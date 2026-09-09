@@ -153,7 +153,10 @@ void loop() {
   float baseFlow = 0.0;
   if (isValveOpen) {
       // Baseline flow of ~40 LPM when valve is open
-      baseFlow = 40.0; 
+      baseFlow = random(400, 551) / 100.0; 
+  }else {
+      // Valve is closed. Base flow is strictly zero.
+      baseFlow = 0.00;
   }
 
   // Read the raw potentiometer value (0 to 4095)
@@ -166,7 +169,8 @@ void loop() {
       anomalyFlow = map(rawAnalogValue, 800, 4095, 0, 80);
   }
 
-// Calculate the final flow rate with the deadzone applied
+  // Calculate the final flow rate
+  // If valve is closed (0.00) but pot is turned, it simulates a burst pipe!
   currentFlowRate = baseFlow + anomalyFlow;
   // 4. TRANSMIT TELEMETRY
   if (millis() - lastSyncTime >= syncInterval) {
@@ -177,7 +181,6 @@ void loop() {
 
 void sendTelemetryPayload() {
   String jsonPayload = "{";
-  jsonPayload += "\"id\": 0,";
   jsonPayload += "\"deviceId\": \"ESP32_WROOM_ZONE_1\",";
   jsonPayload += "\"flowRateLitersPerMin\": " + String(currentFlowRate, 2) + ",";
   jsonPayload += "\"valveIsOpen\": " + String(isValveOpen ? "true" : "false") + ",";
