@@ -257,6 +257,35 @@ Take that model.tflite file and physically hand it (via Slack/Email/Flash drive)
 
 If you successfully generate this file and give it to Android, you win Phase 2. (In Phase 3, Student 1 will actually plug it into the app). 
 
+-------------New things....
+
+👩‍💻 Student 2: The C# Backend
+Your goal is to connect your existing API controllers to your MQTT client so the web server can send commands outward.
+
+Inject the MQTT Client: Ensure the IMqttClient you configured in your setup is injected into your controllers (like ValveController and TelemetryController) via their constructors.
+
+Build the Command Endpoint: Create an HTTP POST endpoint (e.g., /api/v1/telemetry/request-read). When the Android app hits this, use the MQTT client to publish a simple message (like "READ_NOW") to a brand new topic, such as undersoil/commands.
+
+Build the Fetch Endpoint: Create an HTTP GET endpoint (e.g., /api/v1/telemetry/latest) that queries your SQLite database, pulls the single most recent row from your telemetry table, and returns it to the phone as JSON.
+
+🔌 Student 4: The Hardware Lead
+Your ESP needs to stop just talking and start listening for instructions from the server.
+
+Subscribe to Commands: Update the C++ or MicroPython code on the ESP to subscribe to the new undersoil/commands topic on HiveMQ.
+
+Listen and React: Write a callback function on the ESP so that when it receives the "READ_NOW" payload, it immediately wakes up and polls the physical sensors.
+
+Return the Data: Package that brand-new reading into your standard JSON format and publish it immediately back to your original undersoil/telemetry topic (which your C# app is already perfectly configured to catch and save).
+
+📱 Student 1: The Android App
+Your goal is to orchestrate this flow from the user's hand and display the fresh results.
+
+The Trigger Button: Create a "Get Live Reading" button. When pressed, use Retrofit to send an HTTP POST to the backend's /request-read endpoint.
+
+The Delay: Because MQTT takes a split second to travel to the hardware and back to the database, have the app show a loading spinner and wait about 1 to 2 seconds.
+
+Fetch and Display: Send an HTTP GET to the /latest endpoint, parse the fresh JSON data, stop the loading spinner, and update the text views on the screen.
+
  
 
  
