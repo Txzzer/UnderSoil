@@ -3,22 +3,20 @@ package com.example.undersoil;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
-import java.time.LocalDateTime;
+import androidx.appcompat.app.AppCompatActivity;
 
 import network.ApiClient;
-import network.ApiResponse;
 import network.ApiService;
-import network.TelemetryReading;
+import network.ValveRequest;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public class MainActivity extends AppCompatActivity {
 
     Button testApiButton;
+    boolean isValveOpen = false; // Tracks the current state
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,64 +24,42 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         testApiButton = findViewById(R.id.testApiButton);
+        testApiButton.setText("Turn Valve ON");
 
         testApiButton.setOnClickListener(view -> {
-
             testApiButton.setEnabled(false);
 
-            TelemetryReading reading = new TelemetryReading(
-                    "Android_Test",
-                    42.5,
-                    true,
-                    LocalDateTime.now().toString()
-            );
+            // Flip the state
+            isValveOpen = !isValveOpen;
+            ValveRequest request = new ValveRequest(isValveOpen);
 
+            ApiService api = ApiClient.getClient().create(ApiService.class);
 
-            ApiService api = ApiClient.getClient()
-                    .create(ApiService.class);
-
-            api.sendTelemetry(reading).enqueue(new Callback<ApiResponse>() {
-
+            api.toggleValve(request).enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<ApiResponse> call,
-                                       Response<ApiResponse> response) {
-
+                public void onResponse(Call<Void> call, Response<Void> response) {
                     testApiButton.setEnabled(true);
 
-                    if (response.isSuccessful() && response.body() != null) {
-
-                        Toast.makeText(
-                                MainActivity.this,
-                                response.body().getMessage(),
-                                Toast.LENGTH_SHORT
-                        ).show();
-
+                    if (response.isSuccessful()) {
+                        // Update button text for the next click
+                        testApiButton.setText(isValveOpen ? "Turn Valve OFF" : "Turn Valve ON");
+                        String state = isValveOpen ? "OPEN" : "CLOSED";
+                        Toast.makeText(MainActivity.this, "Success! Valve is " + state, Toast.LENGTH_SHORT).show();
                     } else {
-
-                        Toast.makeText(
-                                MainActivity.this,
-                                "Server Error: " + response.code(),
-                                Toast.LENGTH_LONG
-                        ).show();
-
+                        // Revert state on server error
+                        isValveOpen = !isValveOpen;
+                        Toast.makeText(MainActivity.this, "Server Error: " + response.code(), Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<ApiResponse> call, Throwable t) {
-
+                public void onFailure(Call<Void> call, Throwable t) {
                     testApiButton.setEnabled(true);
-
-                    Toast.makeText(
-                            MainActivity.this,
-                            "Failed: " + t.getMessage(),
-                            Toast.LENGTH_LONG
-                    ).show();
-
+                    // Revert state on network failure
+                    isValveOpen = !isValveOpen;
+                    Toast.makeText(MainActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
-
             });
-
         });
     }
 }

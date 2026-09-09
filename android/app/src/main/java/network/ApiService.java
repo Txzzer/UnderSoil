@@ -5,6 +5,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 public interface ApiService {
 
-    @POST("api/v1/telemetry/ingest")
-    Call<ApiResponse> sendTelemetry(@Body TelemetryReading reading);
+
+    @POST("api/v1/Valve/toggle")
+    Call<Void> toggleValve(@Body ValveRequest request);
 }

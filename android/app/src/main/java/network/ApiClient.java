@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     private static final String BASE_URL =
-            "http://BACKEND_IP_HERE:5000/";
+            "http://10.0.2.2:5196/";
 
     private static Retrofit retrofit;
 
