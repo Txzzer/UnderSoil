@@ -3,12 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="#F5F5F5">
+
+    <!-- THE HIDDEN ALERT BANNER -->
+    <TextView
+        android:id="@+id/alertBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#D32F2F"
+        android:textColor="#FFFFFF"
+        android:text="⚠️ CRITICAL ALERT: BURST PIPE DETECTED! ⚠️"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:layout_marginBottom="32dp"
+        android:elevation="4dp" />
 
     <Button
         android:id="@+id/testApiButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="Turn Valve ON"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
+    <TextView
+        android:id="@+id/flowrate"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test API" />
+        android:text="Waiting for live sensor data..."
+        android:textSize="20sp"
+        android:lineSpacingExtra="8dp"
+        android:textAlignment="center"
+        android:textColor="#333333" />
 
 </LinearLayout>

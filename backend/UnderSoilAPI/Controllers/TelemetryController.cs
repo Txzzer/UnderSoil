@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UnderSoilAPI.Models;
-using System;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
+using UnderSoilAPI.Models;
 
 namespace UnderSoilAPI.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")] // This makes the URL look like: http://<your-ip>:5000/api/v1/telemetry
+    [Route("api/v1/[controller]")]
     public class TelemetryController : ControllerBase
     {
         private readonly UnderSoilContext _db;
@@ -16,34 +17,21 @@ namespace UnderSoilAPI.Controllers
             _db = db;
         }
 
-        // ====================================================================
-        // ENDPOINT: The Python Simulator posts data here every 5 seconds
-        // URL: POST http://<your-ip>:5000/api/v1/telemetry/ingest
-        // ====================================================================
-        [HttpPost("ingest")]
-        public async Task<IActionResult> IngestTelemetry([FromBody] TelemetryReading reading)
+        // Endpoint: GET http://<IP>:5254/api/v1/telemetry/latest
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatestReading()
         {
-            if (reading == null)
+            // Get the most recent row based on the Timestamp
+            var latestData = await _db.TelemetryReadings
+                                      .OrderByDescending(t => t.Timestamp)
+                                      .FirstOrDefaultAsync();
+
+            if (latestData == null)
             {
-                return BadRequest("I didn't receive any data.");
+                return NotFound(new { message = "No sensor data found yet." });
             }
 
-            // For now, we are just printing it to the black terminal screen to prove it arrived.
-            // Now also save to the database.
-            Console.WriteLine("=========================================");
-            Console.WriteLine($"🔔 NEW DATA RECEIVED FROM: {reading.DeviceId}");
-            Console.WriteLine($"💧 Flow Rate: {reading.FlowRateLitersPerMin} L/min");
-            Console.WriteLine($"⚙️ Valve Open: {reading.ValveIsOpen}");
-            Console.WriteLine($"⚙️ Temperature: {reading.TemperatureCelsius}");
-            Console.WriteLine($"⚙️ Humidity: {reading.HumidityPercentage}");
-            Console.WriteLine($"⏰ Time: {reading.Timestamp}");
-            Console.WriteLine("=========================================");
-
-            await _db.TelemetryReadings.AddAsync(reading);
-            await _db.SaveChangesAsync();
-
-            // Tell the Python script that we got the data successfully.
-            return Ok(new { status = "Success", message = "Data received loud and clear!" });
+            return Ok(latestData);
         }
     }
 }

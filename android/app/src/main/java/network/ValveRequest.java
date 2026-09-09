@@ -3,7 +3,7 @@ package network;
 public class ValveRequest {
     private boolean valveIsOpen;
 
-    public ValveRequest(boolean valveIsOpen) {
+    public ValveRequest(boolean valveIsOpen, int i) {
         this.valveIsOpen = valveIsOpen;
     }
 
