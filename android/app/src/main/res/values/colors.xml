@@ -2,4 +2,19 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary">#1E88E5</color>
+
+    <color name="gauge_green">#4CAF50</color>
+    <color name="gauge_orange">#FF9800</color>
+    <color name="gauge_red">#F44336</color>
+    <color name="gauge_track">#ECEFF1</color>
+
+    <color name="flow_rate_blue">#0288D1</color>
+    <color name="valve_open">#2E7D32</color>
+    <color name="valve_closed">#C62828</color>
+    <color name="valve_open_bg">#E8F5E9</color>
+    <color name="valve_closed_bg">#FFEBEE</color>
+
+    <color name="status_connected">#4CAF50</color>
+    <color name="status_error">#F44336</color>
 </resources>
