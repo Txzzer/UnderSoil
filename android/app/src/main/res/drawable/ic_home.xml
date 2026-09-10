@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- House outline -->
+    <path
+        android:pathData="M12,3 L3,10.5 L5.5,10.5 L5.5,19.5 C5.5,20.1 6,20.5 6.5,20.5 L17.5,20.5 C18,20.5 18.5,20.1 18.5,19.5 L18.5,10.5 L21,10.5 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+    <!-- Center circle window -->
+    <path
+        android:pathData="M12,14.5 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"/>
+</vector>

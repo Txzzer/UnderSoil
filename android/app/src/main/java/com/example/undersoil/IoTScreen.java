@@ -15,8 +15,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
 
@@ -28,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class IoTScreen extends AppCompatActivity {
 
     private static final long POLLING_INTERVAL_MS = 3000; // Poll every 3 seconds
 
@@ -46,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private MaterialCardView cardWarningBanner;
     private TextView tvWarningBannerText;
     private Button btnWarningAction;
+
+    // Bottom Navigation Views
+    private BottomNavigationView bottomNavigationView;
+    private FloatingActionButton fabHome;
 
     private boolean isValveOpen = false;
     private boolean isTogglingValve = false;
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupGauges();
         setupValveToggle();
+        setupBottomNavigation();
     }
 
     private void initViews() {
@@ -88,7 +95,30 @@ public class MainActivity extends AppCompatActivity {
         tvWarningBannerText = findViewById(R.id.tvWarningBannerText);
         btnWarningAction = findViewById(R.id.btnWarningAction);
 
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        fabHome = findViewById(R.id.fabHome);
+
         btnWarningAction.setOnClickListener(v -> performValveToggle(true));
+    }
+
+    private void setupBottomNavigation() {
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_iot);
+            bottomNavigationView.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_iot) {
+                    return true;
+                } else if (itemId == R.id.nav_garden) {
+                    Toast.makeText(IoTScreen.this, "Garden screen coming soon!", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        if (fabHome != null) {
+            fabHome.setOnClickListener(v -> Toast.makeText(IoTScreen.this, "Home screen", Toast.LENGTH_SHORT).show());
+        }
     }
 
     private void setupGauges() {
@@ -131,13 +161,13 @@ public class MainActivity extends AppCompatActivity {
                     isValveOpen = targetState;
                     updateValveUi(isValveOpen);
                     String state = isValveOpen ? "OPEN" : "CLOSED";
-                    Toast.makeText(MainActivity.this, "Valve toggled to " + state, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IoTScreen.this, "Valve toggled to " + state, Toast.LENGTH_SHORT).show();
 
                     if (flowAlertDialog != null && flowAlertDialog.isShowing()) {
                         flowAlertDialog.dismiss();
                     }
                 } else {
-                    Toast.makeText(MainActivity.this, "Server Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IoTScreen.this, "Server Error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -146,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 btnToggleValve.setEnabled(true);
                 btnWarningAction.setEnabled(true);
                 isTogglingValve = false;
-                Toast.makeText(MainActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(IoTScreen.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

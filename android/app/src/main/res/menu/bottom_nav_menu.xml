@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_iot"
+        android:icon="@drawable/ic_iot_valve"
+        android:title="@string/nav_iot" />
+
+    <item
+        android:id="@+id/nav_placeholder"
+        android:enabled="false"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_garden"
+        android:icon="@drawable/ic_garden_tree"
+        android:title="@string/nav_garden" />
+</menu>
