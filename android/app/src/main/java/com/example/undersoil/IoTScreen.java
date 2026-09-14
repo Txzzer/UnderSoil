@@ -109,7 +109,10 @@ public class IoTScreen extends AppCompatActivity {
                 if (itemId == R.id.nav_iot) {
                     return true;
                 } else if (itemId == R.id.nav_garden) {
-                    Toast.makeText(IoTScreen.this, "Garden screen coming soon!", Toast.LENGTH_SHORT).show();
+                    android.content.Intent intent = new android.content.Intent(IoTScreen.this, MainActivity.class);
+                    intent.putExtra("target_route", "garden");
+                    intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
                     return true;
                 }
                 return false;
@@ -117,7 +120,12 @@ public class IoTScreen extends AppCompatActivity {
         }
 
         if (fabHome != null) {
-            fabHome.setOnClickListener(v -> Toast.makeText(IoTScreen.this, "Home screen", Toast.LENGTH_SHORT).show());
+            fabHome.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(IoTScreen.this, MainActivity.class);
+                intent.putExtra("target_route", "home");
+                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            });
         }
     }
 

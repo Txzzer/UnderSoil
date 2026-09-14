@@ -17,16 +17,16 @@
         android:theme="@style/Theme.Undersoil"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".IoTScreen"
+            android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+<<<<<<< Updated upstream
             android:name=".Log_result"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -85,6 +85,10 @@
         <activity
             android:name=".Log_in"
             android:exported="false"
+=======
+            android:name=".IoTScreen"
+            android:exported="true"
+>>>>>>> Stashed changes
             android:windowSoftInputMode="adjustResize" />
     </application>
 
