@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light_green">
+
+    <ImageButton
+        android:id="@+id/closeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="2dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_add"
+        android:rotation="45"
+        android:contentDescription="Close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/illustration"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:src="@drawable/ic_error_illustration"
+        android:contentDescription="Not found illustration"
+        app:layout_constraintBottom_toTopOf="@id/notFoundTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.42"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_circle_green"
+        android:padding="8dp"
+        android:src="@drawable/ic_translate"
+        app:tint="@color/white"
+        android:contentDescription="Retry"
+        app:layout_constraintBottom_toBottomOf="@id/illustration"
+        app:layout_constraintEnd_toEndOf="@id/illustration" />
+
+    <TextView
+        android:id="@+id/notFoundTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Not Found !"
+        android:textColor="@color/text_main_dark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/illustration" />
+
+    <TextView
+        android:id="@+id/notFoundMessage"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="We cannot identify your plant/disease please try the photo again from the different angle"
+        android:textColor="@color/text_sub"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notFoundTitle" />
+
+    <Button
+        android:id="@+id/tryAgainButton"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/bg_pill_green"
+        android:elevation="2dp"
+        android:fontFamily="sans-serif-medium"
+        android:paddingVertical="16dp"
+        android:text="Try Again"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notFoundMessage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

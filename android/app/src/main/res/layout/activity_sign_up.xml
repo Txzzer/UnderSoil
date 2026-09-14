@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light_green">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="54dp"
+        android:background="@drawable/bg_circle_white"
+        android:elevation="2dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_back_arrow"
+        android:contentDescription="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="89dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Create Account"
+        android:textColor="@color/text_main_dark"
+        android:textSize="28sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/subtitleText"
+        android:layout_width="247dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="Let's Create Account Together"
+        android:textColor="@color/text_sub"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText" />
+
+    <TextView
+        android:id="@+id/nameLabel"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Your Name"
+        android:textColor="@color/text_dark"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subtitleText" />
+
+    <EditText
+        android:id="@+id/nameInput"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_pill_white"
+        android:elevation="1dp"
+        android:fontFamily="sans-serif"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:text="Alisson Becker"
+        android:textColor="@color/input_text"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/nameLabel"
+        app:layout_constraintEnd_toEndOf="@id/nameLabel"
+        app:layout_constraintTop_toBottomOf="@id/nameLabel" />
+
+    <TextView
+        android:id="@+id/emailLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Email Address"
+        android:textColor="@color/text_dark"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/nameLabel"
+        app:layout_constraintTop_toBottomOf="@id/nameInput" />
+
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_pill_white"
+        android:elevation="1dp"
+        android:fontFamily="sans-serif"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:text="alissonbecker@gmail.com"
+        android:textColor="@color/input_text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@id/emailLabel"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/emailLabel"
+        app:layout_constraintTop_toBottomOf="@id/emailLabel" />
+
+    <TextView
+        android:id="@+id/passwordLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Password"
+        android:textColor="@color/text_dark"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/emailLabel"
+        app:layout_constraintTop_toBottomOf="@id/emailInput" />
+
+    <RelativeLayout
+        android:id="@+id/passwordContainer"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_pill_white"
+        android:elevation="1dp"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="14dp"
+        app:layout_constraintStart_toStartOf="@id/passwordLabel"
+        app:layout_constraintTop_toBottomOf="@id/passwordLabel">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.3"
+            android:text="••••••••"
+            android:textColor="@color/input_text"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_eye"
+            android:contentDescription="Show password" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_pill_green"
+        android:elevation="2dp"
+        android:fontFamily="sans-serif-medium"
+        android:paddingVertical="16dp"
+        android:text="Sign Up"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@id/passwordContainer"
+        app:layout_constraintTop_toBottomOf="@id/passwordContainer" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
