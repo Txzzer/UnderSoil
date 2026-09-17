@@ -8,8 +8,10 @@ TEST_SPLIT = 0.1
 
 # Model configuration
 MODEL_INPUT_SIZE = (256, 256)
-MODEL_OUTPUT_PATH = "model.tflite"
-MODEL_CHECKPOINT_PATH = "model_checkpoint.h5"
+MODEL_OUTPUT_PATH = "test_v1/models/model.tflite"
+MODEL_METADATA_OUTPUT_PATH = "test_v1/models/model_with_metadata.tflite"
+MODEL_CHECKPOINT_PATH = "test_v1/models/model_checkpoint.h5"
+LABEL_FILE = "test_v1/labels.txt"
 
 # Training configuration
 BATCH_SIZE = 32

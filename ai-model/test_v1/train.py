@@ -6,6 +6,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
 from data_loader import load_dataset, split_dataset
 from model_trainer import build_model, train_model, convert_to_tflite
 from inference import evaluate_model
+from add_metadata import add_metadata_to_tflite_model
 from config import MODEL_CHECKPOINT_PATH
 
 
@@ -48,7 +49,12 @@ def main():
     print("Step 6: Converting to TensorFlow Lite format...")
     convert_to_tflite(model)
     print()
-    
+
+    # Adding metadata to the model
+    print("Step 7: Adding metadata to the model...")
+    add_metadata_to_tflite_model()
+    print()
+
     print("="*60)
     print("TRAINING COMPLETE!")
     print("="*60)
