@@ -2,9 +2,18 @@ package network;
 
 public class ValveRequest {
     private boolean valveIsOpen;
+    private int deviceIdInt;
 
-    public ValveRequest(boolean valveIsOpen, int i) {
+    public ValveRequest() {
+    }
+
+    public ValveRequest(boolean valveIsOpen) {
         this.valveIsOpen = valveIsOpen;
+    }
+
+    public ValveRequest(boolean valveIsOpen, int deviceIdInt) {
+        this.valveIsOpen = valveIsOpen;
+        this.deviceIdInt = deviceIdInt;
     }
 
     public boolean isValveIsOpen() {
@@ -13,5 +22,13 @@ public class ValveRequest {
 
     public void setValveIsOpen(boolean valveIsOpen) {
         this.valveIsOpen = valveIsOpen;
+    }
+
+    public int getDeviceIdInt() {
+        return deviceIdInt;
+    }
+
+    public void setDeviceIdInt(int deviceIdInt) {
+        this.deviceIdInt = deviceIdInt;
     }
 }
