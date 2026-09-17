@@ -27,69 +27,31 @@ public class SensorData {
     public SensorData() {
     }
 
-    public SensorData(long id, String deviceId, double flowRateLitersPerMin, boolean valveIsOpen, double temperatureCelsius, double humidityPercentage, String timestamp) {
-        this.id = id;
-        this.deviceId = deviceId;
-        this.flowRateLitersPerMin = flowRateLitersPerMin;
-        this.valveIsOpen = valveIsOpen;
-        this.temperatureCelsius = temperatureCelsius;
-        this.humidityPercentage = humidityPercentage;
-        this.timestamp = timestamp;
-    }
-
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
     public double getFlowRateLitersPerMin() {
         return flowRateLitersPerMin;
-    }
-
-    public void setFlowRateLitersPerMin(double flowRateLitersPerMin) {
-        this.flowRateLitersPerMin = flowRateLitersPerMin;
     }
 
     public boolean isValveIsOpen() {
         return valveIsOpen;
     }
 
-    public void setValveIsOpen(boolean valveIsOpen) {
-        this.valveIsOpen = valveIsOpen;
-    }
-
     public double getTemperatureCelsius() {
         return temperatureCelsius;
-    }
-
-    public void setTemperatureCelsius(double temperatureCelsius) {
-        this.temperatureCelsius = temperatureCelsius;
     }
 
     public double getHumidityPercentage() {
         return humidityPercentage;
     }
 
-    public void setHumidityPercentage(double humidityPercentage) {
-        this.humidityPercentage = humidityPercentage;
-    }
-
     public String getTimestamp() {
         return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
     }
 }

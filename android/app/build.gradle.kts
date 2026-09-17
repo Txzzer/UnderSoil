@@ -18,6 +18,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    androidResources {
+        noCompress += "tflite"
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         release {
             optimization {
@@ -32,6 +42,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        mlModelBinding = true
     }
 }
 
@@ -40,6 +51,13 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    
+    // TensorFlow Lite 2.17.0 (Supports CAST opcode v6+)
+    implementation("org.tensorflow:tensorflow-lite:2.17.0")
+    implementation("org.tensorflow:tensorflow-lite-api:2.17.0")
+    implementation("org.tensorflow:tensorflow-lite-support-api:0.4.4")
+    implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
