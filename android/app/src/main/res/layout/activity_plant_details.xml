@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/bg_light_green">
 
-    <View
+    <ImageView
         android:id="@+id/heroImage"
         android:layout_width="0dp"
         android:layout_height="280dp"
+        android:scaleType="centerCrop"
         android:background="@drawable/bg_photo_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,12 +54,13 @@
                 android:padding="24dp">
 
                 <TextView
+                    android:id="@+id/tvPlantNameScientific"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Solanum lycopersicum(Tomato)"
+                    android:text="Solanum lycopersicum (Tomato)"
                     android:textColor="@color/main_green"
-                    android:textSize="18sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -70,11 +72,12 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tvPlantDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:fontFamily="sans-serif"
-                    android:text="Tomato is a visually appealing and not only adds a touch of elegance to indoor spaces but also carries a positive and symbolic message of prosperity and well-being."
+                    android:text="Tomato is a visually appealing crop that adds elegance and yields fresh produce."
                     android:textColor="@color/text_sub"
                     android:textSize="13sp" />
 
@@ -128,6 +131,7 @@
                                 android:textSize="13sp" />
 
                             <TextView
+                                android:id="@+id/tvWaterValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif"
@@ -165,6 +169,7 @@
                                 android:textSize="13sp" />
 
                             <TextView
+                                android:id="@+id/tvSunlightValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif"
@@ -202,6 +207,7 @@
                                 android:textSize="13sp" />
 
                             <TextView
+                                android:id="@+id/tvFertilizerValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif"
@@ -239,6 +245,7 @@
                                 android:textSize="13sp" />
 
                             <TextView
+                                android:id="@+id/tvHumidityValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif"
@@ -257,7 +264,7 @@
                     android:background="@drawable/bg_pill_green"
                     android:fontFamily="sans-serif-medium"
                     android:paddingVertical="16dp"
-                    android:text="Add to My Plants"
+                    android:text="Add to My Garden"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="16sp" />

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="14dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/ivPlantPhoto"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_photo_placeholder"
+            android:contentDescription="Plant photo" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPlantName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Tomato"
+                android:textColor="@color/text_dark"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvPlantStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Healthy"
+                android:textColor="@color/text_sub"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_square_water" />
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="1dp" />
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/bg_square_sunlight" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            android:src="@drawable/ic_trash"
+            android:contentDescription="Delete plant" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_chevron_right"
+            android:contentDescription="View details" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

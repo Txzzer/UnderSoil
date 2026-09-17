@@ -6,14 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.undersoil"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.undersoil"
         minSdk = 30
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

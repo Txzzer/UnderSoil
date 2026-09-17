@@ -1,6 +1,7 @@
 package com.example.undersoil;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,10 +110,7 @@ public class IoTScreen extends AppCompatActivity {
                 if (itemId == R.id.nav_iot) {
                     return true;
                 } else if (itemId == R.id.nav_garden) {
-                    android.content.Intent intent = new android.content.Intent(IoTScreen.this, MainActivity.class);
-                    intent.putExtra("target_route", "garden");
-                    intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
+                    startActivity(new Intent(IoTScreen.this, MainActivity.class));
                     return true;
                 }
                 return false;
@@ -120,12 +118,7 @@ public class IoTScreen extends AppCompatActivity {
         }
 
         if (fabHome != null) {
-            fabHome.setOnClickListener(v -> {
-                android.content.Intent intent = new android.content.Intent(IoTScreen.this, MainActivity.class);
-                intent.putExtra("target_route", "home");
-                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-            });
+            fabHome.setOnClickListener(v -> startActivity(new Intent(IoTScreen.this, HomeScreenActivity.class)));
         }
     }
 

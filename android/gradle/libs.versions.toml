@@ -7,6 +7,8 @@ appcompat = "1.7.1"
 material = "1.14.0"
 activityKtx = "1.13.0"
 constraintlayout = "2.2.2"
+tensorflowSupport = "0.4.4"
+tensorflowGpu = "2.16.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -16,9 +18,11 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+tensorflow-lite-support = { group = "org.tensorflow", name = "tensorflow-lite-support", version.ref = "tensorflowSupport" }
+tensorflow-lite-metadata = { group = "org.tensorflow", name = "tensorflow-lite-metadata", version.ref = "tensorflowSupport" }
+tensorflow-lite-gpu = { group = "org.tensorflow", name = "tensorflow-lite-gpu", version.ref = "tensorflowGpu" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.0" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }
-
