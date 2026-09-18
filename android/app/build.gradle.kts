@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-    
+
     // TensorFlow Lite 2.17.0 (Supports CAST opcode v6+)
     implementation("org.tensorflow:tensorflow-lite:2.17.0")
     implementation("org.tensorflow:tensorflow-lite-api:2.17.0")

@@ -4,9 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,13 +22,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.undersoil.ml.ModelWithMetadata;
-
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.support.common.FileUtil;
+import org.tensorflow.lite.support.common.ops.CastOp;
+import org.tensorflow.lite.support.common.ops.NormalizeOp;
+import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.label.Category;
+import org.tensorflow.lite.support.image.ops.ResizeOp;
+import org.tensorflow.lite.support.metadata.MetadataExtractor;
 
+import java.io.InputStream;
+import java.nio.MappedByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class Camera_detector extends AppCompatActivity {
 
@@ -45,7 +52,9 @@ public class Camera_detector extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<String> galleryLauncher;
-    private int sampleToggleCount = 0;
+
+    private Interpreter tfliteInterpreter;
+    private List<String> labels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +64,34 @@ public class Camera_detector extends AppCompatActivity {
         initViews();
         setupCameraLauncher();
         setupGalleryLauncher();
+        
+        loadTfliteModel();
+    }
 
-        // Run initial classification on default sample image so screen loads with a working preview
-        runTestSampleLeaf();
+    private void loadTfliteModel() {
+        try {
+            MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(this, "agri_model_ready.tflite");
+            Interpreter.Options options = new Interpreter.Options();
+            tfliteInterpreter = new Interpreter(tfliteModel, options);
+
+            // Extract labels manually to avoid metadata parsing bugs
+            MetadataExtractor extractor = new MetadataExtractor(tfliteModel);
+            InputStream labelsInput = extractor.getAssociatedFile("labels.txt");
+            if (labelsInput != null) {
+                Scanner scanner = new Scanner(labelsInput).useDelimiter("\\A");
+                String rawLabels = scanner.hasNext() ? scanner.next() : "";
+                labels = new ArrayList<>();
+                for (String label : rawLabels.split("\n")) {
+                    if (!label.trim().isEmpty()) {
+                        labels.add(label.trim());
+                    }
+                }
+            } else {
+                throw new Exception("labels.txt not found in model metadata");
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error loading ML Model: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void initViews() {
@@ -71,12 +105,10 @@ public class Camera_detector extends AppCompatActivity {
 
         Button btnTakePhoto = findViewById(R.id.btnTakePhoto);
         Button btnPickGallery = findViewById(R.id.btnPickGallery);
-        Button btnTestSample = findViewById(R.id.btnTestSample);
 
         backButton.setOnClickListener(v -> finish());
         btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpen());
         btnPickGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
-        btnTestSample.setOnClickListener(v -> runTestSampleLeaf());
     }
 
     private void setupCameraLauncher() {
@@ -89,7 +121,7 @@ public class Camera_detector extends AppCompatActivity {
                             ivCapturedImage.setImageBitmap(bitmap);
                             classifyLeafImage(bitmap);
                         } else {
-                            Toast.makeText(this, "No image captured. Use 'Upload Image' to test model.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "No image captured. Try uploading from gallery.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -104,11 +136,13 @@ public class Camera_detector extends AppCompatActivity {
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                             if (bitmap != null) {
+                                // Convert hardware bitmaps to software to be readable by TFLite
+                                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                 ivCapturedImage.setImageBitmap(bitmap);
                                 classifyLeafImage(bitmap);
                             }
                         } catch (Exception e) {
-                            Toast.makeText(this, "Failed to load selected image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Failed to load image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -118,20 +152,19 @@ public class Camera_detector extends AppCompatActivity {
     private Bitmap getBitmapFromCameraResult(Intent data) {
         if (data == null) return null;
 
-        // 1. Try Uri from data.getData()
         if (data.getData() != null) {
             try {
-                return MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                return bitmap.copy(Bitmap.Config.ARGB_8888, true);
             } catch (Exception ignored) {
             }
         }
 
-        // 2. Try Bitmap from extras
         Bundle extras = data.getExtras();
         if (extras != null) {
             Object bitmapObj = extras.get("data");
             if (bitmapObj instanceof Bitmap) {
-                return (Bitmap) bitmapObj;
+                return ((Bitmap) bitmapObj).copy(Bitmap.Config.ARGB_8888, true);
             }
         }
 
@@ -162,83 +195,121 @@ public class Camera_detector extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Camera permission denied. Use 'Upload Image' button to test model.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Camera permission denied. Use 'Upload Image' button.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void runTestSampleLeaf() {
-        sampleToggleCount++;
-        boolean isHealthySample = (sampleToggleCount % 2 != 0);
-
-        Bitmap sampleBitmap = createSampleLeafBitmap(isHealthySample);
-        ivCapturedImage.setImageBitmap(sampleBitmap);
-
-        classifyLeafImage(sampleBitmap);
-    }
-
-    private Bitmap createSampleLeafBitmap(boolean healthy) {
-        Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-
-        canvas.drawColor(healthy ? Color.parseColor("#E8F5E9") : Color.parseColor("#FFF3E0"));
-
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        paint.setColor(healthy ? Color.parseColor("#2E7D32") : Color.parseColor("#8D6E63"));
-        canvas.drawCircle(128, 128, 90, paint);
-
-        paint.setColor(healthy ? Color.parseColor("#4CAF50") : Color.parseColor("#D32F2F"));
-        canvas.drawCircle(100, 100, 30, paint);
-        canvas.drawCircle(150, 140, 25, paint);
-
-        return bitmap;
-    }
-
     private void classifyLeafImage(Bitmap bitmap) {
+        if (tfliteInterpreter == null || labels == null) {
+            Toast.makeText(this, "ML Model not fully initialized.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
-            ModelWithMetadata model = ModelWithMetadata.newInstance(this);
+            // Apply correct preprocessing: TFLite model expects [-1, 1] input range.
+            // NormalizeOp(127.5f, 127.5f) means: (pixel_value - 127.5) / 127.5
+            ImageProcessor imageProcessor = new ImageProcessor.Builder()
+                    .add(new ResizeOp(256, 256, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+                    .add(new CastOp(DataType.FLOAT32))
+                    .build();
 
-            TensorImage image = TensorImage.fromBitmap(bitmap);
-            ModelWithMetadata.Outputs outputs = model.process(image);
-            List<Category> probabilityList = outputs.getProbabilityAsCategoryList();
+            TensorImage tensorImage = new TensorImage(DataType.FLOAT32);
+            tensorImage.load(bitmap);
+            tensorImage = imageProcessor.process(tensorImage);
 
-            Category topCategory = null;
+            // Output buffer for 38 classes
+            float[][] outputProbabilities = new float[1][labels.size()];
+
+            // Run inference
+            tfliteInterpreter.run(tensorImage.getBuffer(), outputProbabilities);
+
+            // Find Argmax (Top Probability) globally
             float maxScore = -1f;
+            int maxIndex = -1;
 
-            if (probabilityList != null && !probabilityList.isEmpty()) {
-                for (Category category : probabilityList) {
-                    if (category.getScore() > maxScore) {
-                        maxScore = category.getScore();
-                        topCategory = category;
-                    }
+            float[] probs = outputProbabilities[0];
+            
+            for (int i = 0; i < probs.length; i++) {
+                if (probs[i] > maxScore) {
+                    maxScore = probs[i];
+                    maxIndex = i;
                 }
             }
 
-            if (topCategory != null) {
-                String label = topCategory.getLabel();
-                float confidencePercent = maxScore * 100f;
+            if (maxIndex != -1) {
+                String rawLabel = labels.get(maxIndex);
 
-                tvClassLabel.setText(String.format("Class: %s", label));
+                float confidencePercent = maxScore * 100f;
+                confidencePercent = Math.min(100f, Math.max(0f, confidencePercent));
+
+                String[] parsed = formatPlantLabel(rawLabel);
+                String plantName = parsed[0];
+                String conditionName = parsed[1];
+
+                boolean isHealthy = conditionName.toLowerCase(Locale.US).contains("healthy") ||
+                                    rawLabel.toLowerCase(Locale.US).contains("healthy");
+
+                tvClassLabel.setText(String.format("%s • %s", plantName, conditionName));
                 tvConfidenceText.setText(String.format(Locale.US, "%.1f%% Confidence", confidencePercent));
                 pbConfidence.setProgress((int) confidencePercent);
-
-                boolean isHealthy = label.toLowerCase(Locale.US).contains("healthy");
 
                 if (isHealthy) {
                     tvDiagnosisStatus.setText("HEALTHY 🌱");
                     tvDiagnosisStatus.setTextColor(Color.parseColor("#2E7D32"));
-                    tvRecommendation.setText("Leaf foliage shows robust green coloration with no detected symptoms of blight or infection.");
+                    tvRecommendation.setText(String.format("Foliage for %s shows optimal health with no detected symptoms of blight or infection.", plantName));
                 } else {
                     tvDiagnosisStatus.setText("DISEASE DETECTED ⚠️");
                     tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
-                    tvRecommendation.setText(String.format("Symptoms of %s detected. Check watering, isolate infected leaves, and apply recommended crop treatment.", label));
+                    tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
                 }
             }
 
-            model.close();
         } catch (Exception e) {
-            Toast.makeText(this, "ML Diagnosis Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Inference Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String[] formatPlantLabel(String rawLabel) {
+        if (rawLabel == null || rawLabel.isEmpty()) {
+            return new String[]{"Crop", "Unknown Condition"};
+        }
+
+        if (rawLabel.contains("___")) {
+            String[] parts = rawLabel.split("___");
+            String plantName = parts[0].replace("_", " ").replace(",", "").trim();
+            String conditionName = parts[1].replace("_", " ").trim();
+
+            if (conditionName.isEmpty()) {
+                conditionName = "Healthy";
+            }
+            return new String[]{plantName, conditionName};
+        }
+
+        return new String[]{"Crop", rawLabel.replace("_", " ")};
+    }
+
+    private String getRecommendationForCondition(String plantName, String condition) {
+        String lowerCondition = condition.toLowerCase(Locale.US);
+
+        if (lowerCondition.contains("blight")) {
+            return String.format("Early/Late Blight detected on %s. Prune infected leaves, avoid wet foliage, and apply copper fungicide.", plantName);
+        } else if (lowerCondition.contains("bacterial")) {
+            return String.format("Bacterial infection detected on %s. Ensure good air circulation, avoid overhead watering, and apply bactericide spray.", plantName);
+        } else if (lowerCondition.contains("mildew")) {
+            return String.format("Powdery mildew fungal growth detected on %s. Increase sunlight exposure and apply neem oil or sulfur spray.", plantName);
+        } else if (lowerCondition.contains("rust") || lowerCondition.contains("rot") || lowerCondition.contains("scab")) {
+            return String.format("Fungal condition (%s) detected on %s. Remove diseased foliage and ensure proper soil drainage.", condition, plantName);
+        }
+
+        return String.format("Symptoms of %s detected on %s. Isolate affected leaves, inspect moisture levels, and apply appropriate treatment.", condition, plantName);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (tfliteInterpreter != null) {
+            tfliteInterpreter.close();
         }
     }
 }
