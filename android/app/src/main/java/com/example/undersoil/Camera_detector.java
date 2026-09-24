@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -26,7 +25,6 @@ import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.common.ops.CastOp;
-import org.tensorflow.lite.support.common.ops.NormalizeOp;
 import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
@@ -41,6 +39,7 @@ import java.util.Scanner;
 
 public class Camera_detector extends AppCompatActivity {
 
+    public static final String EXTRA_CROP_NAME = "EXTRA_CROP_NAME";
     private static final int CAMERA_PERMISSION_CODE = 101;
 
     private ImageView ivCapturedImage;
@@ -49,6 +48,8 @@ public class Camera_detector extends AppCompatActivity {
     private TextView tvClassLabel;
     private TextView tvRecommendation;
     private ProgressBar pbConfidence;
+    private Button btnTakePhoto;
+    private Button btnPickGallery;
 
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<String> galleryLauncher;
@@ -64,13 +65,96 @@ public class Camera_detector extends AppCompatActivity {
         initViews();
         setupCameraLauncher();
         setupGalleryLauncher();
-        
-        loadTfliteModel();
+
+        Intent intent = getIntent();
+        String cropName = (intent != null) ? intent.getStringExtra(EXTRA_CROP_NAME) : null;
+
+        initializeModel(cropName);
     }
 
-    private void loadTfliteModel() {
+    private String getModelFilenameForCrop(String cropName) {
+        if (cropName == null || cropName.trim().isEmpty()) {
+            return null;
+        }
+        String normalized = cropName.trim().toLowerCase(Locale.US);
+        switch (normalized) {
+            case "apple":
+            case "apple.tflite":
+                return "Apple.tflite";
+            case "cherry":
+            case "cherry (including sour)":
+            case "cherry_(including_sour)":
+            case "cherry.tflite":
+                return "Cherry_(including_sour).tflite";
+            case "corn":
+            case "maize":
+            case "corn (maize)":
+            case "corn_(maize)":
+            case "corn.tflite":
+                return "Corn_(maize).tflite";
+            case "grape":
+            case "grape.tflite":
+                return "Grape.tflite";
+            case "peach":
+            case "peach.tflite":
+                return "Peach.tflite";
+            case "pepper":
+            case "bell pepper":
+            case "pepper bell":
+            case "pepper, bell":
+            case "pepper,_bell":
+            case "pepper.tflite":
+                return "Pepper,_bell.tflite";
+            case "potato":
+            case "potato.tflite":
+                return "Potato.tflite";
+            case "strawberry":
+            case "strawberry.tflite":
+                return "Strawberry.tflite";
+            case "tomato":
+            case "tomato.tflite":
+                return "Tomato.tflite";
+            default:
+                return null;
+        }
+    }
+
+    private void initializeModel(String cropName) {
+        String modelFilename = getModelFilenameForCrop(cropName);
+        boolean loaded = false;
+
+        if (modelFilename != null) {
+            loaded = loadTfliteModel(modelFilename);
+        }
+
+        if (!loaded) {
+            // Fallback to default generic model
+            String defaultModel = "model2_plant_disease_meta.tflite";
+            loaded = loadTfliteModel(defaultModel);
+
+            if (loaded) {
+                if (cropName != null && !cropName.trim().isEmpty()) {
+                    Toast.makeText(this, "No specific model found for '" + cropName + "'. Loaded generic model.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Loaded generic plant disease model.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Failed to load ML Model. Camera scanning disabled.", Toast.LENGTH_LONG).show();
+                if (btnTakePhoto != null) {
+                    btnTakePhoto.setEnabled(false);
+                }
+                if (btnPickGallery != null) {
+                    btnPickGallery.setEnabled(false);
+                }
+            }
+        } else {
+            Toast.makeText(this, "Loaded model for " + cropName, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean loadTfliteModel(String modelFilename) {
         try {
-            MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(this, "agri_model_ready.tflite");
+            MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(this, modelFilename);
             Interpreter.Options options = new Interpreter.Options();
             tfliteInterpreter = new Interpreter(tfliteModel, options);
 
@@ -86,11 +170,12 @@ public class Camera_detector extends AppCompatActivity {
                         labels.add(label.trim());
                     }
                 }
+                return true;
             } else {
                 throw new Exception("labels.txt not found in model metadata");
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error loading ML Model: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 
@@ -103,8 +188,8 @@ public class Camera_detector extends AppCompatActivity {
         tvRecommendation = findViewById(R.id.tvRecommendation);
         pbConfidence = findViewById(R.id.pbConfidence);
 
-        Button btnTakePhoto = findViewById(R.id.btnTakePhoto);
-        Button btnPickGallery = findViewById(R.id.btnPickGallery);
+        btnTakePhoto = findViewById(R.id.btnTakePhoto);
+        btnPickGallery = findViewById(R.id.btnPickGallery);
 
         backButton.setOnClickListener(v -> finish());
         btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpen());
@@ -207,10 +292,17 @@ public class Camera_detector extends AppCompatActivity {
         }
 
         try {
+            // Dynamically calculate input size and output class count using interpreter tensors
+            int[] inputShape = tfliteInterpreter.getInputTensor(0).shape();
+            int inputHeight = (inputShape.length >= 3) ? inputShape[1] : 224;
+            int inputWidth = (inputShape.length >= 3) ? inputShape[2] : 224;
+
+            int[] outputShape = tfliteInterpreter.getOutputTensor(0).shape();
+            int outputClasses = (outputShape.length >= 2) ? outputShape[outputShape.length - 1] : labels.size();
+
             // Apply correct preprocessing: TFLite model expects [-1, 1] input range.
-            // NormalizeOp(127.5f, 127.5f) means: (pixel_value - 127.5) / 127.5
             ImageProcessor imageProcessor = new ImageProcessor.Builder()
-                    .add(new ResizeOp(256, 256, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+                    .add(new ResizeOp(inputHeight, inputWidth, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
                     .add(new CastOp(DataType.FLOAT32))
                     .build();
 
@@ -218,8 +310,8 @@ public class Camera_detector extends AppCompatActivity {
             tensorImage.load(bitmap);
             tensorImage = imageProcessor.process(tensorImage);
 
-            // Output buffer for 38 classes
-            float[][] outputProbabilities = new float[1][labels.size()];
+            // Output buffer dynamically sized based on tensor shape / labels count
+            float[][] outputProbabilities = new float[1][outputClasses];
 
             // Run inference
             tfliteInterpreter.run(tensorImage.getBuffer(), outputProbabilities);

@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    implementation(libs.tensorflow.lite.gpu)
+    implementation(libs.tensorflow.lite.support)
 
     // TensorFlow Lite 2.17.0 (Supports CAST opcode v6+)
     implementation("org.tensorflow:tensorflow-lite:2.17.0")
