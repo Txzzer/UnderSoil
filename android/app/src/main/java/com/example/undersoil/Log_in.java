@@ -12,10 +12,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.undersoil.data.SecurityUtils;
 import com.example.undersoil.data.SessionManager;
-import com.example.undersoil.data.User;
-import com.example.undersoil.data.UserDatabaseHelper;
+
+// Import our new network files
+import network.ApiClient;
+import network.ApiService;
+import network.AuthResponse;
+import network.LoginRequest;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Log_in extends AppCompatActivity {
 
@@ -26,7 +32,6 @@ public class Log_in extends AppCompatActivity {
     private TextView tvSignUpPrompt;
 
     private boolean isPasswordVisible = false;
-    private UserDatabaseHelper dbHelper;
     private SessionManager sessionManager;
 
     @Override
@@ -42,7 +47,6 @@ public class Log_in extends AppCompatActivity {
 
         setContentView(R.layout.activity_log_in);
 
-        dbHelper = UserDatabaseHelper.getInstance(this);
         initViews();
         setupClickListeners();
     }
@@ -98,18 +102,49 @@ public class Log_in extends AppCompatActivity {
             return;
         }
 
-        String passwordHash = SecurityUtils.hashPassword(password);
-        User user = dbHelper.getAuthUser(email, passwordHash);
+        // Disable button so they don't spam click it while loading
+        btnSignIn.setEnabled(false);
+        btnSignIn.setText("Logging in...");
 
-        if (user != null) {
-            sessionManager.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
-            Toast.makeText(this, "Welcome back, " + user.getName() + "!", Toast.LENGTH_SHORT).show();
+        // 1. Create the API Service
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-            Intent intent = new Intent(Log_in.this, HomeScreenActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Invalid email or password. Please try again.", Toast.LENGTH_LONG).show();
-        }
+        // 2. Package the email and password into the request model
+        LoginRequest request = new LoginRequest(email, password);
+
+        // 3. Send the request to the C# Backend
+        apiService.loginUser(request).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                btnSignIn.setEnabled(true);
+                btnSignIn.setText("Sign In");
+
+                if (response.isSuccessful() && response.body() != null) {
+                    // SUCCESS! The backend gave us a JWT Token.
+                    AuthResponse authData = response.body();
+
+                    // For now, we save it using your existing SessionManager format
+                    sessionManager.createLoginSession(authData.getUserId(), authData.getName(), email, "Farmer", authData.getToken());
+
+                    // Note: We will need to update SessionManager later to actually store the authData.getToken() string!
+
+                    Toast.makeText(Log_in.this, "Welcome back, " + authData.getName() + "!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Log_in.this, HomeScreenActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // Backend responded, but passwords didn't match (401 Unauthorized)
+                    Toast.makeText(Log_in.this, "Invalid email or password.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                // The app couldn't reach the backend at all (server offline, bad IP, etc)
+                btnSignIn.setEnabled(true);
+                btnSignIn.setText("Sign In");
+                Toast.makeText(Log_in.this, "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

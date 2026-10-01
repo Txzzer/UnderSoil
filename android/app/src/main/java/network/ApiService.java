@@ -12,4 +12,10 @@ public interface ApiService {
 
     @GET("api/v1/Telemetry/latest")
     Call<SensorData> getLatestSensorData();
+
+    @POST("api/auth/login")
+    Call<AuthResponse> loginUser(@Body LoginRequest request);
+
+    @POST("api/auth/register")
+    Call<AuthResponse> registerUser(@Body RegisterRequest request);
 }

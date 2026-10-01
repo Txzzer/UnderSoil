@@ -14,6 +14,7 @@ public class SessionManager {
     private static final String KEY_USER_NAME = "userName";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_USER_ROLE = "userRole";
+    private static final String KEY_TOKEN = "jwt_token";
 
     private static SessionManager instance;
     private final SharedPreferences pref;
@@ -31,12 +32,16 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void createLoginSession(String userId, String name, String email, String role) {
+    // UPDATED: userId is now an int, and we added the token parameter
+    public void createLoginSession(int userId, String name, String email, String role, String token) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putString(KEY_USER_ID, userId);
+        editor.putInt(KEY_USER_ID, userId);
         editor.putString(KEY_USER_NAME, name);
         editor.putString(KEY_USER_EMAIL, email);
         editor.putString(KEY_USER_ROLE, role != null ? role : "Farmer");
+
+        // Save the JWT Token from the backend
+        editor.putString(KEY_TOKEN, token);
         editor.apply();
     }
 
@@ -56,8 +61,14 @@ public class SessionManager {
         return pref.getString(KEY_USER_ROLE, "Farmer");
     }
 
-    public String getUserId() {
-        return pref.getString(KEY_USER_ID, "");
+    // UPDATED: Returns int now to match the database
+    public int getUserId() {
+        return pref.getInt(KEY_USER_ID, -1);
+    }
+
+    // NEW: Method to retrieve the token so you can attach it to future network calls
+    public String getToken() {
+        return pref.getString(KEY_TOKEN, null);
     }
 
     public void logoutUser(Context context) {
