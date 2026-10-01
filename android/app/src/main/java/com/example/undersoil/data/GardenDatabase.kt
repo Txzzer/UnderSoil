@@ -12,11 +12,14 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
-@Entity(tableName = "my_garden", primaryKeys = ["plantId", "userId"])
+@Entity(tableName = "my_garden")
 data class GardenEntity(
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val plantId: Int,
-    val userId: Long = 1
+    val userId: String = "",
+    val isSynced: Boolean = false
 )
 
 @Dao
@@ -28,16 +31,22 @@ interface GardenDao {
     fun delete(gardenEntity: GardenEntity)
 
     @Query("DELETE FROM my_garden WHERE plantId = :plantId AND userId = :userId")
-    fun deleteByPlantAndUser(plantId: Int, userId: Long)
+    fun deleteByPlantAndUser(plantId: Int, userId: String)
 
     @Query("SELECT * FROM my_garden WHERE userId = :userId")
-    fun getAll(userId: Long = 1): Flow<List<GardenEntity>>
+    fun getAll(userId: String = ""): Flow<List<GardenEntity>>
 
     @Query("SELECT * FROM my_garden WHERE userId = :userId")
-    fun getAllSync(userId: Long = 1): List<GardenEntity>
+    fun getAllSync(userId: String = ""): List<GardenEntity>
+
+    @Query("SELECT * FROM my_garden WHERE isSynced = 0")
+    fun getUnsyncedCrops(): List<GardenEntity>
+
+    @Query("UPDATE my_garden SET isSynced = 1 WHERE id = :id")
+    fun markCropAsSynced(id: String)
 }
 
-@Database(entities = [GardenEntity::class], version = 2, exportSchema = false)
+@Database(entities = [GardenEntity::class], version = 3, exportSchema = false)
 abstract class GardenDatabase : RoomDatabase() {
     abstract fun gardenDao(): GardenDao
 

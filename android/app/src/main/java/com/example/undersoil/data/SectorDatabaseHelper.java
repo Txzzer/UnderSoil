@@ -8,17 +8,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SectorDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "sectors.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_SECTORS = "sectors";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_CROP_NAMES = "crop_names";
+    public static final String COLUMN_IS_SYNCED = "is_synced";
 
     private static SectorDatabaseHelper instance;
 
@@ -36,10 +38,11 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_SECTORS + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_USER_ID + " INTEGER, " +
+                COLUMN_ID + " TEXT PRIMARY KEY, " +
+                COLUMN_USER_ID + " TEXT, " +
                 COLUMN_NAME + " TEXT, " +
-                COLUMN_CROP_NAMES + " TEXT)";
+                COLUMN_CROP_NAMES + " TEXT, " +
+                COLUMN_IS_SYNCED + " INTEGER DEFAULT 0)";
         db.execSQL(CREATE_TABLE);
     }
 
@@ -49,23 +52,32 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertSector(Sector sector, long userId) {
+    public String insertSector(Sector sector, String userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+
+        String sectorId = (sector.getId() != null && !sector.getId().trim().isEmpty())
+                ? sector.getId()
+                : UUID.randomUUID().toString();
+
+        values.put(COLUMN_ID, sectorId);
         values.put(COLUMN_USER_ID, userId);
         values.put(COLUMN_NAME, sector.getName());
         values.put(COLUMN_CROP_NAMES, sector.getCropNames());
-        return db.insert(TABLE_SECTORS, null, values);
+        values.put(COLUMN_IS_SYNCED, sector.isSynced() ? 1 : 0);
+
+        long row = db.insert(TABLE_SECTORS, null, values);
+        return (row != -1) ? sectorId : null;
     }
 
-    public List<Sector> getAllSectors(long userId) {
+    public List<Sector> getAllSectors(String userId) {
         List<Sector> sectors = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_SECTORS,
                 null,
                 COLUMN_USER_ID + " = ?",
-                new String[]{String.valueOf(userId)},
+                new String[]{userId},
                 null,
                 null,
                 COLUMN_ID + " ASC"
@@ -77,13 +89,15 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
                 int userIdx = cursor.getColumnIndexOrThrow(COLUMN_USER_ID);
                 int nameIdx = cursor.getColumnIndexOrThrow(COLUMN_NAME);
                 int cropIdx = cursor.getColumnIndexOrThrow(COLUMN_CROP_NAMES);
+                int syncIdx = cursor.getColumnIndexOrThrow(COLUMN_IS_SYNCED);
 
                 do {
                     Sector sector = new Sector(
-                            cursor.getLong(idIdx),
-                            cursor.getLong(userIdx),
+                            cursor.getString(idIdx),
+                            cursor.getString(userIdx),
                             cursor.getString(nameIdx),
-                            cursor.getString(cropIdx)
+                            cursor.getString(cropIdx),
+                            cursor.getInt(syncIdx) == 1
                     );
                     sectors.add(sector);
                 } while (cursor.moveToNext());
@@ -93,8 +107,51 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
         return sectors;
     }
 
-    public void deleteSector(long id) {
+    public List<Sector> getUnsyncedSectors() {
+        List<Sector> sectors = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(
+                TABLE_SECTORS,
+                null,
+                COLUMN_IS_SYNCED + " = 0",
+                null, null, null,
+                COLUMN_ID + " ASC"
+        );
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int idIdx = cursor.getColumnIndexOrThrow(COLUMN_ID);
+                int userIdx = cursor.getColumnIndexOrThrow(COLUMN_USER_ID);
+                int nameIdx = cursor.getColumnIndexOrThrow(COLUMN_NAME);
+                int cropIdx = cursor.getColumnIndexOrThrow(COLUMN_CROP_NAMES);
+                int syncIdx = cursor.getColumnIndexOrThrow(COLUMN_IS_SYNCED);
+
+                do {
+                    Sector sector = new Sector(
+                            cursor.getString(idIdx),
+                            cursor.getString(userIdx),
+                            cursor.getString(nameIdx),
+                            cursor.getString(cropIdx),
+                            cursor.getInt(syncIdx) == 1
+                    );
+                    sectors.add(sector);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return sectors;
+    }
+
+    public void markSectorAsSynced(String sectorId) {
+        if (sectorId == null) return;
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_SECTORS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_SYNCED, 1);
+        db.update(TABLE_SECTORS, values, COLUMN_ID + " = ?", new String[]{sectorId});
+    }
+
+    public void deleteSector(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_SECTORS, COLUMN_ID + " = ?", new String[]{id});
     }
 }

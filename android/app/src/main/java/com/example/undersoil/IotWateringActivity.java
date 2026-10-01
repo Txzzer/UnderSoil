@@ -63,6 +63,7 @@ public class IotWateringActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_SECTOR_ID, sector.getId());
             intent.putExtra(EXTRA_SECTOR_NAME, sector.getName());
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         rvSectors.setLayoutManager(new LinearLayoutManager(this));
@@ -83,7 +84,7 @@ public class IotWateringActivity extends AppCompatActivity {
 
     private void loadSectorsFromDatabase() {
         if (dbHelper != null) {
-            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+            String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
             sectorsList = dbHelper.getAllSectors(userId);
             adapter.updateData(sectorsList);
 

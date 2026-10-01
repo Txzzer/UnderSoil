@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fabHome: FloatingActionButton
     private lateinit var etSearch: EditText
     private lateinit var rvSavedGardenPlants: RecyclerView
+    private lateinit var layoutEmptyGarden: View
+    private lateinit var btnAddPlant: View
+    private lateinit var backButton: ImageButton
     private lateinit var adapter: SavedGardenAdapter
 
     private val savedPlantsList = mutableListOf<Plant>()
@@ -50,10 +53,18 @@ class MainActivity : AppCompatActivity() {
         fabHome = findViewById(R.id.fabHome)
         etSearch = findViewById(R.id.et_search)
         rvSavedGardenPlants = findViewById(R.id.rvSavedGardenPlants)
+        layoutEmptyGarden = findViewById(R.id.layoutEmptyGarden)
+        btnAddPlant = findViewById(R.id.btnAddPlant)
+        backButton = findViewById(R.id.backButton)
 
-        etSearch.setOnClickListener {
+        backButton.setOnClickListener { finish() }
+
+        val openExplore = View.OnClickListener {
             startActivity(Intent(this, ExplorePlantsActivity::class.java))
         }
+
+        etSearch.setOnClickListener(openExplore)
+        btnAddPlant.setOnClickListener(openExplore)
 
         adapter = SavedGardenAdapter(
             savedPlantsList,
@@ -73,33 +84,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadSavedPlants() {
-        val userId = SessionManager.getInstance(this).getUserId()
-        val dao = GardenDatabase.getInstance(this).gardenDao()
-        var savedEntities = dao.getAllSync(userId)
+        try {
+            val userId = SessionManager.getInstance(this).getUserIdString()
+            val dao = GardenDatabase.getInstance(this).gardenDao()
+            val savedEntities = dao.getAllSync(userId)
 
-        // Seed default plants if empty initially for this user
-        if (savedEntities.isEmpty()) {
-            dao.insert(GardenEntity(1, userId)) // Tomato
-            dao.insert(GardenEntity(2, userId)) // Potato
-            savedEntities = dao.getAllSync(userId)
-        }
-
-        savedPlantsList.clear()
-        for (entity in savedEntities) {
-            val plant = getPlantById(entity.plantId)
-            if (plant != null) {
-                savedPlantsList.add(plant)
+            savedPlantsList.clear()
+            for (entity in savedEntities) {
+                val plant = getPlantById(entity.plantId)
+                if (plant != null) {
+                    savedPlantsList.add(plant)
+                }
             }
+            adapter.notifyDataSetChanged()
+
+            if (savedPlantsList.isEmpty()) {
+                layoutEmptyGarden.visibility = View.VISIBLE
+                rvSavedGardenPlants.visibility = View.GONE
+            } else {
+                layoutEmptyGarden.visibility = View.GONE
+                rvSavedGardenPlants.visibility = View.VISIBLE
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error loading garden: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        adapter.notifyDataSetChanged()
     }
 
     private fun deletePlantFromGarden(plant: Plant) {
-        val userId = SessionManager.getInstance(this).getUserId()
-        val dao = GardenDatabase.getInstance(this).gardenDao()
-        dao.deleteByPlantAndUser(plant.id, userId)
-        Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
-        loadSavedPlants()
+        try {
+            val userId = SessionManager.getInstance(this).getUserIdString()
+            val dao = GardenDatabase.getInstance(this).gardenDao()
+            dao.deleteByPlantAndUser(plant.id, userId)
+            Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
+            loadSavedPlants()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun getPlantById(id: Int): Plant? {
@@ -112,6 +133,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_iot -> {
                     startActivity(Intent(this, IotWateringActivity::class.java))
+                    overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_garden -> {
@@ -123,6 +145,7 @@ class MainActivity : AppCompatActivity() {
 
         fabHome.setOnClickListener {
             startActivity(Intent(this, HomeScreenActivity::class.java))
+            overridePendingTransition(0, 0)
         }
     }
 }

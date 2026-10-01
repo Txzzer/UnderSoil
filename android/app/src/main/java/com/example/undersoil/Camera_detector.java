@@ -27,7 +27,6 @@ import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.common.ops.CastOp;
 import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.metadata.MetadataExtractor;
 
 import com.example.undersoil.data.ScanLog;
@@ -41,6 +40,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Camera_detector extends AppCompatActivity {
 
@@ -63,6 +64,9 @@ public class Camera_detector extends AppCompatActivity {
     private List<String> labels;
     private String cropName;
 
+    // Single-thread executor for background ML model loading & inference
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,8 @@ public class Camera_detector extends AppCompatActivity {
         Intent intent = getIntent();
         cropName = (intent != null) ? intent.getStringExtra(EXTRA_CROP_NAME) : null;
 
-        initializeModel(cropName);
+        // Load model in background thread to prevent UI freezing & ANRs
+        executorService.execute(() -> initializeModel(cropName));
     }
 
     private String getModelFilenameForCrop(String cropName) {
@@ -138,23 +143,26 @@ public class Camera_detector extends AppCompatActivity {
             String defaultModel = "model2_plant_disease_meta.tflite";
             loaded = loadTfliteModel(defaultModel);
 
-            if (loaded) {
-                if (cropName != null && !cropName.trim().isEmpty()) {
-                    Toast.makeText(this, "No specific model found for '" + cropName + "'. Loaded generic model.", Toast.LENGTH_SHORT).show();
+            boolean finalLoaded = loaded;
+            runOnUiThread(() -> {
+                if (finalLoaded) {
+                    if (cropName != null && !cropName.trim().isEmpty()) {
+                        Toast.makeText(Camera_detector.this, "No specific model found for '" + cropName + "'. Loaded generic model.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Camera_detector.this, "Loaded generic plant disease model.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, "Loaded generic plant disease model.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Camera_detector.this, "Failed to load ML Model. Camera scanning disabled.", Toast.LENGTH_LONG).show();
+                    if (btnTakePhoto != null) {
+                        btnTakePhoto.setEnabled(false);
+                    }
+                    if (btnPickGallery != null) {
+                        btnPickGallery.setEnabled(false);
+                    }
                 }
-            } else {
-                Toast.makeText(this, "Failed to load ML Model. Camera scanning disabled.", Toast.LENGTH_LONG).show();
-                if (btnTakePhoto != null) {
-                    btnTakePhoto.setEnabled(false);
-                }
-                if (btnPickGallery != null) {
-                    btnPickGallery.setEnabled(false);
-                }
-            }
+            });
         } else {
-            Toast.makeText(this, "Loaded model for " + cropName, Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> Toast.makeText(Camera_detector.this, "Loaded model for " + cropName, Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -210,7 +218,8 @@ public class Camera_detector extends AppCompatActivity {
                         Bitmap bitmap = getBitmapFromCameraResult(result.getData());
                         if (bitmap != null) {
                             ivCapturedImage.setImageBitmap(bitmap);
-                            classifyLeafImage(bitmap);
+                            // Run classification in background thread
+                            executorService.execute(() -> classifyLeafImage(bitmap));
                         } else {
                             Toast.makeText(this, "No image captured. Try uploading from gallery.", Toast.LENGTH_SHORT).show();
                         }
@@ -227,10 +236,11 @@ public class Camera_detector extends AppCompatActivity {
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                             if (bitmap != null) {
-                                // Convert hardware bitmaps to software to be readable by TFLite
                                 bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                 ivCapturedImage.setImageBitmap(bitmap);
-                                classifyLeafImage(bitmap);
+                                Bitmap processBitmap = bitmap;
+                                // Run classification in background thread
+                                executorService.execute(() -> classifyLeafImage(processBitmap));
                             }
                         } catch (Exception e) {
                             Toast.makeText(this, "Failed to load image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -293,9 +303,11 @@ public class Camera_detector extends AppCompatActivity {
 
     private void classifyLeafImage(Bitmap bitmap) {
         if (tfliteInterpreter == null || labels == null) {
-            Toast.makeText(this, "ML Model not fully initialized.", Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> Toast.makeText(this, "ML Model not fully initialized.", Toast.LENGTH_SHORT).show());
             return;
         }
+
+        Bitmap scaledBitmap = null;
 
         try {
             // Dynamically calculate input size and output class count using interpreter tensors
@@ -306,14 +318,16 @@ public class Camera_detector extends AppCompatActivity {
             int[] outputShape = tfliteInterpreter.getOutputTensor(0).shape();
             int outputClasses = (outputShape.length >= 2) ? outputShape[outputShape.length - 1] : labels.size();
 
+            // Create a lightweight 224x224 software copy specifically for TFLite processing
+            scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputWidth, inputHeight, true);
+
             // Apply correct preprocessing: TFLite model expects [-1, 1] input range.
             ImageProcessor imageProcessor = new ImageProcessor.Builder()
-                    .add(new ResizeOp(inputHeight, inputWidth, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
                     .add(new CastOp(DataType.FLOAT32))
                     .build();
 
             TensorImage tensorImage = new TensorImage(DataType.FLOAT32);
-            tensorImage.load(bitmap);
+            tensorImage.load(scaledBitmap);
             tensorImage = imageProcessor.process(tensorImage);
 
             // Output buffer dynamically sized based on tensor shape / labels count
@@ -327,7 +341,7 @@ public class Camera_detector extends AppCompatActivity {
             int maxIndex = -1;
 
             float[] probs = outputProbabilities[0];
-            
+
             for (int i = 0; i < probs.length; i++) {
                 if (probs[i] > maxScore) {
                     maxScore = probs[i];
@@ -335,7 +349,7 @@ public class Camera_detector extends AppCompatActivity {
                 }
             }
 
-            if (maxIndex != -1) {
+            if (maxIndex != -1 && maxIndex < labels.size()) {
                 String rawLabel = labels.get(maxIndex);
 
                 float confidencePercent = maxScore * 100f;
@@ -348,39 +362,50 @@ public class Camera_detector extends AppCompatActivity {
                 boolean isHealthy = conditionName.toLowerCase(Locale.US).contains("healthy") ||
                                     rawLabel.toLowerCase(Locale.US).contains("healthy");
 
-                tvClassLabel.setText(String.format("%s • %s", plantName, conditionName));
-                tvConfidenceText.setText(String.format(Locale.US, "%.1f%% Confidence", confidencePercent));
-                pbConfidence.setProgress((int) confidencePercent);
+                final float finalConfidence = confidencePercent;
 
-                if (isHealthy) {
-                    tvDiagnosisStatus.setText("HEALTHY 🌱");
-                    tvDiagnosisStatus.setTextColor(Color.parseColor("#2E7D32"));
-                    tvRecommendation.setText(String.format("Foliage for %s shows optimal health with no detected symptoms of blight or infection.", plantName));
-                } else {
-                    tvDiagnosisStatus.setText("DISEASE DETECTED ⚠️");
-                    tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
-                    tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
-                }
+                // Post results back to the main UI thread
+                runOnUiThread(() -> {
+                    tvClassLabel.setText(String.format("%s • %s", plantName, conditionName));
+                    tvConfidenceText.setText(String.format(Locale.US, "%.1f%% Confidence", finalConfidence));
+                    pbConfidence.setProgress((int) finalConfidence);
+
+                    if (isHealthy) {
+                        tvDiagnosisStatus.setText("HEALTHY 🌱");
+                        tvDiagnosisStatus.setTextColor(Color.parseColor("#2E7D32"));
+                        tvRecommendation.setText(String.format("Foliage for %s shows optimal health with no detected symptoms of blight or infection.", plantName));
+                    } else {
+                        tvDiagnosisStatus.setText("DISEASE DETECTED ⚠️");
+                        tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
+                        tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
+                    }
+                });
 
                 // Save scan log to SQLite database
                 saveScanLog(plantName, conditionName, confidencePercent);
             }
 
         } catch (Exception e) {
-            Toast.makeText(this, "Inference Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            String errorMsg = e.getMessage();
+            runOnUiThread(() -> Toast.makeText(this, "Inference Error: " + errorMsg, Toast.LENGTH_LONG).show());
+        } finally {
+            // Recycle scaled bitmap immediately after TFLite finishes to prevent OOM & memory thrashing
+            if (scaledBitmap != null && !scaledBitmap.isRecycled() && scaledBitmap != bitmap) {
+                scaledBitmap.recycle();
+            }
         }
     }
 
     private void saveScanLog(String plantName, String conditionName, float confidence) {
         try {
-            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+            String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
             String logCrop = (cropName != null && !cropName.trim().isEmpty()) ? cropName : plantName;
             String diagnosisText = String.format("%s • %s", plantName, conditionName);
             String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
 
             ScanLog scanLog = new ScanLog(logCrop, diagnosisText, confidence, dateStr, userId);
             ScanLogDatabaseHelper.getInstance(this).insertLog(scanLog, userId);
-            Toast.makeText(this, "Scan saved to history", Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> Toast.makeText(this, "Scan saved to history", Toast.LENGTH_SHORT).show());
         } catch (Exception e) {
             // Ignore log save failure
         }
@@ -424,6 +449,10 @@ public class Camera_detector extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Shutdown executor service to free threads & memory
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
         if (tfliteInterpreter != null) {
             tfliteInterpreter.close();
         }

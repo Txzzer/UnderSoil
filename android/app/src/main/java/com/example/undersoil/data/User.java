@@ -1,35 +1,44 @@
 package com.example.undersoil.data;
 
+import java.util.UUID;
+
 public class User {
-    private long id;
+    private String id;
     private String name;
     private String email;
     private String passwordHash;
     private String role;
+    private boolean isSynced;
 
     public User() {
+        this.id = UUID.randomUUID().toString();
+        this.role = "Farmer";
+        this.isSynced = false;
     }
 
-    public User(long id, String name, String email, String passwordHash, String role) {
-        this.id = id;
+    public User(String id, String name, String email, String passwordHash, String role, boolean isSynced) {
+        this.id = (id != null && !id.trim().isEmpty()) ? id : UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = role;
+        this.role = (role != null) ? role : "Farmer";
+        this.isSynced = isSynced;
     }
 
     public User(String name, String email, String passwordHash, String role) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = role;
+        this.role = (role != null) ? role : "Farmer";
+        this.isSynced = false;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -63,5 +72,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        isSynced = synced;
     }
 }

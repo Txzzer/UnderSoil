@@ -111,7 +111,7 @@ public class LogListActivity extends AppCompatActivity {
 
     private void loadLogsFromDatabase() {
         if (dbHelper != null) {
-            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+            String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
             scanLogs = dbHelper.getLogsByCropName(cropName, userId);
             adapter.updateData(scanLogs);
 

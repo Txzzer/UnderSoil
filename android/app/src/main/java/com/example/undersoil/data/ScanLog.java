@@ -1,46 +1,54 @@
 package com.example.undersoil.data;
 
+import java.util.UUID;
+
 public class ScanLog {
-    private long id;
-    private long userId;
+    private String id;
+    private String userId;
     private String cropName;
     private String diagnosis;
     private float confidence;
     private String dateStr;
+    private boolean isSynced;
 
     public ScanLog() {
+        this.id = UUID.randomUUID().toString();
+        this.isSynced = false;
     }
 
-    public ScanLog(long id, long userId, String cropName, String diagnosis, float confidence, String dateStr) {
-        this.id = id;
+    public ScanLog(String id, String userId, String cropName, String diagnosis, float confidence, String dateStr, boolean isSynced) {
+        this.id = (id != null && !id.trim().isEmpty()) ? id : UUID.randomUUID().toString();
         this.userId = userId;
         this.cropName = cropName;
         this.diagnosis = diagnosis;
         this.confidence = confidence;
         this.dateStr = dateStr;
+        this.isSynced = isSynced;
     }
 
-    public ScanLog(String cropName, String diagnosis, float confidence, String dateStr, long userId) {
+    public ScanLog(String cropName, String diagnosis, float confidence, String dateStr, String userId) {
+        this.id = UUID.randomUUID().toString();
         this.cropName = cropName;
         this.diagnosis = diagnosis;
         this.confidence = confidence;
         this.dateStr = dateStr;
         this.userId = userId;
+        this.isSynced = false;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -74,5 +82,13 @@ public class ScanLog {
 
     public void setDateStr(String dateStr) {
         this.dateStr = dateStr;
+    }
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        isSynced = synced;
     }
 }

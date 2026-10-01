@@ -1,21 +1,47 @@
 package com.example.undersoil;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomeScreenActivity extends AppCompatActivity {
 
+    private static final int NOTIFICATION_PERMISSION_CODE = 1002;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
+        checkAndRequestNotificationPermission();
         setupClickListeners();
         setupBottomNavigation();
+
+        // Schedule background sync when network connection is active
+        com.example.undersoil.data.SyncManager.scheduleSync(this);
+    }
+
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_CODE
+                );
+            }
+        }
     }
 
     private void setupClickListeners() {
@@ -24,15 +50,24 @@ public class HomeScreenActivity extends AppCompatActivity {
         MaterialCardView cardIotWatering = findViewById(R.id.card_iot_watering);
 
         if (ivProfile != null) {
-            ivProfile.setOnClickListener(v -> startActivity(new Intent(this, Settings.class)));
+            ivProfile.setOnClickListener(v -> {
+                startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(0, 0);
+            });
         }
 
         if (cardDiagnose != null) {
-            cardDiagnose.setOnClickListener(v -> startActivity(new Intent(this, Camera_detector.class)));
+            cardDiagnose.setOnClickListener(v -> {
+                startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(0, 0);
+            });
         }
 
         if (cardIotWatering != null) {
-            cardIotWatering.setOnClickListener(v -> startActivity(new Intent(this, IotWateringActivity.class)));
+            cardIotWatering.setOnClickListener(v -> {
+                startActivity(new Intent(this, IotWateringActivity.class));
+                overridePendingTransition(0, 0);
+            });
         }
     }
 
@@ -41,13 +76,21 @@ public class HomeScreenActivity extends AppCompatActivity {
         FloatingActionButton fabHome = findViewById(R.id.fabHome);
 
         if (bottomNavigationView != null) {
+            // Uncheck all bottom navigation items on Home screen
+            bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
+            for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
+                bottomNavigationView.getMenu().getItem(i).setChecked(false);
+            }
+
             bottomNavigationView.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
                     startActivity(new Intent(this, IotWateringActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (itemId == R.id.nav_garden) {
                     startActivity(new Intent(this, MainActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 }
                 return false;

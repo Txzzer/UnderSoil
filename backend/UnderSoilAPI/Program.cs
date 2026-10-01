@@ -6,8 +6,23 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using UnderSoilAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 1. ALL SERVICES GO HERE FIRST
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "FallbackKey")),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -22,10 +37,12 @@ builder.Services.AddSwaggerGen();
 // Create MQTT client and options to connect to HiveMQ (or any broker)
 var factory = new MqttFactory();
 var mqttClient = factory.CreateMqttClient();
-
 builder.Services.AddSingleton<IMqttClient>(mqttClient);
 
+// 2. BUILD THE APP HERE - AFTER ALL SERVICES ARE ADDED
 var app = builder.Build();
+
+// 3. CONFIGURE EVERYTHING ELSE AFTER THE BUILD
 
 // Ensure database exists
 using (var scope = app.Services.CreateScope())
@@ -44,8 +61,6 @@ var mqttPass = mqttSection.GetValue<string>("Password");
 var topic = mqttSection.GetValue<string>("Topic") ?? "undersoil/telemetry";
 var clientId = mqttSection.GetValue<string>("ClientId") ?? $"UnderSoilClient-{Dns.GetHostName()}";
 
-
-
 var optionsBuilder = new MqttClientOptionsBuilder()
     .WithClientId(clientId)
     .WithTcpServer(broker, port);
@@ -54,7 +69,6 @@ if (!string.IsNullOrEmpty(mqttUser))
     optionsBuilder = optionsBuilder.WithCredentials(mqttUser, mqttPass ?? string.Empty);
 if (useTls)
     optionsBuilder = optionsBuilder.WithTls();
-
 var mqttOptions = optionsBuilder.Build();
 
 // Handlers
@@ -135,10 +149,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 await app.RunAsync();
-    

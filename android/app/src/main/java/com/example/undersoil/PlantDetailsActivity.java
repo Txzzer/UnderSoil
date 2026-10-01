@@ -34,7 +34,6 @@ public class PlantDetailsActivity extends AppCompatActivity {
         TextView tvSunlightValue = findViewById(R.id.tvSunlightValue);
         TextView tvFertilizerValue = findViewById(R.id.tvFertilizerValue);
         TextView tvHumidityValue = findViewById(R.id.tvHumidityValue);
-        Button btnScanCrop = findViewById(R.id.btnScanCrop);
         Button addToPlantsButton = findViewById(R.id.addToPlantsButton);
 
         backButton.setOnClickListener(v -> finish());
@@ -52,20 +51,10 @@ public class PlantDetailsActivity extends AppCompatActivity {
             heroImage.setImageResource(plant.getImageResId());
         }
 
-        if (btnScanCrop != null) {
-            btnScanCrop.setOnClickListener(v -> {
-                if (plant != null) {
-                    Intent scanIntent = new Intent(this, Camera_detector.class);
-                    scanIntent.putExtra(Camera_detector.EXTRA_CROP_NAME, plant.getName());
-                    startActivity(scanIntent);
-                }
-            });
-        }
-
         addToPlantsButton.setOnClickListener(v -> {
             if (plant != null) {
-                long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
-                GardenDatabase.Companion.getInstance(this).gardenDao().insert(new GardenEntity(plant.getId(), userId));
+                String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
+                GardenDatabase.Companion.getInstance(this).gardenDao().insert(new GardenEntity(java.util.UUID.randomUUID().toString(), plant.getId(), userId, false));
                 Toast.makeText(this, "Added " + plant.getName() + " to My Garden!", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(this, MainActivity.class);
