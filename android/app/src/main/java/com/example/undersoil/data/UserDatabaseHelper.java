@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.UUID;
+
 public class UserDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "users.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_ID = "_id";
@@ -17,6 +19,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_PASSWORD_HASH = "password_hash";
     public static final String COLUMN_ROLE = "role";
+    public static final String COLUMN_IS_SYNCED = "is_synced";
 
     private static UserDatabaseHelper instance;
 
@@ -34,11 +37,12 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_USERS + " (" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_ID + " TEXT PRIMARY KEY, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_EMAIL + " TEXT UNIQUE, " +
                 COLUMN_PASSWORD_HASH + " TEXT, " +
-                COLUMN_ROLE + " TEXT DEFAULT 'Farmer')";
+                COLUMN_ROLE + " TEXT DEFAULT 'Farmer', " +
+                COLUMN_IS_SYNCED + " INTEGER DEFAULT 0)";
         db.execSQL(CREATE_TABLE);
     }
 
@@ -48,15 +52,23 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long registerUser(User user) {
+    public String registerUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+
+        String userId = (user.getId() != null && !user.getId().trim().isEmpty())
+                ? user.getId()
+                : UUID.randomUUID().toString();
+
+        values.put(COLUMN_ID, userId);
         values.put(COLUMN_NAME, user.getName());
         values.put(COLUMN_EMAIL, user.getEmail().trim().toLowerCase());
         values.put(COLUMN_PASSWORD_HASH, user.getPasswordHash());
         values.put(COLUMN_ROLE, user.getRole() != null ? user.getRole() : "Farmer");
+        values.put(COLUMN_IS_SYNCED, user.isSynced() ? 1 : 0);
 
-        return db.insert(TABLE_USERS, null, values);
+        long row = db.insert(TABLE_USERS, null, values);
+        return (row != -1) ? userId : null;
     }
 
     public boolean checkEmailExists(String email) {
@@ -92,19 +104,21 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         User user = null;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                int idIdx = cursor.getColumnIndexOrThrow(COLUMN_ID);
-                int nameIdx = cursor.getColumnIndexOrThrow(COLUMN_NAME);
-                int emailIdx = cursor.getColumnIndexOrThrow(COLUMN_EMAIL);
-                int passIdx = cursor.getColumnIndexOrThrow(COLUMN_PASSWORD_HASH);
-                int roleIdx = cursor.getColumnIndexOrThrow(COLUMN_ROLE);
+                int idIdx = cursor.getColumnIndex(COLUMN_ID);
+                int nameIdx = cursor.getColumnIndex(COLUMN_NAME);
+                int emailIdx = cursor.getColumnIndex(COLUMN_EMAIL);
+                int passIdx = cursor.getColumnIndex(COLUMN_PASSWORD_HASH);
+                int roleIdx = cursor.getColumnIndex(COLUMN_ROLE);
+                int syncIdx = cursor.getColumnIndex(COLUMN_IS_SYNCED);
 
-                user = new User(
-                        cursor.getLong(idIdx),
-                        cursor.getString(nameIdx),
-                        cursor.getString(emailIdx),
-                        cursor.getString(passIdx),
-                        cursor.getString(roleIdx)
-                );
+                String id = (idIdx != -1) ? cursor.getString(idIdx) : UUID.randomUUID().toString();
+                String name = (nameIdx != -1) ? cursor.getString(nameIdx) : "Farmer";
+                String userEmail = (emailIdx != -1) ? cursor.getString(emailIdx) : email;
+                String pass = (passIdx != -1) ? cursor.getString(passIdx) : passwordHash;
+                String role = (roleIdx != -1) ? cursor.getString(roleIdx) : "Farmer";
+                boolean isSynced = (syncIdx != -1) && (cursor.getInt(syncIdx) == 1);
+
+                user = new User(id, name, userEmail, pass, role, isSynced);
             }
             cursor.close();
         }

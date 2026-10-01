@@ -53,8 +53,8 @@ public class PlantDetailsActivity extends AppCompatActivity {
 
         addToPlantsButton.setOnClickListener(v -> {
             if (plant != null) {
-                long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
-                GardenDatabase.Companion.getInstance(this).gardenDao().insert(new GardenEntity(plant.getId(), userId));
+                String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
+                GardenDatabase.Companion.getInstance(this).gardenDao().insert(new GardenEntity(java.util.UUID.randomUUID().toString(), plant.getId(), userId, false));
                 Toast.makeText(this, "Added " + plant.getName() + " to My Garden!", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(this, MainActivity.class);

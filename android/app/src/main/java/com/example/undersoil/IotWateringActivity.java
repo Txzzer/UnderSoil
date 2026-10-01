@@ -84,7 +84,7 @@ public class IotWateringActivity extends AppCompatActivity {
 
     private void loadSectorsFromDatabase() {
         if (dbHelper != null) {
-            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+            String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
             sectorsList = dbHelper.getAllSectors(userId);
             adapter.updateData(sectorsList);
 

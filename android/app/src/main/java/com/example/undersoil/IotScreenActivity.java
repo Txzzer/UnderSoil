@@ -59,7 +59,7 @@ public class IotScreenActivity extends AppCompatActivity {
     private AlertDialog flowAlertDialog;
     private long alertSnoozedUntilMs = 0;
 
-    private long sectorId = -1;
+    private String sectorId;
     private String sectorName;
 
     private final Handler pollHandler = new Handler(Looper.getMainLooper());
@@ -86,7 +86,7 @@ public class IotScreenActivity extends AppCompatActivity {
     private void extractIntentExtras() {
         Intent intent = getIntent();
         if (intent != null) {
-            sectorId = intent.getLongExtra(IotWateringActivity.EXTRA_SECTOR_ID, -1);
+            sectorId = intent.getStringExtra(IotWateringActivity.EXTRA_SECTOR_ID);
             sectorName = intent.getStringExtra(IotWateringActivity.EXTRA_SECTOR_NAME);
         }
     }

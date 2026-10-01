@@ -1,5 +1,11 @@
 package network;
 
+import com.example.undersoil.data.GardenEntity;
+import com.example.undersoil.data.ScanLog;
+import com.example.undersoil.data.Sector;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -12,6 +18,16 @@ public interface ApiService {
 
     @GET("api/v1/Telemetry/latest")
     Call<SensorData> getLatestSensorData();
+
+    // Offline-First Sync Endpoints (Batch-upload List<T>)
+    @POST("api/sync/sectors")
+    Call<Void> syncSectors(@Body List<Sector> sectors);
+
+    @POST("api/sync/garden")
+    Call<Void> syncGarden(@Body List<GardenEntity> gardenCrops);
+
+    @POST("api/sync/logs")
+    Call<Void> syncScanLogs(@Body List<ScanLog> logs);
 
     @POST("api/auth/login")
     Call<AuthResponse> loginUser(@Body LoginRequest request);

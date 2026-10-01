@@ -84,34 +84,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadSavedPlants() {
-        val userId = SessionManager.getInstance(this).getUserId()
-        val dao = GardenDatabase.getInstance(this).gardenDao()
-        val savedEntities = dao.getAllSync(userId)
+        try {
+            val userId = SessionManager.getInstance(this).getUserIdString()
+            val dao = GardenDatabase.getInstance(this).gardenDao()
+            val savedEntities = dao.getAllSync(userId)
 
-        savedPlantsList.clear()
-        for (entity in savedEntities) {
-            val plant = getPlantById(entity.plantId)
-            if (plant != null) {
-                savedPlantsList.add(plant)
+            savedPlantsList.clear()
+            for (entity in savedEntities) {
+                val plant = getPlantById(entity.plantId)
+                if (plant != null) {
+                    savedPlantsList.add(plant)
+                }
             }
-        }
-        adapter.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
 
-        if (savedPlantsList.isEmpty()) {
-            layoutEmptyGarden.visibility = View.VISIBLE
-            rvSavedGardenPlants.visibility = View.GONE
-        } else {
-            layoutEmptyGarden.visibility = View.GONE
-            rvSavedGardenPlants.visibility = View.VISIBLE
+            if (savedPlantsList.isEmpty()) {
+                layoutEmptyGarden.visibility = View.VISIBLE
+                rvSavedGardenPlants.visibility = View.GONE
+            } else {
+                layoutEmptyGarden.visibility = View.GONE
+                rvSavedGardenPlants.visibility = View.VISIBLE
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error loading garden: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun deletePlantFromGarden(plant: Plant) {
-        val userId = SessionManager.getInstance(this).getUserId()
-        val dao = GardenDatabase.getInstance(this).gardenDao()
-        dao.deleteByPlantAndUser(plant.id, userId)
-        Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
-        loadSavedPlants()
+        try {
+            val userId = SessionManager.getInstance(this).getUserIdString()
+            val dao = GardenDatabase.getInstance(this).gardenDao()
+            dao.deleteByPlantAndUser(plant.id, userId)
+            Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
+            loadSavedPlants()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun getPlantById(id: Int): Plant? {

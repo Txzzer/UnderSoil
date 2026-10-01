@@ -107,9 +107,9 @@ public class Sign_up extends AppCompatActivity {
         String passwordHash = SecurityUtils.hashPassword(password);
         User newUser = new User(name, email, passwordHash, "Farmer");
 
-        long userId = dbHelper.registerUser(newUser);
+        String userId = dbHelper.registerUser(newUser);
 
-        if (userId != -1) {
+        if (userId != null) {
             sessionManager.createLoginSession(userId, name, email, "Farmer");
             Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
 

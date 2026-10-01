@@ -45,6 +45,20 @@ public class SessionManager {
         editor.apply();
     }
 
+    public void createLoginSession(String userId, String name, String email, String role) {
+        int idInt = -1;
+        try {
+            if (userId != null) idInt = Integer.parseInt(userId);
+        } catch (NumberFormatException ignored) {}
+
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
+        editor.putInt(KEY_USER_ID, idInt);
+        editor.putString(KEY_USER_NAME, name);
+        editor.putString(KEY_USER_EMAIL, email);
+        editor.putString(KEY_USER_ROLE, role != null ? role : "Farmer");
+        editor.apply();
+    }
+
     public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
@@ -61,9 +75,30 @@ public class SessionManager {
         return pref.getString(KEY_USER_ROLE, "Farmer");
     }
 
-    // UPDATED: Returns int now to match the database
+    // Safely retrieves user ID whether stored as int or String in SharedPreferences
     public int getUserId() {
-        return pref.getInt(KEY_USER_ID, -1);
+        try {
+            return pref.getInt(KEY_USER_ID, -1);
+        } catch (ClassCastException e) {
+            try {
+                String strVal = pref.getString(KEY_USER_ID, "-1");
+                return Integer.parseInt(strVal);
+            } catch (Exception ignored) {
+                return -1;
+            }
+        }
+    }
+
+    public String getUserIdString() {
+        try {
+            String strVal = pref.getString(KEY_USER_ID, null);
+            if (strVal != null && !strVal.isEmpty()) {
+                return strVal;
+            }
+        } catch (ClassCastException ignored) {
+        }
+        int intId = getUserId();
+        return intId != -1 ? String.valueOf(intId) : "";
     }
 
     // NEW: Method to retrieve the token so you can attach it to future network calls

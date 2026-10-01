@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class GardenViewModel(private val gardenDao: GardenDao, private val userId: Long = 1) : ViewModel() {
+class GardenViewModel(private val gardenDao: GardenDao, private val userId: String = "") : ViewModel() {
 
     // Expose the raw catalog
     private val _catalog = MutableStateFlow(PlantVillageData.catalog)
