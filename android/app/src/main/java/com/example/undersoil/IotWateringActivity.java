@@ -59,7 +59,7 @@ public class IotWateringActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         adapter = new SectorAdapter(sectorsList, sector -> {
-            Intent intent = new Intent(IotWateringActivity.this, IoTScreen.class);
+            Intent intent = new Intent(IotWateringActivity.this, IotScreenActivity.class);
             intent.putExtra(EXTRA_SECTOR_ID, sector.getId());
             intent.putExtra(EXTRA_SECTOR_NAME, sector.getName());
             startActivity(intent);
@@ -83,7 +83,8 @@ public class IotWateringActivity extends AppCompatActivity {
 
     private void loadSectorsFromDatabase() {
         if (dbHelper != null) {
-            sectorsList = dbHelper.getAllSectors();
+            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+            sectorsList = dbHelper.getAllSectors(userId);
             adapter.updateData(sectorsList);
 
             if (sectorsList.isEmpty()) {

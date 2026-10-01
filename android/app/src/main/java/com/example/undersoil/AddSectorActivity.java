@@ -49,8 +49,9 @@ public class AddSectorActivity extends AppCompatActivity {
     }
 
     private void loadAvailableCrops() {
+        long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
         // Fetch saved garden plants from SQLite / Room GardenDatabase
-        List<GardenEntity> gardenEntities = GardenDatabase.Companion.getInstance(this).gardenDao().getAllSync();
+        List<GardenEntity> gardenEntities = GardenDatabase.Companion.getInstance(this).gardenDao().getAllSync(userId);
 
         availableCrops.clear();
         if (gardenEntities != null && !gardenEntities.isEmpty()) {
@@ -108,8 +109,9 @@ public class AddSectorActivity extends AppCompatActivity {
             cropNamesStr = String.join(", ", selectedCrops);
         }
 
-        Sector newSector = new Sector(name, cropNamesStr);
-        long result = SectorDatabaseHelper.getInstance(this).insertSector(newSector);
+        long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
+        Sector newSector = new Sector(name, cropNamesStr, userId);
+        long result = SectorDatabaseHelper.getInstance(this).insertSector(newSector, userId);
 
         if (result != -1) {
             Toast.makeText(this, "Sector '" + name + "' created!", Toast.LENGTH_SHORT).show();

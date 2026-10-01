@@ -13,9 +13,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "my_garden")
+@Entity(tableName = "my_garden", primaryKeys = ["plantId", "userId"])
 data class GardenEntity(
-    @PrimaryKey val plantId: Int
+    val plantId: Int,
+    val userId: Long = 1
 )
 
 @Dao
@@ -26,14 +27,17 @@ interface GardenDao {
     @Delete
     fun delete(gardenEntity: GardenEntity)
 
-    @Query("SELECT * FROM my_garden")
-    fun getAll(): Flow<List<GardenEntity>>
+    @Query("DELETE FROM my_garden WHERE plantId = :plantId AND userId = :userId")
+    fun deleteByPlantAndUser(plantId: Int, userId: Long)
 
-    @Query("SELECT * FROM my_garden")
-    fun getAllSync(): List<GardenEntity>
+    @Query("SELECT * FROM my_garden WHERE userId = :userId")
+    fun getAll(userId: Long = 1): Flow<List<GardenEntity>>
+
+    @Query("SELECT * FROM my_garden WHERE userId = :userId")
+    fun getAllSync(userId: Long = 1): List<GardenEntity>
 }
 
-@Database(entities = [GardenEntity::class], version = 1, exportSchema = false)
+@Database(entities = [GardenEntity::class], version = 2, exportSchema = false)
 abstract class GardenDatabase : RoomDatabase() {
     abstract fun gardenDao(): GardenDao
 
@@ -47,7 +51,10 @@ abstract class GardenDatabase : RoomDatabase() {
                     context.applicationContext,
                     GardenDatabase::class.java,
                     "garden-database"
-                ).allowMainThreadQueries().build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
+                    .build()
                 INSTANCE = instance
                 instance
             }

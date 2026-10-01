@@ -12,10 +12,11 @@ import java.util.List;
 public class SectorDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "sectors.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_SECTORS = "sectors";
     public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_CROP_NAMES = "crop_names";
 
@@ -36,6 +37,7 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_SECTORS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_USER_ID + " INTEGER, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_CROP_NAMES + " TEXT)";
         db.execSQL(CREATE_TABLE);
@@ -47,22 +49,23 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertSector(Sector sector) {
+    public long insertSector(Sector sector, long userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, userId);
         values.put(COLUMN_NAME, sector.getName());
         values.put(COLUMN_CROP_NAMES, sector.getCropNames());
         return db.insert(TABLE_SECTORS, null, values);
     }
 
-    public List<Sector> getAllSectors() {
+    public List<Sector> getAllSectors(long userId) {
         List<Sector> sectors = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_SECTORS,
                 null,
-                null,
-                null,
+                COLUMN_USER_ID + " = ?",
+                new String[]{String.valueOf(userId)},
                 null,
                 null,
                 COLUMN_ID + " ASC"
@@ -71,12 +74,14 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int idIdx = cursor.getColumnIndexOrThrow(COLUMN_ID);
+                int userIdx = cursor.getColumnIndexOrThrow(COLUMN_USER_ID);
                 int nameIdx = cursor.getColumnIndexOrThrow(COLUMN_NAME);
                 int cropIdx = cursor.getColumnIndexOrThrow(COLUMN_CROP_NAMES);
 
                 do {
                     Sector sector = new Sector(
                             cursor.getLong(idIdx),
+                            cursor.getLong(userIdx),
                             cursor.getString(nameIdx),
                             cursor.getString(cropIdx)
                     );

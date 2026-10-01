@@ -19,8 +19,13 @@ public class HomeScreenActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
+        android.widget.ImageView ivProfile = findViewById(R.id.iv_profile);
         MaterialCardView cardDiagnose = findViewById(R.id.card_diagnose);
         MaterialCardView cardIotWatering = findViewById(R.id.card_iot_watering);
+
+        if (ivProfile != null) {
+            ivProfile.setOnClickListener(v -> startActivity(new Intent(this, Settings.class)));
+        }
 
         if (cardDiagnose != null) {
             cardDiagnose.setOnClickListener(v -> startActivity(new Intent(this, Camera_detector.class)));

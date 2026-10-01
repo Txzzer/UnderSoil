@@ -12,10 +12,11 @@ import java.util.List;
 public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "scan_logs.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_LOGS = "scan_logs";
     public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_CROP_NAME = "crop_name";
     public static final String COLUMN_DIAGNOSIS = "diagnosis";
     public static final String COLUMN_CONFIDENCE = "confidence";
@@ -38,6 +39,7 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_LOGS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_USER_ID + " INTEGER, " +
                 COLUMN_CROP_NAME + " TEXT, " +
                 COLUMN_DIAGNOSIS + " TEXT, " +
                 COLUMN_CONFIDENCE + " REAL, " +
@@ -51,9 +53,10 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertLog(ScanLog log) {
+    public long insertLog(ScanLog log, long userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, userId);
         values.put(COLUMN_CROP_NAME, log.getCropName());
         values.put(COLUMN_DIAGNOSIS, log.getDiagnosis());
         values.put(COLUMN_CONFIDENCE, log.getConfidence());
@@ -61,7 +64,7 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_LOGS, null, values);
     }
 
-    public List<ScanLog> getLogsByCropName(String cropName) {
+    public List<ScanLog> getLogsByCropName(String cropName, long userId) {
         List<ScanLog> logs = new ArrayList<>();
         if (cropName == null || cropName.trim().isEmpty()) {
             return logs;
@@ -71,8 +74,8 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(
                 TABLE_LOGS,
                 null,
-                "LOWER(" + COLUMN_CROP_NAME + ") = LOWER(?)",
-                new String[]{cropName.trim()},
+                "LOWER(" + COLUMN_CROP_NAME + ") = LOWER(?) AND " + COLUMN_USER_ID + " = ?",
+                new String[]{cropName.trim(), String.valueOf(userId)},
                 null,
                 null,
                 COLUMN_ID + " DESC"
@@ -81,6 +84,7 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int idIdx = cursor.getColumnIndexOrThrow(COLUMN_ID);
+                int userIdx = cursor.getColumnIndexOrThrow(COLUMN_USER_ID);
                 int cropIdx = cursor.getColumnIndexOrThrow(COLUMN_CROP_NAME);
                 int diagIdx = cursor.getColumnIndexOrThrow(COLUMN_DIAGNOSIS);
                 int confIdx = cursor.getColumnIndexOrThrow(COLUMN_CONFIDENCE);
@@ -89,43 +93,7 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
                 do {
                     ScanLog log = new ScanLog(
                             cursor.getLong(idIdx),
-                            cursor.getString(cropIdx),
-                            cursor.getString(diagIdx),
-                            cursor.getFloat(confIdx),
-                            cursor.getString(dateIdx)
-                    );
-                    logs.add(log);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-        }
-        return logs;
-    }
-
-    public List<ScanLog> getAllLogs() {
-        List<ScanLog> logs = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(
-                TABLE_LOGS,
-                null,
-                null,
-                null,
-                null,
-                null,
-                COLUMN_ID + " DESC"
-        );
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                int idIdx = cursor.getColumnIndexOrThrow(COLUMN_ID);
-                int cropIdx = cursor.getColumnIndexOrThrow(COLUMN_CROP_NAME);
-                int diagIdx = cursor.getColumnIndexOrThrow(COLUMN_DIAGNOSIS);
-                int confIdx = cursor.getColumnIndexOrThrow(COLUMN_CONFIDENCE);
-                int dateIdx = cursor.getColumnIndexOrThrow(COLUMN_DATE);
-
-                do {
-                    ScanLog log = new ScanLog(
-                            cursor.getLong(idIdx),
+                            cursor.getLong(userIdx),
                             cursor.getString(cropIdx),
                             cursor.getString(diagIdx),
                             cursor.getFloat(confIdx),

@@ -20,6 +20,8 @@ import com.example.undersoil.data.PlantVillageData
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+import com.example.undersoil.data.SessionManager
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -71,14 +73,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadSavedPlants() {
+        val userId = SessionManager.getInstance(this).getUserId()
         val dao = GardenDatabase.getInstance(this).gardenDao()
-        var savedEntities = dao.getAllSync()
+        var savedEntities = dao.getAllSync(userId)
 
-        // Seed default plants if empty initially
+        // Seed default plants if empty initially for this user
         if (savedEntities.isEmpty()) {
-            dao.insert(GardenEntity(1)) // Tomato
-            dao.insert(GardenEntity(2)) // Potato
-            savedEntities = dao.getAllSync()
+            dao.insert(GardenEntity(1, userId)) // Tomato
+            dao.insert(GardenEntity(2, userId)) // Potato
+            savedEntities = dao.getAllSync(userId)
         }
 
         savedPlantsList.clear()
@@ -92,8 +95,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun deletePlantFromGarden(plant: Plant) {
+        val userId = SessionManager.getInstance(this).getUserId()
         val dao = GardenDatabase.getInstance(this).gardenDao()
-        dao.delete(GardenEntity(plant.id))
+        dao.deleteByPlantAndUser(plant.id, userId)
         Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
         loadSavedPlants()
     }
@@ -107,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_iot -> {
-                    startActivity(Intent(this, IoTScreen::class.java))
+                    startActivity(Intent(this, IotWateringActivity::class.java))
                     true
                 }
                 R.id.nav_garden -> {

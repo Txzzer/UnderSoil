@@ -373,12 +373,13 @@ public class Camera_detector extends AppCompatActivity {
 
     private void saveScanLog(String plantName, String conditionName, float confidence) {
         try {
+            long userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserId();
             String logCrop = (cropName != null && !cropName.trim().isEmpty()) ? cropName : plantName;
             String diagnosisText = String.format("%s • %s", plantName, conditionName);
             String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
 
-            ScanLog scanLog = new ScanLog(logCrop, diagnosisText, confidence, dateStr);
-            ScanLogDatabaseHelper.getInstance(this).insertLog(scanLog);
+            ScanLog scanLog = new ScanLog(logCrop, diagnosisText, confidence, dateStr, userId);
+            ScanLogDatabaseHelper.getInstance(this).insertLog(scanLog, userId);
             Toast.makeText(this, "Scan saved to history", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             // Ignore log save failure

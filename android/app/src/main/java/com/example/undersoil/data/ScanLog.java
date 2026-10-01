@@ -2,6 +2,7 @@ package com.example.undersoil.data;
 
 public class ScanLog {
     private long id;
+    private long userId;
     private String cropName;
     private String diagnosis;
     private float confidence;
@@ -10,19 +11,21 @@ public class ScanLog {
     public ScanLog() {
     }
 
-    public ScanLog(long id, String cropName, String diagnosis, float confidence, String dateStr) {
+    public ScanLog(long id, long userId, String cropName, String diagnosis, float confidence, String dateStr) {
         this.id = id;
+        this.userId = userId;
         this.cropName = cropName;
         this.diagnosis = diagnosis;
         this.confidence = confidence;
         this.dateStr = dateStr;
     }
 
-    public ScanLog(String cropName, String diagnosis, float confidence, String dateStr) {
+    public ScanLog(String cropName, String diagnosis, float confidence, String dateStr, long userId) {
         this.cropName = cropName;
         this.diagnosis = diagnosis;
         this.confidence = confidence;
         this.dateStr = dateStr;
+        this.userId = userId;
     }
 
     public long getId() {
@@ -31,6 +34,14 @@ public class ScanLog {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getCropName() {

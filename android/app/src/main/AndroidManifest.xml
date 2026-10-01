@@ -18,13 +18,28 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Undersoil">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".Log_in"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".Sign_up"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".HomeScreenActivity"
@@ -52,32 +67,29 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".Log_list"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
             android:name=".IotWateringActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".Iot_watering"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".AddSectorActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
+
         <activity
-            android:name=".Add_sector"
+            android:name=".IotScreenActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".IotScreenActivity"
+            android:name=".Settings"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".SettingsActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 

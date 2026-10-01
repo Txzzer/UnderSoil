@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class GardenViewModel(private val gardenDao: GardenDao) : ViewModel() {
+class GardenViewModel(private val gardenDao: GardenDao, private val userId: Long = 1) : ViewModel() {
 
     // Expose the raw catalog
     private val _catalog = MutableStateFlow(PlantVillageData.catalog)
@@ -38,7 +38,7 @@ class GardenViewModel(private val gardenDao: GardenDao) : ViewModel() {
 
     // Derived state for the "My Garden" screen
     // Maps Room DB entities to catalog plants
-    val myGarden: StateFlow<List<Plant>> = gardenDao.getAll().map { gardenEntities ->
+    val myGarden: StateFlow<List<Plant>> = gardenDao.getAll(userId).map { gardenEntities ->
         val savedIds = gardenEntities.map { it.plantId }.toSet()
         PlantVillageData.catalog.filter { savedIds.contains(it.id) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -49,13 +49,13 @@ class GardenViewModel(private val gardenDao: GardenDao) : ViewModel() {
 
     fun addToGarden(plantId: Int) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            gardenDao.insert(GardenEntity(plantId = plantId))
+            gardenDao.insert(GardenEntity(plantId = plantId, userId = userId))
         }
     }
 
     fun removeFromGarden(plantId: Int) {
         viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            gardenDao.delete(GardenEntity(plantId = plantId))
+            gardenDao.deleteByPlantAndUser(plantId = plantId, userId = userId)
         }
     }
 }
