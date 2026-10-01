@@ -42,12 +42,42 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".IoTScreen"
+            android:name=".Camera_detector"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".Camera_detector"
+            android:name=".LogListActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".Log_list"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".IotWateringActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".Iot_watering"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".AddSectorActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".Add_sector"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".IotScreenActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 

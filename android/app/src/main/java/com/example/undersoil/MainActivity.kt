@@ -56,8 +56,9 @@ class MainActivity : AppCompatActivity() {
         adapter = SavedGardenAdapter(
             savedPlantsList,
             onPlantClick = { plant ->
-                val intent = Intent(this, PlantDetailsActivity::class.java)
-                intent.putExtra("plant_id", plant.id)
+                val intent = Intent(this, LogListActivity::class.java)
+                intent.putExtra(LogListActivity.EXTRA_CROP_NAME, plant.name)
+                intent.putExtra(LogListActivity.EXTRA_PLANT_ID, plant.id)
                 startActivity(intent)
             },
             onDeleteClick = { plant ->

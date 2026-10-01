@@ -31,12 +31,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class IoTScreen extends AppCompatActivity {
+public class IotScreenActivity extends AppCompatActivity {
 
-    private static final long POLLING_INTERVAL_MS = 3000; // Poll every 3 seconds
+    private static final long POLLING_INTERVAL_MS = 3000;
 
     private CircularGaugeView gaugeTemperature;
     private CircularGaugeView gaugeHumidity;
+    private TextView tvDeviceTitle;
     private TextView tvFlowRate;
     private TextView tvFlowStatus;
     private TextView tvDeviceId;
@@ -45,21 +46,21 @@ public class IoTScreen extends AppCompatActivity {
     private TextView tvValveStatus;
     private Button btnToggleValve;
 
-    // Warning Banner Views
     private MaterialCardView cardWarningBanner;
     private TextView tvWarningBannerText;
     private Button btnWarningAction;
 
-    // Bottom Navigation Views
     private BottomNavigationView bottomNavigationView;
     private FloatingActionButton fabHome;
 
     private boolean isValveOpen = false;
     private boolean isTogglingValve = false;
 
-    // Alert State Tracking
     private AlertDialog flowAlertDialog;
     private long alertSnoozedUntilMs = 0;
+
+    private long sectorId = -1;
+    private String sectorName;
 
     private final Handler pollHandler = new Handler(Looper.getMainLooper());
     private final Runnable pollRunnable = new Runnable() {
@@ -73,15 +74,25 @@ public class IoTScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.iot_screen);
 
+        extractIntentExtras();
         initViews();
         setupGauges();
         setupValveToggle();
         setupBottomNavigation();
     }
 
+    private void extractIntentExtras() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            sectorId = intent.getLongExtra(IotWateringActivity.EXTRA_SECTOR_ID, -1);
+            sectorName = intent.getStringExtra(IotWateringActivity.EXTRA_SECTOR_NAME);
+        }
+    }
+
     private void initViews() {
+        tvDeviceTitle = findViewById(R.id.tvDeviceTitle);
         gaugeTemperature = findViewById(R.id.gaugeTemperature);
         gaugeHumidity = findViewById(R.id.gaugeHumidity);
         tvFlowRate = findViewById(R.id.tvFlowRate);
@@ -99,6 +110,10 @@ public class IoTScreen extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         fabHome = findViewById(R.id.fabHome);
 
+        if (tvDeviceTitle != null && sectorName != null && !sectorName.trim().isEmpty()) {
+            tvDeviceTitle.setText(String.format("%s Telemetry", sectorName));
+        }
+
         btnWarningAction.setOnClickListener(v -> performValveToggle(true));
     }
 
@@ -108,9 +123,10 @@ public class IoTScreen extends AppCompatActivity {
             bottomNavigationView.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
+                    startActivity(new Intent(IotScreenActivity.this, IotWateringActivity.class));
                     return true;
                 } else if (itemId == R.id.nav_garden) {
-                    startActivity(new Intent(IoTScreen.this, MainActivity.class));
+                    startActivity(new Intent(IotScreenActivity.this, MainActivity.class));
                     return true;
                 }
                 return false;
@@ -118,18 +134,16 @@ public class IoTScreen extends AppCompatActivity {
         }
 
         if (fabHome != null) {
-            fabHome.setOnClickListener(v -> startActivity(new Intent(IoTScreen.this, HomeScreenActivity.class)));
+            fabHome.setOnClickListener(v -> startActivity(new Intent(IotScreenActivity.this, HomeScreenActivity.class)));
         }
     }
 
     private void setupGauges() {
-        // Temperature Gauge: 0 - 50 °C (Green: <=28°C, Orange: 28-38°C, Red: >38°C)
         gaugeTemperature.setRange(0f, 50f);
         gaugeTemperature.setTitle("Temperature");
         gaugeTemperature.setUnit("°C");
         gaugeTemperature.setThresholds(28f, 38f);
 
-        // Humidity Gauge: 0 - 100 % (Green: <=60%, Orange: 60-80%, Red: >80%)
         gaugeHumidity.setRange(0f, 100f);
         gaugeHumidity.setTitle("Humidity");
         gaugeHumidity.setUnit("%");
@@ -162,13 +176,13 @@ public class IoTScreen extends AppCompatActivity {
                     isValveOpen = targetState;
                     updateValveUi(isValveOpen);
                     String state = isValveOpen ? "OPEN" : "CLOSED";
-                    Toast.makeText(IoTScreen.this, "Valve toggled to " + state, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IotScreenActivity.this, "Valve toggled to " + state, Toast.LENGTH_SHORT).show();
 
                     if (flowAlertDialog != null && flowAlertDialog.isShowing()) {
                         flowAlertDialog.dismiss();
                     }
                 } else {
-                    Toast.makeText(IoTScreen.this, "Server Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IotScreenActivity.this, "Server Error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -177,7 +191,7 @@ public class IoTScreen extends AppCompatActivity {
                 btnToggleValve.setEnabled(true);
                 btnWarningAction.setEnabled(true);
                 isTogglingValve = false;
-                Toast.makeText(IoTScreen.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(IotScreenActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -205,27 +219,21 @@ public class IoTScreen extends AppCompatActivity {
     }
 
     private void updateTelemetryUi(SensorData data) {
-        // Stream status
         tvStreamStatus.setText("● Live (3s)");
         tvStreamStatus.setTextColor(Color.parseColor("#2E7D32"));
 
-        // Gauges
         gaugeTemperature.setValue((float) data.getTemperatureCelsius(), true);
         gaugeHumidity.setValue((float) data.getHumidityPercentage(), true);
 
-        // Flow rate
         tvFlowRate.setText(String.format(Locale.US, "%.1f L/min", data.getFlowRateLitersPerMin()));
 
-        // Check for Unintended Flow Anomaly (Flow detected while Valve is CLOSED)
         checkUnintendedFlowAlert(data);
 
-        // Metadata
         if (data.getDeviceId() != null) {
             tvDeviceId.setText(String.format("Device ID: %s", data.getDeviceId()));
         }
         tvLastUpdated.setText(String.format("Last update: %s", formatTimestamp(data.getTimestamp())));
 
-        // Valve state sync (only if user is not currently toggling manually)
         if (!isTogglingValve && data.isValveIsOpen() != isValveOpen) {
             isValveOpen = data.isValveIsOpen();
             updateValveUi(isValveOpen);
@@ -236,23 +244,19 @@ public class IoTScreen extends AppCompatActivity {
         boolean isUnintendedFlow = (data.getFlowRateLitersPerMin() > 0.05) && (!data.isValveIsOpen());
 
         if (isUnintendedFlow) {
-            // 1. Highlight Top Banner Card
             cardWarningBanner.setVisibility(View.VISIBLE);
             tvWarningBannerText.setText(String.format(Locale.US,
                     "Flow rate of %.1f L/min detected while valve is CLOSED!",
                     data.getFlowRateLitersPerMin()));
 
-            // 2. Highlight Flow Status Badge in Red
             tvFlowStatus.setText("⚠️ LEAK / UNINTENDED FLOW");
             tvFlowStatus.setTextColor(Color.parseColor("#D32F2F"));
 
-            // 3. Trigger Modal Alert Popup if not currently showing and not snoozed
             long currentTime = System.currentTimeMillis();
             if ((flowAlertDialog == null || !flowAlertDialog.isShowing()) && currentTime > alertSnoozedUntilMs) {
                 triggerFlowAlertDialog(data.getFlowRateLitersPerMin());
             }
         } else {
-            // Normal flow / No anomaly
             cardWarningBanner.setVisibility(View.GONE);
 
             if (data.getFlowRateLitersPerMin() > 0.05) {
@@ -263,7 +267,6 @@ public class IoTScreen extends AppCompatActivity {
                 tvFlowStatus.setTextColor(Color.parseColor("#757575"));
             }
 
-            // Dismiss dialog if issue was resolved
             if (flowAlertDialog != null && flowAlertDialog.isShowing()) {
                 flowAlertDialog.dismiss();
             }
@@ -272,7 +275,6 @@ public class IoTScreen extends AppCompatActivity {
     }
 
     private void triggerFlowAlertDialog(double flowRate) {
-        // Trigger haptic vibration alert
         try {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null && vibrator.hasVibrator()) {
@@ -333,14 +335,12 @@ public class IoTScreen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Start live polling when activity is active
         pollHandler.post(pollRunnable);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Stop polling when activity is paused to save resources and prevent memory leaks
         pollHandler.removeCallbacks(pollRunnable);
     }
 }

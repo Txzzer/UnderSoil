@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_light_green"
-    android:padding="24dp">
+    android:padding="20dp">
 
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_circle_white"
         android:elevation="2dp"
         android:padding="10dp"
@@ -25,60 +26,62 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="Solanum Lycopersicum(Tomato)"
+        android:text="Crop Logs"
         android:textColor="@color/text_dark"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/backButton"
         app:layout_constraintTop_toTopOf="@id/backButton" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/pastScanCard"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/tvLogHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="14dp"
-        app:cardElevation="1dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Scan History"
+        android:textColor="@color/main_green"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backButton" />
+
+    <FrameLayout
+        android:id="@+id/recyclerContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/diagnosisButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/backButton">
+        app:layout_constraintTop_toBottomOf="@id/tvLogHeader">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvScanLogs"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/tvEmptyLogs"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="14dp">
-
-            <View
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/bg_photo_placeholder" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:text="Rust Disease (21/08/2026)"
-                android:textColor="@color/text_dark"
-                android:textSize="13sp" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_chevron_right"
-                android:contentDescription="Open" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif"
+            android:text="No scan logs yet for this crop.\nTap 'Scan Plant' to run a diagnosis."
+            android:textAlignment="center"
+            android:textColor="@color/text_sub"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/diagnosisButton"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/bg_circle_green"
         android:elevation="4dp"
         android:scaleType="center"
@@ -86,17 +89,15 @@
         android:contentDescription="Start diagnosis"
         app:layout_constraintBottom_toTopOf="@id/diagnosisLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pastScanCard"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/diagnosisLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Diagnosis"
+        android:text="Scan Plant"
         android:textColor="@color/text_dark"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@id/viewInfoButton"
@@ -110,8 +111,8 @@
         android:background="@drawable/bg_pill_green"
         android:elevation="2dp"
         android:fontFamily="sans-serif-medium"
-        android:paddingVertical="16dp"
-        android:text="View basic information"
+        android:paddingVertical="14dp"
+        android:text="View Plant Information"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="15sp"

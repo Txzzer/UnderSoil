@@ -27,7 +27,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         }
 
         if (cardIotWatering != null) {
-            cardIotWatering.setOnClickListener(v -> startActivity(new Intent(this, IoTScreen.class)));
+            cardIotWatering.setOnClickListener(v -> startActivity(new Intent(this, IotWateringActivity.class)));
         }
     }
 
@@ -39,7 +39,7 @@ public class HomeScreenActivity extends AppCompatActivity {
             bottomNavigationView.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
-                    startActivity(new Intent(this, IoTScreen.class));
+                    startActivity(new Intent(this, IotWateringActivity.class));
                     return true;
                 } else if (itemId == R.id.nav_garden) {
                     startActivity(new Intent(this, MainActivity.class));

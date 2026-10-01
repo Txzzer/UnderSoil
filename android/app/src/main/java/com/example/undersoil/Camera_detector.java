@@ -30,9 +30,14 @@ import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.metadata.MetadataExtractor;
 
+import com.example.undersoil.data.ScanLog;
+import com.example.undersoil.data.ScanLogDatabaseHelper;
+
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -56,6 +61,7 @@ public class Camera_detector extends AppCompatActivity {
 
     private Interpreter tfliteInterpreter;
     private List<String> labels;
+    private String cropName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +73,7 @@ public class Camera_detector extends AppCompatActivity {
         setupGalleryLauncher();
 
         Intent intent = getIntent();
-        String cropName = (intent != null) ? intent.getStringExtra(EXTRA_CROP_NAME) : null;
+        cropName = (intent != null) ? intent.getStringExtra(EXTRA_CROP_NAME) : null;
 
         initializeModel(cropName);
     }
@@ -355,10 +361,27 @@ public class Camera_detector extends AppCompatActivity {
                     tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
                     tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
                 }
+
+                // Save scan log to SQLite database
+                saveScanLog(plantName, conditionName, confidencePercent);
             }
 
         } catch (Exception e) {
             Toast.makeText(this, "Inference Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveScanLog(String plantName, String conditionName, float confidence) {
+        try {
+            String logCrop = (cropName != null && !cropName.trim().isEmpty()) ? cropName : plantName;
+            String diagnosisText = String.format("%s • %s", plantName, conditionName);
+            String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
+
+            ScanLog scanLog = new ScanLog(logCrop, diagnosisText, confidence, dateStr);
+            ScanLogDatabaseHelper.getInstance(this).insertLog(scanLog);
+            Toast.makeText(this, "Scan saved to history", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            // Ignore log save failure
         }
     }
 
