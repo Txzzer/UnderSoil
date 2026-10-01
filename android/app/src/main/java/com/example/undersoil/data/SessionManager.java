@@ -31,9 +31,9 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void createLoginSession(long userId, String name, String email, String role) {
+    public void createLoginSession(String userId, String name, String email, String role) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putLong(KEY_USER_ID, userId);
+        editor.putString(KEY_USER_ID, userId);
         editor.putString(KEY_USER_NAME, name);
         editor.putString(KEY_USER_EMAIL, email);
         editor.putString(KEY_USER_ROLE, role != null ? role : "Farmer");
@@ -56,8 +56,8 @@ public class SessionManager {
         return pref.getString(KEY_USER_ROLE, "Farmer");
     }
 
-    public long getUserId() {
-        return pref.getLong(KEY_USER_ID, -1);
+    public String getUserId() {
+        return pref.getString(KEY_USER_ID, "");
     }
 
     public void logoutUser(Context context) {
