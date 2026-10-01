@@ -124,9 +124,11 @@ public class IotScreenActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
                     startActivity(new Intent(IotScreenActivity.this, IotWateringActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (itemId == R.id.nav_garden) {
                     startActivity(new Intent(IotScreenActivity.this, MainActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 }
                 return false;
@@ -134,7 +136,10 @@ public class IotScreenActivity extends AppCompatActivity {
         }
 
         if (fabHome != null) {
-            fabHome.setOnClickListener(v -> startActivity(new Intent(IotScreenActivity.this, HomeScreenActivity.class)));
+            fabHome.setOnClickListener(v -> {
+                startActivity(new Intent(IotScreenActivity.this, HomeScreenActivity.class));
+                overridePendingTransition(0, 0);
+            });
         }
     }
 

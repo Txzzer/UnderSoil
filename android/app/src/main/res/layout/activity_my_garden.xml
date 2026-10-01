@@ -52,7 +52,7 @@
             android:focusable="false"
             android:clickable="true"
             android:fontFamily="sans-serif"
-            android:hint="Search plants &amp; crops"
+            android:hint="Search &amp; add plants to garden"
             android:paddingHorizontal="18dp"
             android:paddingVertical="14dp"
             android:textColorHint="@color/text_sub"
@@ -61,29 +61,64 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/backButton" />
 
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/gardenContentContainer"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/et_search"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/et_search">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSavedGardenPlants"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="24dp"
+                tools:listitem="@layout/item_saved_garden_plant" />
 
             <LinearLayout
+                android:id="@+id/layoutEmptyGarden"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:paddingHorizontal="24dp">
+                android:padding="24dp"
+                android:visibility="gone">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvSavedGardenPlants"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_garden_tree"
+                    android:contentDescription="Empty Garden" />
+
+                <TextView
+                    android:id="@+id/tvEmptyGardenText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/item_saved_garden_plant" />
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Your garden is empty.\nAdd a plant to start diagnosing!"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_dark"
+                    android:textSize="15sp" />
 
+                <Button
+                    android:id="@+id/btnAddPlant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_pill_green"
+                    android:paddingHorizontal="28dp"
+                    android:paddingVertical="12dp"
+                    android:text="Add Plant"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

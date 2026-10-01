@@ -24,15 +24,24 @@ public class HomeScreenActivity extends AppCompatActivity {
         MaterialCardView cardIotWatering = findViewById(R.id.card_iot_watering);
 
         if (ivProfile != null) {
-            ivProfile.setOnClickListener(v -> startActivity(new Intent(this, Settings.class)));
+            ivProfile.setOnClickListener(v -> {
+                startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(0, 0);
+            });
         }
 
         if (cardDiagnose != null) {
-            cardDiagnose.setOnClickListener(v -> startActivity(new Intent(this, Camera_detector.class)));
+            cardDiagnose.setOnClickListener(v -> {
+                startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(0, 0);
+            });
         }
 
         if (cardIotWatering != null) {
-            cardIotWatering.setOnClickListener(v -> startActivity(new Intent(this, IotWateringActivity.class)));
+            cardIotWatering.setOnClickListener(v -> {
+                startActivity(new Intent(this, IotWateringActivity.class));
+                overridePendingTransition(0, 0);
+            });
         }
     }
 
@@ -41,13 +50,21 @@ public class HomeScreenActivity extends AppCompatActivity {
         FloatingActionButton fabHome = findViewById(R.id.fabHome);
 
         if (bottomNavigationView != null) {
+            // Uncheck all bottom navigation items on Home screen
+            bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
+            for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
+                bottomNavigationView.getMenu().getItem(i).setChecked(false);
+            }
+
             bottomNavigationView.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
                     startActivity(new Intent(this, IotWateringActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 } else if (itemId == R.id.nav_garden) {
                     startActivity(new Intent(this, MainActivity.class));
+                    overridePendingTransition(0, 0);
                     return true;
                 }
                 return false;

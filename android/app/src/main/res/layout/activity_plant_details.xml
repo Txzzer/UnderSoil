@@ -257,23 +257,10 @@
                 </GridLayout>
 
                 <Button
-                    android:id="@+id/btnScanCrop"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_pill_teal"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingVertical="16dp"
-                    android:text="Scan Crop Health 📷"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <Button
                     android:id="@+id/addToPlantsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/bg_pill_green"
                     android:fontFamily="sans-serif-medium"
                     android:paddingVertical="16dp"
