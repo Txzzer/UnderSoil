@@ -8,6 +8,7 @@ namespace UnderSoilAPI.Models
             : base(options)
         {
         }
+        public DbSet<User> Users { get; set; }
 
         public DbSet<TelemetryReading> TelemetryReadings { get; set; } = null!;
 

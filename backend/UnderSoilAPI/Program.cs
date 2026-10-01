@@ -12,9 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Register EF Core DbContext (SQLite file DB)
+// Register EF Core DbContext (SQL Server)
 builder.Services.AddDbContext<UnderSoilContext>(options =>
-    options.UseSqlite("Data Source=undersoil.db"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
