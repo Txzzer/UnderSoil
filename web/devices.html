@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devices — UnderSoil Admin</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/mark.svg" alt="">
+      <span class="brand-word">UnderSoil<span class="brand-sub">Admin</span></span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html"><span class="nav-dot"></span>Farm overview</a>
+      <a href="sectors.html"><span class="nav-dot"></span>Sectors &amp; crops</a>
+      <a href="devices.html" class="active"><span class="nav-dot"></span>Devices</a>
+      <a href="users.html"><span class="nav-dot"></span>Users</a>
+      <a href="reports.html"><span class="nav-dot"></span>Reports</a>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="who">Poppy Mantyi</span>
+      Farm administrator
+      <br><a href="login.html">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topline">
+      <div>
+        <h1>Devices</h1>
+        <p>11 of 12 sensors and controllers online</p>
+      </div>
+    </div>
+
+    <div class="view-only-note">
+      <span class="dot"></span>
+      Devices are registered from the farmer's mobile app. This view updates once a device syncs back online.
+    </div>
+
+    <div class="card">
+      <h2>All devices</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Device ID</th>
+            <th>Type</th>
+            <th>Sector</th>
+            <th>Battery</th>
+            <th>Status</th>
+            <th>Last seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ESP-A1</td>
+            <td>Flow sensor</td>
+            <td>Sector A</td>
+            <td>86%</td>
+            <td><span class="status-pill ok">Online</span></td>
+            <td>Just now</td>
+          </tr>
+          <tr>
+            <td>ESP-A2</td>
+            <td>Soil moisture</td>
+            <td>Sector A</td>
+            <td>74%</td>
+            <td><span class="status-pill ok">Online</span></td>
+            <td>1 min ago</td>
+          </tr>
+          <tr>
+            <td>ESP-B1</td>
+            <td>Flow sensor</td>
+            <td>Sector B</td>
+            <td>91%</td>
+            <td><span class="status-pill ok">Online</span></td>
+            <td>Just now</td>
+          </tr>
+          <tr>
+            <td>ESP-C1</td>
+            <td>Flow sensor</td>
+            <td>Sector C</td>
+            <td>62%</td>
+            <td><span class="status-pill amber">Flow anomaly</span></td>
+            <td>2 min ago</td>
+          </tr>
+          <tr>
+            <td>ESP-C2</td>
+            <td>Valve controller</td>
+            <td>Sector C</td>
+            <td>58%</td>
+            <td><span class="status-pill ok">Online</span></td>
+            <td>2 min ago</td>
+          </tr>
+          <tr>
+            <td>ESP-D1</td>
+            <td>Soil moisture</td>
+            <td>Sector D</td>
+            <td>79%</td>
+            <td><span class="status-pill ok">Online</span></td>
+            <td>3 min ago</td>
+          </tr>
+          <tr>
+            <td>ESP-E1</td>
+            <td>Flow sensor</td>
+            <td>Sector E</td>
+            <td>12%</td>
+            <td><span class="status-pill offline">Offline</span></td>
+            <td>6 hr ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>
