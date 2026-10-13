@@ -108,5 +108,32 @@ namespace UnderSoilAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+        [HttpPost("alerts")]
+        public async Task<IActionResult> SyncIotAlerts([FromBody] List<IotAlert> incomingAlerts)
+        {
+            if (incomingAlerts == null || incomingAlerts.Count == 0) return Ok();
+
+            foreach (var incoming in incomingAlerts)
+            {
+                var existing = await _context.IotAlerts.FirstOrDefaultAsync(a => a.Id == incoming.Id);
+                if (existing != null)
+                {
+                    existing.DeviceId = incoming.DeviceId;
+                    existing.UserId = incoming.UserId;
+                    existing.AlertDesc = incoming.AlertDesc;
+                    existing.DateTime = incoming.DateTime;
+                    existing.IsSynced = true;
+                    _context.IotAlerts.Update(existing);
+                }
+                else
+                {
+                    incoming.IsSynced = true;
+                    await _context.IotAlerts.AddAsync(incoming);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
