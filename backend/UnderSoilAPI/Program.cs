@@ -39,8 +39,25 @@ var factory = new MqttFactory();
 var mqttClient = factory.CreateMqttClient();
 builder.Services.AddSingleton<IMqttClient>(mqttClient);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("UnderSoilDashboard", policy =>
+    {
+        policy
+            .WithOrigins("http://127.0.0.1:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
 // 2. BUILD THE APP HERE - AFTER ALL SERVICES ARE ADDED
 var app = builder.Build();
+
+
+app.UseCors("UnderSoilDashboard");
+
 
 // 3. CONFIGURE EVERYTHING ELSE AFTER THE BUILD
 

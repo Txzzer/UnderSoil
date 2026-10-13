@@ -39,27 +39,19 @@
             app:layout_constraintStart_toEndOf="@id/backButton"
             app:layout_constraintTop_toTopOf="@id/backButton" />
 
-        <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_pill_white"
-            android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="10dp"
-            android:elevation="1dp"
-            android:focusable="false"
-            android:clickable="true"
-            android:fontFamily="sans-serif"
-            android:hint="Search &amp; add plants to garden"
-            android:paddingHorizontal="18dp"
-            android:paddingVertical="14dp"
-            android:textColorHint="@color/text_sub"
-            android:textSize="14sp"
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bg_circle_white"
+            android:elevation="2dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_search"
+            android:contentDescription="Search &amp; add plants"
+            app:layout_constraintBottom_toBottomOf="@id/backButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backButton" />
+            app:layout_constraintTop_toTopOf="@id/backButton" />
 
         <FrameLayout
             android:id="@+id/gardenContentContainer"
@@ -69,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_search">
+            app:layout_constraintTop_toBottomOf="@id/backButton">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSavedGardenPlants"

@@ -33,10 +33,10 @@ interface GardenDao {
     @Query("DELETE FROM my_garden WHERE plantId = :plantId AND userId = :userId")
     fun deleteByPlantAndUser(plantId: Int, userId: String)
 
-    @Query("SELECT * FROM my_garden WHERE userId = :userId")
+    @Query("SELECT * FROM my_garden WHERE userId = :userId GROUP BY plantId")
     fun getAll(userId: String = ""): Flow<List<GardenEntity>>
 
-    @Query("SELECT * FROM my_garden WHERE userId = :userId")
+    @Query("SELECT * FROM my_garden WHERE userId = :userId GROUP BY plantId")
     fun getAllSync(userId: String = ""): List<GardenEntity>
 
     @Query("SELECT * FROM my_garden WHERE isSynced = 0")

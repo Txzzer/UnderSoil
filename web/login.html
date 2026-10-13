@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — UnderSoil Admin</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-panel">
+      <div class="brand">
+        <img src="assets/mark.svg" alt="">
+        <span class="brand-word">UnderSoil</span>
+      </div>
+      <div class="login-copy">
+        <h1>Every plot, every sensor, one screen.</h1>
+        <p>Keep track of crop health, water flow and field devices across the farm from the admin dashboard.</p>
+      </div>
+      <div class="foot">AgriCoders · UnderSoil Admin</div>
+    </div>
+    <div class="login-form-side">
+      <form class="login-form" id="login-form">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to view the farm and manage user accounts.</p>
+        <p class="form-error" id="login-error" style="display: none;"></p>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@undersoil.farm" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" required>
+        </div>
+        <button class="btn-primary" type="submit" id="login-submit">Sign in</button>
+        <p class="alt">Forgot your password? Ask your farm administrator.</p>
+      </form>
+    </div>
+  </div>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit');
+      errorEl.style.display = 'none';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in…';
+
+      try {
+        const { token } = await loginRequest(email, password);
+        const claims = decodeJwt(token);
+        if (!claims || claims.role !== ADMIN_ROLE) {
+          throw new Error("This account doesn't have admin dashboard access.");
+        }
+        saveSession(token, claims);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign in';
+      }
+    });
+  </script>
+</body>
+</html>
+>
