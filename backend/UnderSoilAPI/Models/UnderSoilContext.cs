@@ -11,6 +11,8 @@ namespace UnderSoilAPI.Models
         public DbSet<User> Users { get; set; }
 
         public DbSet<TelemetryReading> TelemetryReadings { get; set; } = null!;
-
+        public DbSet<ScanLog> ScanLogs { get; set; }
+        public DbSet<Sector> Sectors { get; set; }
+        public DbSet<GardenEntity> GardenCrops { get; set; }
     }
 }

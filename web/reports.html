@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reports — UnderSoil Admin</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/mark.svg" alt="">
+      <span class="brand-word">UnderSoil<span class="brand-sub">Admin</span></span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html"><span class="nav-dot"></span>Farm overview</a>
+      <a href="sectors.html"><span class="nav-dot"></span>Sectors &amp; crops</a>
+      <a href="devices.html"><span class="nav-dot"></span>Devices</a>
+      <a href="users.html"><span class="nav-dot"></span>Users</a>
+      <a href="reports.html" class="active"><span class="nav-dot"></span>Reports</a>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="who" id="sidebar-user-name">Poppy Mantyi</span>
+      Farm administrator
+      <br><a href="#" onclick="logout(); return false;">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topline">
+      <div>
+        <h1>Reports</h1>
+        <p>Water use and crop health over the last 7 days</p>
+      </div>
+      <button class="btn-primary no-print" type="button" onclick="window.print()">Download PDF report</button>
+    </div>
+
+    <div class="print-header">
+      <img src="assets/mark.svg" alt="">
+      <div>
+        <strong>UnderSoil — Farm report</strong>
+        <span>Greenfields Smallholding · Gqeberha</span>
+      </div>
+      <span class="print-date" id="print-date"></span>
+    </div>
+
+    <div class="card">
+      <h2>Water consumption by sector (this week)</h2>
+      <ul class="bars">
+        <li>
+          <span>Sector A</span>
+          <span class="track"><span class="fill" style="width:62%;"></span></span>
+          <span class="val">1,240 L</span>
+        </li>
+        <li>
+          <span>Sector B</span>
+          <span class="track"><span class="fill" style="width:71%;"></span></span>
+          <span class="val">1,420 L</span>
+        </li>
+        <li>
+          <span>Sector C</span>
+          <span class="track"><span class="fill" style="width:28%;"></span></span>
+          <span class="val">560 L</span>
+        </li>
+        <li>
+          <span>Sector D</span>
+          <span class="track"><span class="fill" style="width:54%;"></span></span>
+          <span class="val">1,080 L</span>
+        </li>
+        <li>
+          <span>Sector E</span>
+          <span class="track"><span class="fill" style="width:4%;"></span></span>
+          <span class="val">80 L</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Disease scan history</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Sector</th>
+            <th>Crop</th>
+            <th>Result</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>02 Oct 2026</td>
+            <td>Sector B</td>
+            <td>Tomato</td>
+            <td><span class="status-pill alert">Leaf blight</span></td>
+            <td>91%</td>
+          </tr>
+          <tr>
+            <td>01 Oct 2026</td>
+            <td>Sector A</td>
+            <td>Spinach</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+            <td>97%</td>
+          </tr>
+          <tr>
+            <td>30 Sep 2026</td>
+            <td>Sector D</td>
+            <td>Cabbage</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+            <td>95%</td>
+          </tr>
+          <tr>
+            <td>29 Sep 2026</td>
+            <td>Sector C</td>
+            <td>Maize</td>
+            <td><span class="status-pill amber">Early rust</span></td>
+            <td>78%</td>
+          </tr>
+          <tr>
+            <td>28 Sep 2026</td>
+            <td>Sector B</td>
+            <td>Tomato</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+            <td>93%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script>
+  document.getElementById('print-date').textContent =
+    'Generated ' + new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' });
+</script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      const session = requireAdminSession();
+      if (session) {
+        document.getElementById('sidebar-user-name').textContent = session.user.name;
+      }
+    })();
+  </script>
+</body>
+</html>
