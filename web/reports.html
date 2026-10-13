@@ -21,9 +21,9 @@
       <a href="reports.html" class="active"><span class="nav-dot"></span>Reports</a>
     </nav>
     <div class="sidebar-foot">
-      <span class="who">Poppy Mantyi</span>
+      <span class="who" id="sidebar-user-name">Poppy Mantyi</span>
       Farm administrator
-      <br><a href="login.html">Sign out</a>
+      <br><a href="#" onclick="logout(); return false;">Sign out</a>
     </div>
   </aside>
 
@@ -133,5 +133,14 @@
   document.getElementById('print-date').textContent =
     'Generated ' + new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' });
 </script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      const session = requireAdminSession();
+      if (session) {
+        document.getElementById('sidebar-user-name').textContent = session.user.name;
+      }
+    })();
+  </script>
 </body>
 </html>
