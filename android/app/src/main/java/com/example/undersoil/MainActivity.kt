@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fabHome: FloatingActionButton
-    private lateinit var etSearch: EditText
+    private lateinit var btnSearch: ImageButton
     private lateinit var rvSavedGardenPlants: RecyclerView
     private lateinit var layoutEmptyGarden: View
     private lateinit var btnAddPlant: View
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         fabHome = findViewById(R.id.fabHome)
-        etSearch = findViewById(R.id.et_search)
+        btnSearch = findViewById(R.id.btnSearch)
         rvSavedGardenPlants = findViewById(R.id.rvSavedGardenPlants)
         layoutEmptyGarden = findViewById(R.id.layoutEmptyGarden)
         btnAddPlant = findViewById(R.id.btnAddPlant)
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ExplorePlantsActivity::class.java))
         }
 
-        etSearch.setOnClickListener(openExplore)
+        btnSearch.setOnClickListener(openExplore)
         btnAddPlant.setOnClickListener(openExplore)
 
         adapter = SavedGardenAdapter(

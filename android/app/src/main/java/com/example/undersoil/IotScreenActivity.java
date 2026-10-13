@@ -92,6 +92,11 @@ public class IotScreenActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        android.widget.ImageButton backButton = findViewById(R.id.backButton);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
+
         tvDeviceTitle = findViewById(R.id.tvDeviceTitle);
         gaugeTemperature = findViewById(R.id.gaugeTemperature);
         gaugeHumidity = findViewById(R.id.gaugeHumidity);

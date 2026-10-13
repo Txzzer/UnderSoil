@@ -29,6 +29,9 @@ public interface ApiService {
     @POST("api/sync/logs")
     Call<Void> syncScanLogs(@Body List<ScanLog> logs);
 
+    @POST("api/sync/alerts")
+    Call<Void> syncAlerts(@Body List<com.example.undersoil.data.IotAlert> alerts);
+
     @POST("api/auth/login")
     Call<AuthResponse> loginUser(@Body LoginRequest request);
 
