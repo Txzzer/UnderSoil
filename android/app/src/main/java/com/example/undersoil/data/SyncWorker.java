@@ -84,6 +84,17 @@ public class SyncWorker extends Worker {
                 }
             }
 
+            // 4. Sync Unsynced IoT Alerts
+            List<IotAlert> unsyncedAlerts = IotAlertDatabaseHelper.getInstance(context).getUnsyncedAlerts();
+            if (!unsyncedAlerts.isEmpty()) {
+                Response<Void> alertResponse = apiService.syncAlerts(unsyncedAlerts).execute();
+                if (alertResponse.isSuccessful()) {
+                    for (IotAlert alert : unsyncedAlerts) {
+                        IotAlertDatabaseHelper.getInstance(context).markAlertAsSynced(alert.getId());
+                    }
+                }
+            }
+
             // Update notification on completion
             NotificationCompat.Builder completeNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)

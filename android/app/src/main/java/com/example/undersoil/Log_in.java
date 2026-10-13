@@ -120,13 +120,15 @@ public class Log_in extends AppCompatActivity {
                 btnSignIn.setText("Sign In");
 
                 if (response.isSuccessful() && response.body() != null) {
-                    // SUCCESS! The backend gave us a JWT Token.
+                    // SUCCESS! The backend gave us a JWT Token & User GUID.
                     AuthResponse authData = response.body();
 
-                    // For now, we save it using your existing SessionManager format
+                    // Save session with String GUID userId and JWT Token
                     sessionManager.createLoginSession(authData.getUserId(), authData.getName(), email, "Farmer", authData.getToken());
 
-                    // Note: We will need to update SessionManager later to actually store the authData.getToken() string!
+                    // Persist user record locally in SQLite for offline login
+                    com.example.undersoil.data.User localUser = new com.example.undersoil.data.User(authData.getUserId(), authData.getName(), email, "", "Farmer", true);
+                    com.example.undersoil.data.UserDatabaseHelper.getInstance(Log_in.this).registerUser(localUser);
 
                     Toast.makeText(Log_in.this, "Welcome back, " + authData.getName() + "!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Log_in.this, HomeScreenActivity.class);

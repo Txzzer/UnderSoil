@@ -32,31 +32,18 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    // UPDATED: userId is now an int, and we added the token parameter
-    public void createLoginSession(int userId, String name, String email, String role, String token) {
+    public void createLoginSession(String userId, String name, String email, String role, String token) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putInt(KEY_USER_ID, userId);
-        editor.putString(KEY_USER_NAME, name);
-        editor.putString(KEY_USER_EMAIL, email);
+        editor.putString(KEY_USER_ID, userId != null ? userId : "");
+        editor.putString(KEY_USER_NAME, name != null ? name : "Farmer");
+        editor.putString(KEY_USER_EMAIL, email != null ? email : "");
         editor.putString(KEY_USER_ROLE, role != null ? role : "Farmer");
-
-        // Save the JWT Token from the backend
-        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_TOKEN, token != null ? token : "");
         editor.apply();
     }
 
     public void createLoginSession(String userId, String name, String email, String role) {
-        int idInt = -1;
-        try {
-            if (userId != null) idInt = Integer.parseInt(userId);
-        } catch (NumberFormatException ignored) {}
-
-        editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putInt(KEY_USER_ID, idInt);
-        editor.putString(KEY_USER_NAME, name);
-        editor.putString(KEY_USER_EMAIL, email);
-        editor.putString(KEY_USER_ROLE, role != null ? role : "Farmer");
-        editor.apply();
+        createLoginSession(userId, name, email, role, "");
     }
 
     public boolean isLoggedIn() {
@@ -75,20 +62,6 @@ public class SessionManager {
         return pref.getString(KEY_USER_ROLE, "Farmer");
     }
 
-    // Safely retrieves user ID whether stored as int or String in SharedPreferences
-    public int getUserId() {
-        try {
-            return pref.getInt(KEY_USER_ID, -1);
-        } catch (ClassCastException e) {
-            try {
-                String strVal = pref.getString(KEY_USER_ID, "-1");
-                return Integer.parseInt(strVal);
-            } catch (Exception ignored) {
-                return -1;
-            }
-        }
-    }
-
     public String getUserIdString() {
         try {
             String strVal = pref.getString(KEY_USER_ID, null);
@@ -96,12 +69,21 @@ public class SessionManager {
                 return strVal;
             }
         } catch (ClassCastException ignored) {
+            int intVal = pref.getInt(KEY_USER_ID, -1);
+            if (intVal != -1) return String.valueOf(intVal);
         }
-        int intId = getUserId();
-        return intId != -1 ? String.valueOf(intId) : "";
+        return "";
     }
 
-    // NEW: Method to retrieve the token so you can attach it to future network calls
+    public int getUserId() {
+        try {
+            String strVal = getUserIdString();
+            return !strVal.isEmpty() ? Integer.parseInt(strVal) : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
     public String getToken() {
         return pref.getString(KEY_TOKEN, null);
     }

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sectors &amp; crops — UnderSoil Admin</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/mark.svg" alt="">
+      <span class="brand-word">UnderSoil<span class="brand-sub">Admin</span></span>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html"><span class="nav-dot"></span>Farm overview</a>
+      <a href="sectors.html" class="active"><span class="nav-dot"></span>Sectors &amp; crops</a>
+      <a href="devices.html"><span class="nav-dot"></span>Devices</a>
+      <a href="users.html"><span class="nav-dot"></span>Users</a>
+      <a href="reports.html"><span class="nav-dot"></span>Reports</a>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="who" id="sidebar-user-name">Poppy Mantyi</span>
+      Farm administrator
+      <br><a href="#" onclick="logout(); return false;">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topline">
+      <div>
+        <h1>Sectors &amp; crops</h1>
+        <p>5 sectors mapped across Greenfields Smallholding</p>
+      </div>
+    </div>
+
+    <div class="view-only-note">
+      <span class="dot"></span>
+      Sectors are managed from the farmer's mobile app in the field. This view updates once a device syncs back online.
+    </div>
+
+    <div class="card">
+      <h2>All sectors</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Sector</th>
+            <th>Crop</th>
+            <th>Area</th>
+            <th>Planted</th>
+            <th>Flow rate</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sector A</td>
+            <td>Spinach</td>
+            <td>0.4 ha</td>
+            <td>12 Aug 2026</td>
+            <td>6.2 L/min</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+          </tr>
+          <tr>
+            <td>Sector B</td>
+            <td>Tomato</td>
+            <td>0.6 ha</td>
+            <td>03 Jul 2026</td>
+            <td>5.8 L/min</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+          </tr>
+          <tr>
+            <td>Sector C</td>
+            <td>Maize</td>
+            <td>1.1 ha</td>
+            <td>21 Jun 2026</td>
+            <td>2.1 L/min</td>
+            <td><span class="status-pill alert">Leak risk</span></td>
+          </tr>
+          <tr>
+            <td>Sector D</td>
+            <td>Cabbage</td>
+            <td>0.5 ha</td>
+            <td>29 Aug 2026</td>
+            <td>4.9 L/min</td>
+            <td><span class="status-pill ok">Healthy</span></td>
+          </tr>
+          <tr>
+            <td>Sector E</td>
+            <td>Beans</td>
+            <td>0.3 ha</td>
+            <td>14 Sep 2026</td>
+            <td>—</td>
+            <td><span class="status-pill offline">Offline</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      const session = requireAdminSession();
+      if (session) {
+        document.getElementById('sidebar-user-name').textContent = session.user.name;
+      }
+    })();
+  </script>
+</body>
+</html>
