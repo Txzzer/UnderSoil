@@ -1,6 +1,9 @@
 package com.example.undersoil;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,10 +13,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.undersoil.data.SecurityUtils;
 import com.example.undersoil.data.SessionManager;
 import com.example.undersoil.data.User;
 import com.example.undersoil.data.UserDatabaseHelper;
+
+import network.ApiClient;
+import network.ApiService;
+import network.AuthResponse;
+import network.RegisterRequest;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Sign_up extends AppCompatActivity {
 
@@ -25,7 +35,6 @@ public class Sign_up extends AppCompatActivity {
     private TextView tvLoginPrompt;
     private ImageButton backButton;
 
-    private UserDatabaseHelper dbHelper;
     private SessionManager sessionManager;
 
     @Override
@@ -33,7 +42,6 @@ public class Sign_up extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        dbHelper = UserDatabaseHelper.getInstance(this);
         sessionManager = SessionManager.getInstance(this);
 
         initViews();
@@ -60,6 +68,13 @@ public class Sign_up extends AppCompatActivity {
         if (tvLoginPrompt != null) {
             tvLoginPrompt.setOnClickListener(v -> finish());
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     private void handleRegistration() {
@@ -98,27 +113,62 @@ public class Sign_up extends AppCompatActivity {
             return;
         }
 
-        if (dbHelper.checkEmailExists(email)) {
-            etEmail.setError("An account with this email already exists");
-            etEmail.requestFocus();
+        // 1. Sign-up requires internet connection
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "You need an internet connection to create an account", Toast.LENGTH_LONG).show();
             return;
         }
 
-        String passwordHash = SecurityUtils.hashPassword(password);
-        User newUser = new User(name, email, passwordHash, "Farmer");
+        btnSignUp.setEnabled(false);
+        btnSignUp.setText("Creating Account...");
 
-        String userId = dbHelper.registerUser(newUser);
+        // Send PLAIN password to backend
+        RegisterRequest request = new RegisterRequest(name, email, password);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
 
-        if (userId != null) {
-            sessionManager.createLoginSession(userId, name, email, "Farmer");
-            Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+        apiService.registerUser(request).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                btnSignUp.setEnabled(true);
+                btnSignUp.setText("Sign Up");
 
-            Intent intent = new Intent(Sign_up.this, HomeScreenActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_LONG).show();
-        }
+                if (response.isSuccessful() && response.body() != null) {
+                    AuthResponse authData = response.body();
+
+                    // Save 7-day session with JWT token and expiresAt
+                    sessionManager.createLoginSession(
+                            authData.getUserId(),
+                            authData.getName(),
+                            email,
+                            "Farmer",
+                            authData.getToken(),
+                            authData.getExpiresAt()
+                    );
+
+                    // Save local user profile
+                    User localUser = new User(authData.getUserId(), authData.getName(), email, "", "Farmer", true);
+                    UserDatabaseHelper.getInstance(Sign_up.this).registerUser(localUser);
+
+                    Toast.makeText(Sign_up.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(Sign_up.this, HomeScreenActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else if (response.code() == 409) {
+                    etEmail.setError("An account with this email already exists");
+                    etEmail.requestFocus();
+                } else {
+                    Toast.makeText(Sign_up.this, "Registration failed (" + response.code() + "). Please try again.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                btnSignUp.setEnabled(true);
+                btnSignUp.setText("Sign Up");
+                Toast.makeText(Sign_up.this, "No connection. Please try again when online.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

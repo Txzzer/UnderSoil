@@ -1,25 +1,72 @@
 package network;
 
+import android.content.Context;
+import android.content.Intent;
+
+import com.example.undersoil.Log_in;
+import com.example.undersoil.data.SessionManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    // Uses 127.0.0.1 with ADB port reverse (adb reverse tcp:5196 tcp:5196)
     private static final String BASE_URL = "http://192.168.1.52:5196/";
 
     private static Retrofit retrofit;
 
-    public static Retrofit getClient() {
-        if (retrofit == null) {
+    public static synchronized Retrofit getClient(Context context) {
+        if (retrofit == null && context != null) {
+            final Context appContext = context.getApplicationContext();
+
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+            Interceptor authInterceptor = new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request originalRequest = chain.request();
+                    String path = originalRequest.url().encodedPath();
+
+                    // Skip authorization header for auth endpoints
+                    if (path.contains("api/auth/login") || path.contains("api/auth/register")) {
+                        return chain.proceed(originalRequest);
+                    }
+
+                    SessionManager sessionManager = SessionManager.getInstance(appContext);
+                    String token = sessionManager.getToken();
+
+                    Request.Builder builder = originalRequest.newBuilder();
+                    if (token != null && !token.trim().isEmpty()) {
+                        builder.header("Authorization", "Bearer " + token.trim());
+                    }
+
+                    Response response = chain.proceed(builder.build());
+
+                    // On 401 Unauthorized, invalidate session and navigate to login
+                    if (response.code() == 401 && !path.contains("api/auth/")) {
+                        sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+
+                        Intent intent = new Intent(appContext, Log_in.class);
+                        intent.putExtra("session_expired", true);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        appContext.startActivity(intent);
+                    }
+
+                    return response;
+                }
+            };
+
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(authInterceptor)
                     .addInterceptor(logging)
                     .build();
 
@@ -34,6 +81,13 @@ public class ApiClient {
                     .build();
         }
 
+        return retrofit;
+    }
+
+    public static Retrofit getClient() {
+        if (retrofit == null) {
+            throw new IllegalStateException("ApiClient has not been initialized with Context. Call ApiClient.getClient(context) first.");
+        }
         return retrofit;
     }
 }

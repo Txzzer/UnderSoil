@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.undersoil.data.SessionManager;
 
-// Import our new network files
 import network.ApiClient;
 import network.ApiService;
 import network.AuthResponse;
@@ -46,6 +45,14 @@ public class Log_in extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_log_in);
+
+        // Show expired session message if arriving from an expired session
+        SessionManager.InvalidReason invalidReason = sessionManager.getLastInvalidReason();
+        boolean sessionExpiredExtra = getIntent().getBooleanExtra("session_expired", false);
+        if (sessionExpiredExtra || invalidReason == SessionManager.InvalidReason.EXPIRED || invalidReason == SessionManager.InvalidReason.CLOCK_ROLLBACK) {
+            Toast.makeText(this, "Your session has expired. Connect to the internet and log in again.", Toast.LENGTH_LONG).show();
+            sessionManager.setLastInvalidReason(SessionManager.InvalidReason.NONE);
+        }
 
         initViews();
         setupClickListeners();
@@ -102,17 +109,12 @@ public class Log_in extends AppCompatActivity {
             return;
         }
 
-        // Disable button so they don't spam click it while loading
         btnSignIn.setEnabled(false);
         btnSignIn.setText("Logging in...");
 
-        // 1. Create the API Service
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // 2. Package the email and password into the request model
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         LoginRequest request = new LoginRequest(email, password);
 
-        // 3. Send the request to the C# Backend
         apiService.loginUser(request).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
@@ -120,32 +122,40 @@ public class Log_in extends AppCompatActivity {
                 btnSignIn.setText("Sign In");
 
                 if (response.isSuccessful() && response.body() != null) {
-                    // SUCCESS! The backend gave us a JWT Token & User GUID.
                     AuthResponse authData = response.body();
 
-                    // Save session with String GUID userId and JWT Token
-                    sessionManager.createLoginSession(authData.getUserId(), authData.getName(), email, "Farmer", authData.getToken());
+                    // Save session with 7-day token & expiry
+                    sessionManager.createLoginSession(
+                            authData.getUserId(),
+                            authData.getName(),
+                            email,
+                            "Farmer",
+                            authData.getToken(),
+                            authData.getExpiresAt()
+                    );
 
-                    // Persist user record locally in SQLite for offline login
+                    // Save local user profile
                     com.example.undersoil.data.User localUser = new com.example.undersoil.data.User(authData.getUserId(), authData.getName(), email, "", "Farmer", true);
                     com.example.undersoil.data.UserDatabaseHelper.getInstance(Log_in.this).registerUser(localUser);
 
+                    // Schedule background sync on successful login
+                    com.example.undersoil.data.SyncManager.scheduleSync(Log_in.this);
+
                     Toast.makeText(Log_in.this, "Welcome back, " + authData.getName() + "!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Log_in.this, HomeScreenActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
-                    // Backend responded, but passwords didn't match (401 Unauthorized)
                     Toast.makeText(Log_in.this, "Invalid email or password.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                // The app couldn't reach the backend at all (server offline, bad IP, etc)
                 btnSignIn.setEnabled(true);
                 btnSignIn.setText("Sign In");
-                Toast.makeText(Log_in.this, "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(Log_in.this, "No connection. Please check your internet and try again.", Toast.LENGTH_LONG).show();
             }
         });
     }

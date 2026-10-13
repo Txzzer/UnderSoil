@@ -31,6 +31,18 @@ public class HomeScreenActivity extends AppCompatActivity {
         com.example.undersoil.data.SyncManager.scheduleSync(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        com.example.undersoil.data.SessionManager sessionManager = com.example.undersoil.data.SessionManager.getInstance(this);
+        if (!sessionManager.isLoggedIn()) {
+            Intent intent = new Intent(this, Log_in.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     private void checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UnderSoilAPI.Models;
 
 namespace UnderSoilAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/sync")]
     public class SyncController : ControllerBase

@@ -173,7 +173,7 @@ public class IotScreenActivity extends AppCompatActivity {
         isTogglingValve = true;
 
         ValveRequest request = new ValveRequest(targetState);
-        ApiService api = ApiClient.getClient().create(ApiService.class);
+        ApiService api = ApiClient.getClient(this).create(ApiService.class);
 
         api.toggleValve(request).enqueue(new Callback<>() {
             @Override
@@ -207,7 +207,7 @@ public class IotScreenActivity extends AppCompatActivity {
     }
 
     private void fetchSensorData() {
-        ApiService api = ApiClient.getClient().create(ApiService.class);
+        ApiService api = ApiClient.getClient(this).create(ApiService.class);
         api.getLatestSensorData().enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<SensorData> call, Response<SensorData> response) {

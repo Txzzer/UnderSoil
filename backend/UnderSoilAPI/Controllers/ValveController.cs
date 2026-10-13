@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MQTTnet;
 using MQTTnet.Client;
 using System;
@@ -8,6 +9,7 @@ using UnderSoilAPI.Models;
 
 namespace UnderSoilAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ValveController : ControllerBase

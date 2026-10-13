@@ -34,11 +34,16 @@ public class SyncWorker extends Worker {
     @Override
     public Result doWork() {
         Context context = getApplicationContext();
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        SessionManager sessionManager = SessionManager.getInstance(context);
 
+        // Skip sync if session is invalid or token missing; keep local data queued
+        if (!sessionManager.isLoggedIn() || sessionManager.getToken() == null) {
+            return Result.success();
+        }
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel(notificationManager);
 
-        // Show starting sync notification
         NotificationCompat.Builder startingNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("UnderSoil Syncing...")
@@ -49,12 +54,16 @@ public class SyncWorker extends Worker {
         notifySafely(notificationManager, NOTIFICATION_ID, startingNotification, context);
 
         try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            ApiService apiService = ApiClient.getClient(context).create(ApiService.class);
 
             // 1. Sync Unsynced Sectors
             List<Sector> unsyncedSectors = SectorDatabaseHelper.getInstance(context).getUnsyncedSectors();
             if (!unsyncedSectors.isEmpty()) {
                 Response<Void> sectorResponse = apiService.syncSectors(unsyncedSectors).execute();
+                if (sectorResponse.code() == 401) {
+                    sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+                    return Result.success();
+                }
                 if (sectorResponse.isSuccessful()) {
                     for (Sector sector : unsyncedSectors) {
                         SectorDatabaseHelper.getInstance(context).markSectorAsSynced(sector.getId());
@@ -66,6 +75,10 @@ public class SyncWorker extends Worker {
             List<GardenEntity> unsyncedCrops = GardenDatabase.Companion.getInstance(context).gardenDao().getUnsyncedCrops();
             if (!unsyncedCrops.isEmpty()) {
                 Response<Void> cropResponse = apiService.syncGarden(unsyncedCrops).execute();
+                if (cropResponse.code() == 401) {
+                    sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+                    return Result.success();
+                }
                 if (cropResponse.isSuccessful()) {
                     for (GardenEntity crop : unsyncedCrops) {
                         GardenDatabase.Companion.getInstance(context).gardenDao().markCropAsSynced(crop.getId());
@@ -77,6 +90,10 @@ public class SyncWorker extends Worker {
             List<ScanLog> unsyncedLogs = ScanLogDatabaseHelper.getInstance(context).getUnsyncedLogs();
             if (!unsyncedLogs.isEmpty()) {
                 Response<Void> logResponse = apiService.syncScanLogs(unsyncedLogs).execute();
+                if (logResponse.code() == 401) {
+                    sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+                    return Result.success();
+                }
                 if (logResponse.isSuccessful()) {
                     for (ScanLog log : unsyncedLogs) {
                         ScanLogDatabaseHelper.getInstance(context).markLogAsSynced(log.getId());
@@ -88,6 +105,10 @@ public class SyncWorker extends Worker {
             List<IotAlert> unsyncedAlerts = IotAlertDatabaseHelper.getInstance(context).getUnsyncedAlerts();
             if (!unsyncedAlerts.isEmpty()) {
                 Response<Void> alertResponse = apiService.syncAlerts(unsyncedAlerts).execute();
+                if (alertResponse.code() == 401) {
+                    sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+                    return Result.success();
+                }
                 if (alertResponse.isSuccessful()) {
                     for (IotAlert alert : unsyncedAlerts) {
                         IotAlertDatabaseHelper.getInstance(context).markAlertAsSynced(alert.getId());
@@ -95,7 +116,6 @@ public class SyncWorker extends Worker {
                 }
             }
 
-            // Update notification on completion
             NotificationCompat.Builder completeNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("UnderSoil Sync")
@@ -109,7 +129,6 @@ public class SyncWorker extends Worker {
             return Result.success();
 
         } catch (Exception e) {
-            // Update notification on failure
             NotificationCompat.Builder errorNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("UnderSoil Sync Failed")
