@@ -93,6 +93,16 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
         }
 
         btnWarningAction.setOnClickListener(v -> performValveToggle(true));
+
+        Button btnScheduleWatering = findViewById(R.id.btnScheduleWatering);
+        btnScheduleWatering.setOnClickListener(v -> {
+            if (sectorId == null || sectorId.trim().isEmpty()) {
+                // e.g. opened from the IoT alert notification rather than the sector list
+                Toast.makeText(this, "Open this screen from a sector to schedule watering", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ScheduleWateringDialog.show(this, sectorId);
+        });
     }
 
     private void setupBottomNavigation() {

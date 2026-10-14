@@ -6,6 +6,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using UnderSoilAPI.Models;
+using UnderSoilAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,7 +18,6 @@ if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 32 || Encoding.UTF8.Get
     throw new InvalidOperationException("Jwt:Key must be configured with at least 32 characters.");
 }
 
-// 1. ALL SERVICES GO HERE FIRST
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -48,6 +48,10 @@ builder.Services.AddSwaggerGen();
 var factory = new MqttFactory();
 var mqttClient = factory.CreateMqttClient();
 builder.Services.AddSingleton<IMqttClient>(mqttClient);
+builder.Services.AddSingleton<ValveCommandPublisher>();
+
+// Opens/closes the valve for synced watering schedules when their time arrives
+builder.Services.AddHostedService<WateringSchedulerService>();
 
 
 builder.Services.AddCors(options =>
@@ -62,14 +66,11 @@ builder.Services.AddCors(options =>
 });
 
 
-// 2. BUILD THE APP HERE - AFTER ALL SERVICES ARE ADDED
 var app = builder.Build();
 
 
 app.UseCors("UnderSoilDashboard");
 
-
-// 3. CONFIGURE EVERYTHING ELSE AFTER THE BUILD
 
 // Ensure database exists
 using (var scope = app.Services.CreateScope())
@@ -80,6 +81,17 @@ using (var scope = app.Services.CreateScope())
     // EnsureCreated() doesn't alter existing tables: add columns introduced after the DB was created
     db.Database.ExecuteSqlRaw(
         "IF COL_LENGTH('ScanLogs', 'Notes') IS NULL ALTER TABLE [ScanLogs] ADD [Notes] NVARCHAR(50) NULL;");
+    db.Database.ExecuteSqlRaw(
+        "IF OBJECT_ID(N'[WateringSchedules]', N'U') IS NULL CREATE TABLE [WateringSchedules] (" +
+        "[Id] NVARCHAR(450) NOT NULL PRIMARY KEY, " +
+        "[UserId] NVARCHAR(MAX) NOT NULL, " +
+        "[SectorId] NVARCHAR(MAX) NOT NULL, " +
+        "[StartTime] BIGINT NOT NULL, " +
+        "[DurationMinutes] INT NOT NULL, " +
+        "[ExpectedVolume] FLOAT NOT NULL, " +
+        "[ActualVolume] FLOAT NOT NULL, " +
+        "[Status] NVARCHAR(MAX) NOT NULL, " +
+        "[IsSynced] BIT NOT NULL);");
 }
 
 // Read MQTT client settings from configuration (appsettings.json / environment)

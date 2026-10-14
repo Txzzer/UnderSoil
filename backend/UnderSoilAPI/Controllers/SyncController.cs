@@ -138,5 +138,42 @@ namespace UnderSoilAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        // POST: api/sync/schedules
+        [HttpPost("schedules")]
+        public async Task<IActionResult> SyncWateringSchedules([FromBody] List<WateringSchedule> incomingSchedules)
+        {
+            if (incomingSchedules == null || incomingSchedules.Count == 0) return Ok();
+
+            foreach (var incoming in incomingSchedules)
+            {
+                var existing = await _context.WateringSchedules.FirstOrDefaultAsync(s => s.Id == incoming.Id);
+                if (existing != null)
+                {
+                    // Status and ActualVolume are owned by the server; once a schedule has started,
+                    // a re-upload from the phone must not reset it back to Pending.
+                    if (existing.Status == WateringSchedule.StatusPending)
+                    {
+                        existing.UserId = incoming.UserId;
+                        existing.SectorId = incoming.SectorId;
+                        existing.StartTime = incoming.StartTime;
+                        existing.DurationMinutes = incoming.DurationMinutes;
+                        existing.ExpectedVolume = incoming.ExpectedVolume;
+                    }
+                    existing.IsSynced = true;
+                    _context.WateringSchedules.Update(existing);
+                }
+                else
+                {
+                    incoming.Status = WateringSchedule.StatusPending;
+                    incoming.ActualVolume = 0;
+                    incoming.IsSynced = true;
+                    await _context.WateringSchedules.AddAsync(incoming);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

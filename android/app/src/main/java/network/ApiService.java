@@ -32,6 +32,9 @@ public interface ApiService {
     @POST("api/sync/alerts")
     Call<Void> syncAlerts(@Body List<com.example.undersoil.data.IotAlert> alerts);
 
+    @POST("api/sync/schedules")
+    Call<Void> syncSchedules(@Body List<com.example.undersoil.data.WateringSchedule> schedules);
+
     @POST("api/auth/login")
     Call<AuthResponse> loginUser(@Body LoginRequest request);
 

@@ -116,6 +116,21 @@ public class SyncWorker extends Worker {
                 }
             }
 
+            // 5. Sync Unsynced Watering Schedules
+            List<WateringSchedule> unsyncedSchedules = WateringScheduleDatabaseHelper.getInstance(context).getUnsyncedSchedules();
+            if (!unsyncedSchedules.isEmpty()) {
+                Response<Void> scheduleResponse = apiService.syncSchedules(unsyncedSchedules).execute();
+                if (scheduleResponse.code() == 401) {
+                    sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
+                    return Result.success();
+                }
+                if (scheduleResponse.isSuccessful()) {
+                    for (WateringSchedule schedule : unsyncedSchedules) {
+                        WateringScheduleDatabaseHelper.getInstance(context).markScheduleAsSynced(schedule.getId());
+                    }
+                }
+            }
+
             NotificationCompat.Builder completeNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("UnderSoil Sync")
