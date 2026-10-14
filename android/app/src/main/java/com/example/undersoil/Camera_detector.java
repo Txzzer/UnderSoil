@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -32,6 +33,8 @@ import org.tensorflow.lite.support.metadata.MetadataExtractor;
 import com.example.undersoil.data.ScanLog;
 import com.example.undersoil.data.ScanLogDatabaseHelper;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
 import java.text.SimpleDateFormat;
@@ -56,6 +59,7 @@ public class Camera_detector extends AppCompatActivity {
     private ProgressBar pbConfidence;
     private Button btnTakePhoto;
     private Button btnPickGallery;
+    private Button btnShowRecommendations;
 
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<String> galleryLauncher;
@@ -63,6 +67,8 @@ public class Camera_detector extends AppCompatActivity {
     private Interpreter tfliteInterpreter;
     private List<String> labels;
     private String cropName;
+    // Last raw model label (e.g. "Tomato___Early_blight"); matches the keys in assets/recommendations.json
+    private String recognizedDisease;
 
     // Single-thread executor for background ML model loading & inference
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -204,10 +210,17 @@ public class Camera_detector extends AppCompatActivity {
 
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
         btnPickGallery = findViewById(R.id.btnPickGallery);
+        btnShowRecommendations = findViewById(R.id.btnShowRecommendations);
 
         backButton.setOnClickListener(v -> finish());
         btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpen());
         btnPickGallery.setOnClickListener(v -> galleryLauncher.launch("image/*"));
+        btnShowRecommendations.setOnClickListener(v -> {
+            if (recognizedDisease == null) return;
+            Intent intent = new Intent(Camera_detector.this, RecommendationsActivity.class);
+            intent.putExtra(RecommendationsActivity.EXTRA_DISEASE_NAME, recognizedDisease);
+            startActivity(intent);
+        });
     }
 
     private void setupCameraLauncher() {
@@ -309,6 +322,9 @@ public class Camera_detector extends AppCompatActivity {
 
         Bitmap scaledBitmap = null;
 
+        // Hide the previous result's button until this scan produces a new one
+        runOnUiThread(() -> btnShowRecommendations.setVisibility(View.GONE));
+
         try {
             // Dynamically calculate input size and output class count using interpreter tensors
             int[] inputShape = tfliteInterpreter.getInputTensor(0).shape();
@@ -365,8 +381,11 @@ public class Camera_detector extends AppCompatActivity {
                 final float finalConfidence = confidencePercent;
 
                 // Post results back to the main UI thread
+                String diseaseLabel = String.format("%s • %s", plantName, conditionName);
+
                 runOnUiThread(() -> {
-                    tvClassLabel.setText(String.format("%s • %s", plantName, conditionName));
+                    recognizedDisease = rawLabel;
+                    tvClassLabel.setText(diseaseLabel);
                     tvConfidenceText.setText(String.format(Locale.US, "%.1f%% Confidence", finalConfidence));
                     pbConfidence.setProgress((int) finalConfidence);
 
@@ -379,10 +398,12 @@ public class Camera_detector extends AppCompatActivity {
                         tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
                         tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
                     }
+
+                    btnShowRecommendations.setVisibility(View.VISIBLE);
                 });
 
                 // Save scan log to SQLite database
-                saveScanLog(plantName, conditionName, confidencePercent);
+                saveScanLog(plantName, conditionName, confidencePercent, bitmap);
             }
 
         } catch (Exception e) {
@@ -396,7 +417,7 @@ public class Camera_detector extends AppCompatActivity {
         }
     }
 
-    private void saveScanLog(String plantName, String conditionName, float confidence) {
+    private void saveScanLog(String plantName, String conditionName, float confidence, Bitmap bitmap) {
         try {
             String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
             String logCrop = (cropName != null && !cropName.trim().isEmpty()) ? cropName : plantName;
@@ -404,10 +425,40 @@ public class Camera_detector extends AppCompatActivity {
             String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
 
             ScanLog scanLog = new ScanLog(logCrop, diagnosisText, confidence, dateStr, userId);
+            scanLog.setImagePath(saveScanImage(bitmap, scanLog.getId()));
             ScanLogDatabaseHelper.getInstance(this).insertLog(scanLog, userId);
             runOnUiThread(() -> Toast.makeText(this, "Scan saved to history", Toast.LENGTH_SHORT).show());
         } catch (Exception e) {
             // Ignore log save failure
+        }
+    }
+
+    /** Saves a downscaled JPEG copy of the scanned image to app storage; returns its path or null. */
+    private String saveScanImage(Bitmap bitmap, String logId) {
+        if (bitmap == null || bitmap.isRecycled()) return null;
+
+        Bitmap toSave = bitmap;
+        try {
+            File dir = new File(getFilesDir(), "scan_images");
+            if (!dir.exists() && !dir.mkdirs()) return null;
+
+            int maxSide = 1024;
+            int longest = Math.max(bitmap.getWidth(), bitmap.getHeight());
+            if (longest > maxSide) {
+                float scale = (float) maxSide / longest;
+                toSave = Bitmap.createScaledBitmap(bitmap,
+                        Math.round(bitmap.getWidth() * scale), Math.round(bitmap.getHeight() * scale), true);
+            }
+
+            File file = new File(dir, logId + ".jpg");
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                toSave.compress(Bitmap.CompressFormat.JPEG, 85, out);
+            }
+            return file.getAbsolutePath();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            if (toSave != bitmap) toSave.recycle();
         }
     }
 

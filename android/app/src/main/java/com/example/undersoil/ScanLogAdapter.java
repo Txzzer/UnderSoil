@@ -1,5 +1,6 @@
 package com.example.undersoil;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,12 @@ public class ScanLogAdapter extends RecyclerView.Adapter<ScanLogAdapter.ViewHold
         holder.tvLogDiagnosis.setText(log.getDiagnosis());
         holder.tvLogConfidence.setText(String.format(Locale.US, "%.1f%% Confidence", log.getConfidence()));
         holder.tvLogDate.setText(log.getDateStr());
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), LogResultActivity.class);
+            intent.putExtra(LogResultActivity.EXTRA_LOG_ID, log.getId());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

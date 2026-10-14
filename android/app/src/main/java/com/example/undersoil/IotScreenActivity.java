@@ -1,39 +1,24 @@
 package com.example.undersoil;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
 
-import network.ApiClient;
-import network.ApiService;
 import network.SensorData;
-import network.ValveRequest;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class IotScreenActivity extends AppCompatActivity {
-
-    private static final long POLLING_INTERVAL_MS = 3000;
+public class IotScreenActivity extends AppCompatActivity implements IoTAlertManager.Listener {
 
     private CircularGaugeView gaugeTemperature;
     private CircularGaugeView gaugeHumidity;
@@ -56,20 +41,8 @@ public class IotScreenActivity extends AppCompatActivity {
     private boolean isValveOpen = false;
     private boolean isTogglingValve = false;
 
-    private AlertDialog flowAlertDialog;
-    private long alertSnoozedUntilMs = 0;
-
     private String sectorId;
     private String sectorName;
-
-    private final Handler pollHandler = new Handler(Looper.getMainLooper());
-    private final Runnable pollRunnable = new Runnable() {
-        @Override
-        public void run() {
-            fetchSensorData();
-            pollHandler.postDelayed(this, POLLING_INTERVAL_MS);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,60 +145,33 @@ public class IotScreenActivity extends AppCompatActivity {
         btnWarningAction.setEnabled(false);
         isTogglingValve = true;
 
-        ValveRequest request = new ValveRequest(targetState);
-        ApiService api = ApiClient.getClient(this).create(ApiService.class);
-
-        api.toggleValve(request).enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                btnToggleValve.setEnabled(true);
-                btnWarningAction.setEnabled(true);
-                isTogglingValve = false;
-
-                if (response.isSuccessful()) {
-                    isValveOpen = targetState;
-                    updateValveUi(isValveOpen);
-                    String state = isValveOpen ? "OPEN" : "CLOSED";
-                    Toast.makeText(IotScreenActivity.this, "Valve toggled to " + state, Toast.LENGTH_SHORT).show();
-
-                    if (flowAlertDialog != null && flowAlertDialog.isShowing()) {
-                        flowAlertDialog.dismiss();
-                    }
-                } else {
-                    Toast.makeText(IotScreenActivity.this, "Server Error: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                btnToggleValve.setEnabled(true);
-                btnWarningAction.setEnabled(true);
-                isTogglingValve = false;
-                Toast.makeText(IotScreenActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        IoTAlertManager.get().toggleValve(targetState);
     }
 
-    private void fetchSensorData() {
-        ApiService api = ApiClient.getClient(this).create(ApiService.class);
-        api.getLatestSensorData().enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<SensorData> call, Response<SensorData> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    SensorData data = response.body();
-                    updateTelemetryUi(data);
-                } else {
-                    tvStreamStatus.setText(String.format(Locale.US, "● Error (%d)", response.code()));
-                    tvStreamStatus.setTextColor(Color.parseColor("#F44336"));
-                }
-            }
+    // ---- IoTAlertManager.Listener ----
 
-            @Override
-            public void onFailure(Call<SensorData> call, Throwable t) {
-                tvStreamStatus.setText("● Offline");
-                tvStreamStatus.setTextColor(Color.parseColor("#F44336"));
-            }
-        });
+    @Override
+    public void onTelemetry(SensorData data) {
+        updateTelemetryUi(data);
+    }
+
+    @Override
+    public void onPollError(String message) {
+        tvStreamStatus.setText("● " + message);
+        tvStreamStatus.setTextColor(Color.parseColor("#F44336"));
+    }
+
+    @Override
+    public void onValveToggleResult(boolean success, boolean targetState, String message) {
+        btnToggleValve.setEnabled(true);
+        btnWarningAction.setEnabled(true);
+        isTogglingValve = false;
+
+        if (success) {
+            isValveOpen = targetState;
+            updateValveUi(isValveOpen);
+        }
+        Toast.makeText(IotScreenActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void updateTelemetryUi(SensorData data) {
@@ -237,7 +183,7 @@ public class IotScreenActivity extends AppCompatActivity {
 
         tvFlowRate.setText(String.format(Locale.US, "%.1f L/min", data.getFlowRateLitersPerMin()));
 
-        checkUnintendedFlowAlert(data);
+        updateFlowWarningUi(data);
 
         if (data.getDeviceId() != null) {
             tvDeviceId.setText(String.format("Device ID: %s", data.getDeviceId()));
@@ -250,7 +196,7 @@ public class IotScreenActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUnintendedFlowAlert(SensorData data) {
+    private void updateFlowWarningUi(SensorData data) {
         boolean isUnintendedFlow = (data.getFlowRateLitersPerMin() > 0.05) && (!data.isValveIsOpen());
 
         if (isUnintendedFlow) {
@@ -261,11 +207,6 @@ public class IotScreenActivity extends AppCompatActivity {
 
             tvFlowStatus.setText("⚠️ LEAK / UNINTENDED FLOW");
             tvFlowStatus.setTextColor(Color.parseColor("#D32F2F"));
-
-            long currentTime = System.currentTimeMillis();
-            if ((flowAlertDialog == null || !flowAlertDialog.isShowing()) && currentTime > alertSnoozedUntilMs) {
-                triggerFlowAlertDialog(data.getFlowRateLitersPerMin());
-            }
         } else {
             cardWarningBanner.setVisibility(View.GONE);
 
@@ -276,40 +217,7 @@ public class IotScreenActivity extends AppCompatActivity {
                 tvFlowStatus.setText("No Flow");
                 tvFlowStatus.setTextColor(Color.parseColor("#757575"));
             }
-
-            if (flowAlertDialog != null && flowAlertDialog.isShowing()) {
-                flowAlertDialog.dismiss();
-            }
-            alertSnoozedUntilMs = 0;
         }
-    }
-
-    private void triggerFlowAlertDialog(double flowRate) {
-        try {
-            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-            }
-        } catch (Exception ignored) {
-        }
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("🚨 Warning: Unintended Flow Detected!");
-        builder.setMessage(String.format(Locale.US,
-                "The sensor is detecting active fluid flow of %.1f L/min, but the valve is reported CLOSED.\n\nThis may indicate a pipe leak, stuck valve actuator, or sensor mismatch.",
-                flowRate));
-        builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("Open Valve Now", (dialog, which) -> performValveToggle(true));
-
-        builder.setNegativeButton("Acknowledge (Snooze 30s)", (dialog, which) -> {
-            alertSnoozedUntilMs = System.currentTimeMillis() + 30_000;
-            dialog.dismiss();
-        });
-
-        flowAlertDialog = builder.create();
-        flowAlertDialog.show();
     }
 
     private void updateValveUi(boolean isOpen) {
@@ -345,12 +253,22 @@ public class IotScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        pollHandler.post(pollRunnable);
+        IoTAlertManager manager = IoTAlertManager.get();
+        manager.addListener(this);
+
+        isTogglingValve = manager.isTogglingValve();
+        btnToggleValve.setEnabled(!isTogglingValve);
+        btnWarningAction.setEnabled(!isTogglingValve);
+
+        SensorData lastData = manager.getLastData();
+        if (lastData != null) {
+            updateTelemetryUi(lastData);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        pollHandler.removeCallbacks(pollRunnable);
+        IoTAlertManager.get().removeListener(this);
     }
 }

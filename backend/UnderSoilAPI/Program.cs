@@ -76,6 +76,10 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<UnderSoilContext>();
     db.Database.EnsureCreated();
+
+    // EnsureCreated() doesn't alter existing tables: add columns introduced after the DB was created
+    db.Database.ExecuteSqlRaw(
+        "IF COL_LENGTH('ScanLogs', 'Notes') IS NULL ALTER TABLE [ScanLogs] ADD [Notes] NVARCHAR(50) NULL;");
 }
 
 // Read MQTT client settings from configuration (appsettings.json / environment)

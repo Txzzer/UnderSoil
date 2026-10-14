@@ -10,6 +10,8 @@ public class ScanLog {
     private float confidence;
     private String dateStr;
     private boolean isSynced;
+    private String notes;
+    private String imagePath;
 
     public ScanLog() {
         this.id = UUID.randomUUID().toString();
@@ -24,6 +26,13 @@ public class ScanLog {
         this.confidence = confidence;
         this.dateStr = dateStr;
         this.isSynced = isSynced;
+    }
+
+    public ScanLog(String id, String userId, String cropName, String diagnosis, float confidence, String dateStr,
+                   boolean isSynced, String notes, String imagePath) {
+        this(id, userId, cropName, diagnosis, confidence, dateStr, isSynced);
+        this.notes = notes;
+        this.imagePath = imagePath;
     }
 
     public ScanLog(String cropName, String diagnosis, float confidence, String dateStr, String userId) {
@@ -90,5 +99,21 @@ public class ScanLog {
 
     public void setSynced(boolean synced) {
         isSynced = synced;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

@@ -97,6 +97,7 @@ namespace UnderSoilAPI.Controllers
                     existing.Diagnosis = incoming.Diagnosis;
                     existing.Confidence = incoming.Confidence;
                     existing.DateStr = incoming.DateStr;
+                    existing.Notes = incoming.Notes;
                     existing.IsSynced = true;
                     _context.ScanLogs.Update(existing);
                 }

@@ -1,0 +1,308 @@
+{
+  "Apple___Apple_scab": {
+    "crop": "Apple",
+    "disease": "Apple Scab",
+    "cause": "Fungus (Venturia inaequalis)",
+    "recommendations": [
+      "Rake up and destroy fallen leaves in autumn to remove the overwintering source of the fungus.",
+      "Prune trees to open the canopy and improve air circulation and drying.",
+      "Apply a protective fungicide (e.g. captan, mancozeb or sulfur) from bud break through early summer, especially during wet spells.",
+      "Avoid overhead irrigation; water at the base of the tree.",
+      "Remove and destroy heavily infected leaves and fruit.",
+      "Plant scab-resistant apple varieties for new plantings."
+    ]
+  },
+  "Apple___Black_rot": {
+    "crop": "Apple",
+    "disease": "Black Rot",
+    "cause": "Fungus (Botryosphaeria obtusa)",
+    "recommendations": [
+      "Prune out dead or cankered branches during the dormant season, cutting well below visible infection.",
+      "Remove mummified fruit from the tree and the ground.",
+      "Destroy pruned wood and infected material; do not leave it near the orchard.",
+      "Apply fungicides such as captan from petal fall through the growing season.",
+      "Avoid wounding trees, and control insects that create entry points.",
+      "Keep trees vigorous with proper watering and fertilization."
+    ]
+  },
+  "Apple___Cedar_apple_rust": {
+    "crop": "Apple",
+    "disease": "Cedar Apple Rust",
+    "cause": "Fungus (Gymnosporangium juniperi-virginianae)",
+    "recommendations": [
+      "Remove nearby juniper or eastern red cedar trees (alternate hosts) where practical, ideally within a few hundred metres.",
+      "Cut off orange, gelatinous galls from junipers in late winter before they release spores.",
+      "Apply a protective fungicide (e.g. myclobutanil or mancozeb) from pink bud stage through early summer.",
+      "Plant rust-resistant apple varieties.",
+      "Improve air circulation by pruning so leaves dry quickly."
+    ]
+  },
+  "Cherry_(including_sour)___Powdery_mildew": {
+    "crop": "Cherry",
+    "disease": "Powdery Mildew",
+    "cause": "Fungus (Podosphaera clandestina)",
+    "recommendations": [
+      "Prune to open the canopy and improve air flow and sunlight penetration.",
+      "Remove and destroy infected shoots and root suckers.",
+      "Apply sulfur, potassium bicarbonate or a registered fungicide at the first sign of white powdery growth.",
+      "Avoid excessive nitrogen fertilizer, which encourages susceptible new growth.",
+      "Water at the base of the tree rather than overhead.",
+      "Rotate fungicide groups to prevent resistance."
+    ]
+  },
+  "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+    "crop": "Corn (Maize)",
+    "disease": "Gray Leaf Spot (Cercospora Leaf Spot)",
+    "cause": "Fungus (Cercospora zeae-maydis)",
+    "recommendations": [
+      "Plant resistant or tolerant hybrids.",
+      "Rotate with non-host crops (e.g. soybeans, legumes) for at least one season.",
+      "Till or bury crop residue to reduce the fungus that survives on old stalks and leaves.",
+      "Apply a foliar fungicide (strobilurin or triazole) if lesions appear on the upper leaves before or at tasseling.",
+      "Avoid dense planting to improve air movement and reduce leaf wetness."
+    ]
+  },
+  "Corn_(maize)___Common_rust_": {
+    "crop": "Corn (Maize)",
+    "disease": "Common Rust",
+    "cause": "Fungus (Puccinia sorghi)",
+    "recommendations": [
+      "Plant rust-resistant hybrids.",
+      "Plant early so the crop matures before rust pressure builds.",
+      "Scout fields regularly, especially during cool, humid weather.",
+      "Apply a foliar fungicide (triazole or strobilurin) if pustules spread to the upper leaves before tasseling.",
+      "Ensure balanced fertilization to keep plants vigorous."
+    ]
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "crop": "Corn (Maize)",
+    "disease": "Northern Leaf Blight",
+    "cause": "Fungus (Exserohilum turcicum)",
+    "recommendations": [
+      "Plant hybrids with resistance to northern leaf blight.",
+      "Rotate crops away from corn for at least one year.",
+      "Bury or break down infected residue through tillage.",
+      "Apply a foliar fungicide around tasseling if lesions are present on the upper leaves.",
+      "Scout fields during periods of moderate temperatures and heavy dew."
+    ]
+  },
+  "Grape___Black_rot": {
+    "crop": "Grape",
+    "disease": "Black Rot",
+    "cause": "Fungus (Guignardia bidwellii)",
+    "recommendations": [
+      "Remove and destroy mummified berries from vines and the ground.",
+      "Prune out infected canes and tendrils during the dormant season.",
+      "Train and prune vines to improve air circulation and sunlight exposure.",
+      "Apply fungicides (e.g. mancozeb, captan or myclobutanil) from early shoot growth until berries begin to colour.",
+      "Control weeds under the vines to reduce humidity."
+    ]
+  },
+  "Grape___Esca_(Black_Measles)": {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "cause": "Fungal trunk disease complex (Phaeomoniella, Phaeoacremonium and others)",
+    "recommendations": [
+      "Prune during dry weather and as late in the dormant season as practical to reduce infection of wounds.",
+      "Protect large pruning wounds with a wound sealant or registered pruning-wound protectant.",
+      "Remove and destroy severely infected vines and dead wood.",
+      "Consider retraining or trunk renewal (cutting back to a healthy sucker) for affected vines.",
+      "Avoid water stress and keep vines healthy with balanced nutrition.",
+      "Disinfect pruning tools between vines."
+    ]
+  },
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+    "crop": "Grape",
+    "disease": "Leaf Blight (Isariopsis Leaf Spot)",
+    "cause": "Fungus (Pseudocercospora vitis)",
+    "recommendations": [
+      "Remove and destroy fallen infected leaves.",
+      "Prune and train vines to improve air circulation.",
+      "Apply a copper-based or mancozeb fungicide when symptoms first appear.",
+      "Avoid overhead irrigation and wetting the leaves.",
+      "Keep the vineyard floor free of weeds."
+    ]
+  },
+  "Peach___Bacterial_spot": {
+    "crop": "Peach",
+    "disease": "Bacterial Spot",
+    "cause": "Bacterium (Xanthomonas arboricola pv. pruni)",
+    "recommendations": [
+      "Plant resistant or less susceptible varieties.",
+      "Apply copper-based bactericides during dormancy and early in the season, following label rates to avoid leaf injury.",
+      "Prune to improve air circulation and remove infected twigs.",
+      "Avoid excessive nitrogen fertilization.",
+      "Plant windbreaks on sandy, windy sites, as wind-blown sand creates entry wounds."
+    ]
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "crop": "Bell Pepper",
+    "disease": "Bacterial Spot",
+    "cause": "Bacterium (Xanthomonas spp.)",
+    "recommendations": [
+      "Use certified disease-free seed and transplants.",
+      "Remove and destroy infected plants and plant debris.",
+      "Rotate with non-host crops (avoid tomato, pepper and eggplant) for 2–3 years.",
+      "Apply copper-based sprays as a preventive measure, especially in warm, wet weather.",
+      "Avoid overhead irrigation and working with plants when they are wet.",
+      "Plant resistant varieties where available."
+    ]
+  },
+  "Potato___Early_blight": {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "cause": "Fungus (Alternaria solani)",
+    "recommendations": [
+      "Rotate crops away from potatoes and tomatoes for at least 2 years.",
+      "Remove and destroy infected leaves and plant debris after harvest.",
+      "Apply fungicides such as chlorothalonil or mancozeb when the first spots appear.",
+      "Keep plants well fertilized and watered to reduce stress.",
+      "Water at the base of plants, preferably in the morning.",
+      "Plant certified disease-free seed potatoes."
+    ]
+  },
+  "Potato___Late_blight": {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "cause": "Oomycete (Phytophthora infestans)",
+    "recommendations": [
+      "Act quickly: late blight spreads rapidly in cool, wet weather.",
+      "Remove and destroy infected plants immediately; do not compost them.",
+      "Apply protective fungicides (e.g. chlorothalonil, mancozeb, or late-blight-specific products) on a regular schedule during favourable weather.",
+      "Plant certified disease-free seed potatoes and resistant varieties.",
+      "Hill soil well around plants to protect tubers from infection.",
+      "Destroy volunteer potatoes and cull piles.",
+      "Harvest only after vines are fully dead to avoid tuber infection."
+    ]
+  },
+  "Strawberry___Leaf_scorch": {
+    "crop": "Strawberry",
+    "disease": "Leaf Scorch",
+    "cause": "Fungus (Diplocarpon earlianum)",
+    "recommendations": [
+      "Remove and destroy infected leaves, especially after harvest.",
+      "Plant resistant varieties and certified disease-free plants.",
+      "Space plants for good air circulation and control weeds.",
+      "Use drip irrigation instead of overhead watering.",
+      "Renovate beds after harvest and replant every few years.",
+      "Apply a registered fungicide (e.g. captan) if the disease is severe."
+    ]
+  },
+  "Tomato___Bacterial_spot": {
+    "crop": "Tomato",
+    "disease": "Bacterial Spot",
+    "cause": "Bacterium (Xanthomonas spp.)",
+    "recommendations": [
+      "Use certified disease-free seed and transplants.",
+      "Remove and destroy infected plants and debris.",
+      "Rotate away from tomato, pepper and eggplant for 2–3 years.",
+      "Apply copper-based sprays preventively, especially in warm, wet conditions.",
+      "Avoid overhead irrigation and handling wet plants.",
+      "Disinfect stakes, cages and tools between seasons."
+    ]
+  },
+  "Tomato___Early_blight": {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "cause": "Fungus (Alternaria solani)",
+    "recommendations": [
+      "Remove lower leaves showing target-like brown spots.",
+      "Mulch around plants to stop soil splashing onto leaves.",
+      "Stake or cage plants to improve air flow.",
+      "Apply fungicides such as chlorothalonil, mancozeb or copper when symptoms first appear.",
+      "Rotate crops away from tomatoes and potatoes for at least 2 years.",
+      "Water at the base of plants in the morning."
+    ]
+  },
+  "Tomato___Late_blight": {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "cause": "Oomycete (Phytophthora infestans)",
+    "recommendations": [
+      "Remove and destroy infected plants immediately; bag them rather than composting.",
+      "Apply protective fungicides (e.g. chlorothalonil, mancozeb or copper) during cool, wet weather.",
+      "Avoid overhead watering and keep foliage dry.",
+      "Space and stake plants for good air circulation.",
+      "Plant resistant varieties.",
+      "Keep tomatoes away from potatoes, which share the same disease."
+    ]
+  },
+  "Tomato___Leaf_Mold": {
+    "crop": "Tomato",
+    "disease": "Leaf Mold",
+    "cause": "Fungus (Passalora fulva)",
+    "recommendations": [
+      "Reduce humidity: ventilate greenhouses and tunnels well.",
+      "Space and prune plants to improve air circulation.",
+      "Remove and destroy infected leaves.",
+      "Water at the base and avoid wetting leaves.",
+      "Apply a registered fungicide (e.g. chlorothalonil or copper) if the disease spreads.",
+      "Plant resistant varieties."
+    ]
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "crop": "Tomato",
+    "disease": "Septoria Leaf Spot",
+    "cause": "Fungus (Septoria lycopersici)",
+    "recommendations": [
+      "Remove infected lower leaves as soon as spots appear.",
+      "Mulch to prevent soil splash onto leaves.",
+      "Avoid overhead irrigation.",
+      "Apply fungicides such as chlorothalonil, mancozeb or copper at first sign of disease.",
+      "Rotate crops for at least 1–2 years and remove plant debris after harvest.",
+      "Control weeds such as nightshade that can host the fungus."
+    ]
+  },
+  "Tomato___Spider_mites Two-spotted_spider_mite": {
+    "crop": "Tomato",
+    "disease": "Two-Spotted Spider Mite",
+    "cause": "Pest (Tetranychus urticae)",
+    "recommendations": [
+      "Spray the undersides of leaves with a strong jet of water to knock mites off.",
+      "Apply insecticidal soap, horticultural oil or neem oil, covering leaf undersides thoroughly.",
+      "Use a registered miticide if infestations are severe, rotating products to prevent resistance.",
+      "Encourage or release natural predators such as predatory mites.",
+      "Avoid broad-spectrum insecticides that kill beneficial insects.",
+      "Keep plants well watered, as drought-stressed plants are more susceptible.",
+      "Remove heavily infested leaves or plants."
+    ]
+  },
+  "Tomato___Target_Spot": {
+    "crop": "Tomato",
+    "disease": "Target Spot",
+    "cause": "Fungus (Corynespora cassiicola)",
+    "recommendations": [
+      "Prune lower leaves and improve air circulation around plants.",
+      "Remove and destroy infected leaves and crop debris.",
+      "Avoid overhead irrigation.",
+      "Apply fungicides such as chlorothalonil, mancozeb or azoxystrobin when symptoms appear.",
+      "Rotate crops away from tomatoes for at least 2 years."
+    ]
+  },
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+    "crop": "Tomato",
+    "disease": "Tomato Yellow Leaf Curl Virus",
+    "cause": "Virus (TYLCV), spread by whiteflies",
+    "recommendations": [
+      "Remove and destroy infected plants immediately; there is no cure.",
+      "Control whiteflies with yellow sticky traps, insecticidal soap, neem oil or registered insecticides.",
+      "Use insect-proof netting over seedlings and in tunnels.",
+      "Plant TYLCV-resistant varieties.",
+      "Control weeds that host whiteflies.",
+      "Use reflective mulch to deter whiteflies."
+    ]
+  },
+  "Tomato___Tomato_mosaic_virus": {
+    "crop": "Tomato",
+    "disease": "Tomato Mosaic Virus",
+    "cause": "Virus (ToMV), spread by contact, tools and seed",
+    "recommendations": [
+      "Remove and destroy infected plants; there is no cure.",
+      "Wash hands and disinfect tools frequently, especially when moving between plants.",
+      "Use certified virus-free seed and resistant varieties.",
+      "Avoid using tobacco products near plants, as related viruses can spread from them.",
+      "Control weeds that may host the virus.",
+      "Do not save seed from infected plants."
+    ]
+  }
+}

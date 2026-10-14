@@ -1,4 +1,6 @@
-﻿namespace UnderSoilAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UnderSoilAPI.Models
 {
     public class ScanLog
     {
@@ -9,5 +11,8 @@
         public float Confidence { get; set; }
         public string DateStr { get; set; } = string.Empty;
         public bool IsSynced { get; set; } = true;
+
+        [MaxLength(50)]
+        public string? Notes { get; set; }
     }
 }
