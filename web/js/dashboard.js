@@ -24,7 +24,7 @@ async function loadSectorCount() {
 async function loadDeviceCount() {
   const el = document.getElementById("fact-devices");
   try {
-    const readings = await apiGet("/api/telemetry/latest");
+    const readings = await apiGet("/api/v1/Telemetry/latest-per-device");
     const online = readings.filter(r => {
       const ts = r.timestamp ?? r.Timestamp;
       return ts && Date.now() - new Date(ts).getTime() < DASHBOARD_ONLINE_THRESHOLD_MS;

@@ -1,5 +1,5 @@
 // Devices page — read-only, data owned by the farmer's mobile app / ESP32s.
-// Pulls GET /api/telemetry/latest (most recent reading per device) and
+// Pulls GET /api/v1/Telemetry/latest-per-device (most recent reading per device) and
 // renders it into the table. "Online" is derived client-side from how
 // recent the last reading is, since the backend doesn't track a live
 // connection state — anything seen in the last 10 minutes counts as online.
@@ -11,7 +11,7 @@ const ONLINE_THRESHOLD_MS = 10 * 60 * 1000;
   const subtitle = document.getElementById("devices-subtitle");
 
   try {
-    const readings = await apiGet("/api/telemetry/latest");
+    const readings = await apiGet("/api/v1/Telemetry/latest-per-device");
 
     if (!readings.length) {
       body.innerHTML = `<tr><td colspan="7">No devices have reported in yet.</td></tr>`;
