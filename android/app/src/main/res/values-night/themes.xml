@@ -1,7 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Undersoil" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!--
+        Dark mode: colors come from values-night/colors.xml (charcoal / slate
+        surfaces, muted green accents). Only the light/dark window flags differ.
+    -->
+    <style name="Base.Theme.Undersoil" parent="AgriTech.Theme">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:isLightTheme">false</item>
+        <item name="isLightTheme">false</item>
     </style>
 </resources>

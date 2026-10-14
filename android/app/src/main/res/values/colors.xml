@@ -1,40 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ============================================================ -->
+    <!-- Organic Modern palette - LIGHT                                -->
+    <!-- Dark-mode overrides live in values-night/colors.xml.          -->
+    <!-- Token names are kept stable because code references them;    -->
+    <!-- the comment on each line describes its actual role.           -->
+    <!-- ============================================================ -->
+
+    <!-- Surfaces -->
+    <color name="us_bg">#F5F6F2</color>               <!-- soft off-white page -->
+    <color name="us_surface">#FFFFFF</color>
+    <color name="us_surface_card">#FFFFFF</color>
+    <color name="us_surface_raised">#EDF0EA</color>   <!-- light grey-green tint -->
+    <color name="us_surface_input">#F3F5F0</color>
+    <color name="us_scrim">#66141A16</color>
+
+    <!-- Outlines -->
+    <color name="us_outline">#E2E6DF</color>
+    <color name="us_outline_strong">#C4CBC1</color>
+    <!-- Formerly neon edges; now plain hairlines -->
+    <color name="us_outline_glow">@color/us_outline</color>
+    <color name="us_outline_glow_aqua">@color/us_outline</color>
+
+    <!-- Text -->
+    <color name="us_text_primary">#1E2621</color>
+    <color name="us_text_secondary">#58625C</color>
+    <color name="us_text_hint">#89928C</color>
+    <color name="us_text_disabled">#B3B9B4</color>
+
+    <!-- Primary: Deep Forest Green -->
+    <color name="us_bio_green">#2F6B3A</color>
+    <color name="us_bio_green_dim">#24542D</color>
+    <color name="us_bio_green_container">#DDEBDD</color>
+    <color name="us_bio_green_glow">#1F2F6B3A</color>
+    <color name="us_on_bio_green">#FFFFFF</color>
+    <color name="us_on_bio_green_container">#163A1E</color>
+
+    <!-- Secondary: calm Water Blue (irrigation) -->
+    <color name="us_aqua">#2D7398</color>
+    <color name="us_aqua_dim">#245C7A</color>
+    <color name="us_aqua_container">#DCEBF3</color>
+    <color name="us_on_aqua">#FFFFFF</color>
+    <color name="us_on_aqua_container">#123547</color>
+
+    <!-- Tertiary: Ochre / clay (warnings, humidity) -->
+    <color name="us_amber">#B8742A</color>
+    <color name="us_amber_container">#F6E8D6</color>
+
+    <!-- Error: soft Terracotta -->
+    <color name="us_danger">#B34A3C</color>
+    <color name="us_danger_container">#F8E1DC</color>
+    <color name="us_on_danger">#FFFFFF</color>
+
+    <!-- Harvest gold (sunlight) -->
+    <color name="us_violet">#B88A17</color>
+    <color name="us_sun_container">#F6EECF</color>
+
+    <!-- Sage (soft accent: nav indicator, chips) -->
+    <color name="us_sage">#DCE6D6</color>
+
+    <!-- Hero / photo placeholder fills -->
+    <color name="us_hero_start">#E4EFE3</color>
+    <color name="us_hero_end">#DCEAF0</color>
+
+    <!-- Gauge zone tints (CircularGaugeView) -->
+    <color name="gauge_green_faint">#D6E6D6</color>
+    <color name="gauge_orange_faint">#F1E0C8</color>
+    <color name="gauge_red_faint">#F2D3CD</color>
+
+    <!-- ============================================================ -->
+    <!-- Legacy names (kept so existing references still resolve)      -->
+    <!-- ============================================================ -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#1E88E5</color>
+    <color name="primary">@color/us_bio_green</color>
 
-    <color name="gauge_green">#4CAF50</color>
-    <color name="gauge_orange">#FF9800</color>
-    <color name="gauge_red">#F44336</color>
-    <color name="gauge_track">#ECEFF1</color>
+    <color name="gauge_green">@color/us_bio_green</color>
+    <color name="gauge_orange">@color/us_amber</color>
+    <color name="gauge_red">@color/us_danger</color>
+    <color name="gauge_track">@color/us_surface_raised</color>
 
-    <color name="flow_rate_blue">#0288D1</color>
-    <color name="valve_open">#2E7D32</color>
-    <color name="valve_closed">#C62828</color>
-    <color name="valve_open_bg">#E8F5E9</color>
-    <color name="valve_closed_bg">#FFEBEE</color>
+    <color name="flow_rate_blue">@color/us_aqua</color>
+    <color name="valve_open">@color/us_bio_green</color>
+    <color name="valve_closed">@color/us_danger</color>
+    <color name="valve_open_bg">@color/us_bio_green_container</color>
+    <color name="valve_closed_bg">@color/us_danger_container</color>
 
-    <color name="status_connected">#4CAF50</color>
-    <color name="status_error">#F44336</color>
+    <color name="status_connected">@color/us_bio_green</color>
+    <color name="status_error">@color/us_danger</color>
     <color name="light_blue_50">#FFE1F5FE</color>
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
 
-    <color name="main_green">#1F4E20</color>
-    <color name="bg_light_green">#F4FAF4</color>
-    <color name="text_dark">#1A2530</color>
-    <color name="text_main_dark">#003300</color>
-    <color name="text_sub">#707B81</color>
-    <color name="warning_red">#AE0C0C</color>
-    <color name="input_text">#1A3025</color>
-    <color name="light_grey">#E5E5E5</color>
-    <color name="border_grey">#1A000000</color>
-    <color name="card_grey">#D9D9D9</color>
-    <color name="sensor_activate_teal">#489FA9</color>
-    <color name="water_color">#FFD400</color>
-    <color name="sunlight_color">#725AC1</color>
-    <color name="fertilizer_color">#FF6F61</color>
-    <color name="humidity_color">#F28B2B</color>
+    <color name="main_green">@color/us_bio_green</color>
+    <color name="bg_light_green">@color/us_bg</color>
+    <color name="text_dark">@color/us_text_primary</color>
+    <color name="text_main_dark">@color/us_text_primary</color>
+    <color name="text_sub">@color/us_text_secondary</color>
+    <color name="warning_red">@color/us_danger</color>
+    <color name="input_text">@color/us_text_primary</color>
+    <color name="light_grey">@color/us_outline</color>
+    <color name="border_grey">@color/us_outline</color>
+    <color name="card_grey">@color/us_surface_input</color>
+    <color name="sensor_activate_teal">@color/us_aqua</color>
+    <color name="water_color">@color/us_aqua</color>
+    <color name="sunlight_color">@color/us_violet</color>
+    <color name="fertilizer_color">@color/us_danger</color>
+    <color name="humidity_color">@color/us_amber</color>
 </resources>

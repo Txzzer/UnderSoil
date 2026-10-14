@@ -3,7 +3,6 @@ package com.example.undersoil;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -12,6 +11,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.Locale;
 
@@ -37,14 +37,15 @@ public class CircularGaugeView extends View {
     private float greenMax = 30f;
     private float orangeMax = 70f;
 
-    private final int greenColor = Color.parseColor("#4CAF50");  // Green
-    private final int orangeColor = Color.parseColor("#FF9800"); // Orange
-    private final int redColor = Color.parseColor("#F44336");    // Red
+    // Organic Modern palette, resolved from res/values(-night)/colors.xml so it follows light/dark mode
+    private final int greenColor = ContextCompat.getColor(getContext(), R.color.gauge_green);
+    private final int orangeColor = ContextCompat.getColor(getContext(), R.color.gauge_orange);
+    private final int redColor = ContextCompat.getColor(getContext(), R.color.gauge_red);
 
-    private final int faintGreen = Color.parseColor("#C8E6C9");
-    private final int faintOrange = Color.parseColor("#FFE0B2");
-    private final int faintRed = Color.parseColor("#FFCDD2");
-    private final int trackColor = Color.parseColor("#ECEFF1");
+    private final int faintGreen = ContextCompat.getColor(getContext(), R.color.gauge_green_faint);
+    private final int faintOrange = ContextCompat.getColor(getContext(), R.color.gauge_orange_faint);
+    private final int faintRed = ContextCompat.getColor(getContext(), R.color.gauge_red_faint);
+    private final int trackColor = ContextCompat.getColor(getContext(), R.color.gauge_track);
 
     private ValueAnimator animator;
 
@@ -83,16 +84,16 @@ public class CircularGaugeView extends View {
         progressPaint.setColor(greenColor);
 
         valueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        valueTextPaint.setColor(Color.parseColor("#212121"));
+        valueTextPaint.setColor(ContextCompat.getColor(getContext(), R.color.us_text_primary));
         valueTextPaint.setFakeBoldText(true);
 
         unitTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        unitTextPaint.setColor(Color.parseColor("#757575"));
+        unitTextPaint.setColor(ContextCompat.getColor(getContext(), R.color.us_text_secondary));
         unitTextPaint.setFakeBoldText(true);
 
         titleTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titleTextPaint.setTextAlign(Paint.Align.CENTER);
-        titleTextPaint.setColor(Color.parseColor("#757575"));
+        titleTextPaint.setColor(ContextCompat.getColor(getContext(), R.color.us_text_secondary));
         titleTextPaint.setFakeBoldText(true);
     }
 

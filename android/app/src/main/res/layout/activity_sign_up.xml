@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green"
+    android:background="@drawable/bg_screen_gradient"
     android:padding="20dp">
 
     <ImageButton
@@ -51,8 +51,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:background="@drawable/bg_pill_white"
-        android:elevation="1dp"
+        android:background="@drawable/bg_input_field"
         android:fontFamily="sans-serif"
         android:hint="John Farmer"
         android:inputType="textPersonName|textCapWords"
@@ -83,8 +82,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:background="@drawable/bg_pill_white"
-        android:elevation="1dp"
+        android:background="@drawable/bg_input_field"
         android:fontFamily="sans-serif"
         android:hint="farmer@undersoil.com"
         android:inputType="textEmailAddress"
@@ -115,8 +113,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:background="@drawable/bg_pill_white"
-        android:elevation="1dp"
+        android:background="@drawable/bg_input_field"
         android:fontFamily="sans-serif"
         android:hint="Create password"
         android:inputType="textPassword"
@@ -147,8 +144,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:background="@drawable/bg_pill_white"
-        android:elevation="1dp"
+        android:background="@drawable/bg_input_field"
         android:fontFamily="sans-serif"
         android:hint="Repeat password"
         android:inputType="textPassword"
@@ -161,19 +157,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/confirmPasswordLabel" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/signUpButton"
+        style="@style/Widget.AgriTech.Button"
+        android:minHeight="56dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:background="@drawable/bg_pill_green"
-        android:elevation="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingVertical="14dp"
         android:text="Register Account"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/confirmPasswordInput" />

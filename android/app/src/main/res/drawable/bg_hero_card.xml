@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Soft, flat fill for hero / summary cards -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:endColor="@color/us_hero_end"
+        android:startColor="@color/us_hero_start" />
+    <corners android:radius="16dp" />
+</shape>

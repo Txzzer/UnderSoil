@@ -28,6 +28,10 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NOTES = "notes";
     public static final String COLUMN_IMAGE_PATH = "image_path";
 
+    // Dates are stored as "yyyy-MM-dd HH:mm", so they sort chronologically as text;
+    // rowid breaks ties between scans taken within the same minute.
+    private static final String NEWEST_FIRST = COLUMN_DATE + " DESC, rowid DESC";
+
     private static ScanLogDatabaseHelper instance;
 
     public static synchronized ScanLogDatabaseHelper getInstance(Context context) {
@@ -106,9 +110,30 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
                 new String[]{cropName.trim(), userId},
                 null,
                 null,
-                COLUMN_ID + " DESC"
+                NEWEST_FIRST
         );
         return readLogs(cursor);
+    }
+
+    /** Returns the most recent scan for the crop, or null if it has never been scanned. */
+    public ScanLog getLatestLogByCropName(String cropName, String userId) {
+        if (cropName == null || cropName.trim().isEmpty()) {
+            return null;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(
+                TABLE_LOGS,
+                null,
+                "LOWER(" + COLUMN_CROP_NAME + ") = LOWER(?) AND " + COLUMN_USER_ID + " = ?",
+                new String[]{cropName.trim(), userId},
+                null,
+                null,
+                NEWEST_FIRST,
+                "1"
+        );
+        List<ScanLog> logs = readLogs(cursor);
+        return logs.isEmpty() ? null : logs.get(0);
     }
 
     public ScanLog getLogById(String logId) {

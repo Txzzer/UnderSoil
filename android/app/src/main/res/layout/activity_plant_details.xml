@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green">
+    android:background="@color/us_bg">
 
     <ImageView
         android:id="@+id/heroImage"
@@ -22,10 +22,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
         android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="10dp"
+        android:padding="12dp"
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
+        app:tint="@color/us_text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,17 +59,17 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
                     android:text="Solanum lycopersicum (Tomato)"
-                    android:textColor="@color/main_green"
-                    android:textSize="20sp" />
+                    android:textColor="@color/us_text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:fontFamily="sans-serif-medium"
                     android:text="Description"
-                    android:textColor="@color/main_green"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AgriTech.Label"
+                    android:textColor="@color/us_bio_green" />
 
                 <TextView
                     android:id="@+id/tvPlantDescription"
@@ -91,10 +91,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="sans-serif-medium"
                     android:text="Favored Conditions"
-                    android:textColor="@color/main_green"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AgriTech.Label"
+                    android:textColor="@color/us_bio_green" />
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -111,10 +110,14 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_square_water" />
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_square_water"
+                            android:importantForAccessibility="no"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_drop"
+                            app:tint="@color/us_aqua" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -127,7 +130,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-medium"
                                 android:text="Water"
-                                android:textColor="#D4A017"
+                                android:textColor="@color/water_color"
                                 android:textSize="13sp" />
 
                             <TextView
@@ -149,10 +152,14 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_square_sunlight" />
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_square_sunlight"
+                            android:importantForAccessibility="no"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_sun"
+                            app:tint="@color/us_violet" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -187,10 +194,14 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_square_fertilizer" />
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_square_fertilizer"
+                            android:importantForAccessibility="no"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_leaf_scan"
+                            app:tint="@color/us_danger" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -225,10 +236,14 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <View
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_square_humidity" />
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_square_humidity"
+                            android:importantForAccessibility="no"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_humidity"
+                            app:tint="@color/us_amber" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -256,18 +271,16 @@
                     </LinearLayout>
                 </GridLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/addToPlantsButton"
+                    style="@style/Widget.AgriTech.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_pill_green"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingVertical="16dp"
+                    android:layout_marginTop="24dp"
+                    android:minHeight="56dp"
                     android:text="Add to My Garden"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="textStart" />
 
             </LinearLayout>
         </LinearLayout>

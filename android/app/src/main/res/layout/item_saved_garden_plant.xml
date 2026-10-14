@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="14dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp">
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,12 +14,16 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPlantPhoto"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:background="@drawable/bg_photo_placeholder"
-            android:contentDescription="Plant photo" />
+            android:contentDescription="Plant photo"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriTech.Small"
+            app:strokeColor="@color/us_outline"
+            app:strokeWidth="1dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,58 +36,73 @@
                 android:id="@+id/tvPlantName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
                 android:text="Tomato"
-                android:textColor="@color/text_dark"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AgriTech.Title"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvPlantStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
                 android:text="Healthy"
-                android:textColor="@color/text_sub"
-                android:textSize="12sp" />
+                android:textColor="@color/us_bio_green"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:orientation="horizontal">
 
-                <View
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:background="@drawable/bg_square_water" />
+                <ImageView
+                    android:id="@+id/ivConditionPrimary"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bg_square_water"
+                    android:contentDescription="Water"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_drop"
+                    app:tint="@color/us_aqua" />
 
                 <View
                     android:layout_width="6dp"
                     android:layout_height="1dp" />
 
-                <View
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:background="@drawable/bg_square_sunlight" />
+                <ImageView
+                    android:id="@+id/ivConditionSecondary"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bg_square_sunlight"
+                    android:contentDescription="Sunlight"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_sun"
+                    app:tint="@color/us_violet" />
             </LinearLayout>
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginEnd="4dp"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete plant"
+            android:padding="10dp"
             android:src="@drawable/ic_trash"
-            android:contentDescription="Delete plant" />
+            app:tint="@color/us_danger" />
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:contentDescription="View details"
             android:src="@drawable/ic_chevron_right"
-            android:contentDescription="View details" />
+            app:tint="@color/us_bio_green" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

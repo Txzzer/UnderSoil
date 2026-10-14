@@ -6,61 +6,70 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA">
+    android:background="@drawable/bg_screen_gradient">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
-        android:fillViewport="true">
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="112dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingTop="20dp">
 
             <!-- Top Navigation Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/backButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:background="@drawable/bg_circle_white"
-                    android:elevation="2dp"
-                    android:padding="10dp"
+                    android:contentDescription="Back"
+                    android:padding="12dp"
                     android:src="@drawable/ic_back_arrow"
-                    android:contentDescription="Back" />
+                    app:tint="@color/us_text_primary" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="IoT Dashboard"
-                    android:textColor="#212121"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Control centre"
+                        android:textAppearance="@style/TextAppearance.AgriTech.Label"
+                        android:textColor="@color/us_aqua" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IoT Dashboard"
+                        android:textAppearance="@style/TextAppearance.AgriTech.Headline" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Leak / Unintended Flow Warning Banner Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardWarningBanner"
+                style="@style/Widget.AgriTech.CardView.Alert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                app:cardBackgroundColor="#FFEBEE"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:strokeColor="#D32F2F"
-                app:strokeWidth="2dp">
+                app:cardBackgroundColor="@color/us_danger_container">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -69,12 +78,10 @@
                     android:orientation="horizontal"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        style="@style/Widget.AgriTech.IconTile.Danger"
                         android:layout_marginEnd="12dp"
-                        android:text="🚨"
-                        android:textSize="26sp" />
+                        android:src="@drawable/ic_flow_rate" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -85,8 +92,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
                             android:text="UNINTENDED FLOW DETECTED!"
-                            android:textColor="#B71C1C"
+                            android:textColor="@color/us_danger"
                             android:textSize="13sp"
                             android:textStyle="bold" />
 
@@ -96,37 +104,35 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="Active flow detected while valve is CLOSED."
-                            android:textColor="#C62828"
+                            android:textColor="@color/us_text_primary"
                             android:textSize="12sp" />
 
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnWarningAction"
-                        style="@style/Widget.Material3.Button.TextButton"
+                        style="@style/Widget.AgriTech.Button.Text.Danger"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="OPEN VALVE"
-                        android:textColor="#B71C1C"
-                        android:textStyle="bold" />
+                        android:text="OPEN VALVE" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Top Header Card -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.AgriTech.CardView.Aqua"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardBackgroundColor="@android:color/transparent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_hero_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="18dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -140,9 +146,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="UnderSoil Telemetry"
-                            android:textColor="#212121"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.AgriTech.Title"
+                            android:textSize="19sp" />
 
                         <TextView
                             android:id="@+id/tvStreamStatus"
@@ -161,18 +166,24 @@
                         android:id="@+id/tvDeviceId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="8dp"
+                        android:drawableStart="@drawable/ic_sector_node"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/us_aqua"
+                        android:fontFamily="monospace"
+                        android:gravity="center_vertical"
                         android:text="Device ID: Connecting..."
-                        android:textColor="#757575"
-                        android:textSize="14sp" />
+                        android:textColor="@color/us_text_secondary"
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tvLastUpdated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="monospace"
                         android:text="Last update: Never"
-                        android:textColor="#9E9E9E"
+                        android:textColor="@color/us_text_hint"
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -183,80 +194,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
                 <!-- Temperature Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@color/white">
+                    android:layout_weight="1">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="12dp">
+
+                        <ImageView
+                            style="@style/Widget.AgriTech.IconTile.Amber"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_thermometer" />
 
                         <com.example.undersoil.CircularGaugeView
                             android:id="@+id/gaugeTemperature"
                             android:layout_width="140dp"
-                            android:layout_height="140dp" />
-
-                    </LinearLayout>
+                            android:layout_height="140dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="16dp" />
+                    </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Humidity Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@color/white">
+                    android:layout_weight="1">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="12dp">
+
+                        <ImageView
+                            style="@style/Widget.AgriTech.IconTile.Aqua"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_humidity" />
 
                         <com.example.undersoil.CircularGaugeView
                             android:id="@+id/gaugeHumidity"
                             android:layout_width="140dp"
-                            android:layout_height="140dp" />
-
-                    </LinearLayout>
+                            android:layout_height="140dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="16dp" />
+                    </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
             <!-- Flow Rate Card -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.AgriTech.CardView.Aqua"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
+
+                    <ImageView
+                        style="@style/Widget.AgriTech.IconTile.Aqua"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_flow_rate" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -264,19 +287,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="FLOW RATE"
-                            android:textColor="#757575"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.AgriTech.Label" />
 
                         <TextView
                             android:id="@+id/tvFlowRate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="2dp"
                             android:text="0.0 L/min"
-                            android:textColor="@color/flow_rate_blue"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.AgriTech.DataValue"
+                            android:textColor="@color/flow_rate_blue" />
                     </LinearLayout>
 
                     <TextView
@@ -284,11 +304,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_status_badge"
+                        android:backgroundTint="@color/us_surface_raised"
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp"
                         android:text="No Flow"
-                        android:textColor="#757575"
-                        android:textSize="13sp"
+                        android:textColor="@color/us_text_secondary"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -296,11 +317,9 @@
 
             <!-- Actuator / Valve Control Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardValveControl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -312,9 +331,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ACTUATOR CONTROL"
-                        android:textColor="#757575"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.AgriTech.Label" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -323,34 +340,61 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
+                        <!-- Valve "node": glowing halo pulses while the valve is ON -->
+                        <FrameLayout
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:clipChildren="false"
+                            android:clipToPadding="false">
+
+                            <View
+                                android:id="@+id/viewValveGlow"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_valve_node_glow"
+                                android:visibility="invisible" />
+
+                            <View
+                                android:id="@+id/viewValveCore"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_valve_node_core"
+                                android:backgroundTint="@color/valve_closed" />
+                        </FrameLayout>
+
                         <TextView
                             android:id="@+id/tvValveStatus"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
                             android:layout_weight="1"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.04"
                             android:text="Valve: CLOSED"
-                            android:textColor="#212121"
-                            android:textSize="16sp"
+                            android:textColor="@color/valve_closed"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnToggleValve"
+                            style="@style/Widget.AgriTech.Button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Turn Valve ON"
-                            app:cornerRadius="12dp" />
+                            android:text="Turn Valve ON" />
 
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnScheduleWatering"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        style="@style/Widget.AgriTech.Button.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="14dp"
                         android:text="Schedule Watering"
-                        android:textAllCaps="false"
-                        app:cornerRadius="12dp" />
+                        app:icon="@drawable/ic_drop"
+                        app:iconGravity="textStart" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -364,24 +408,13 @@
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="#FFFFFF"
-        app:fabAlignmentMode="center"
-        app:fabAnimationMode="slide"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="24dp"
-        app:fabCradleVerticalOffset="6dp">
+        android:layout_gravity="bottom">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:itemIconTint="@color/black"
-            app:itemTextColor="@color/black"
-            app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
@@ -393,8 +426,6 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/nav_home"
         android:src="@drawable/ic_home"
-        app:backgroundTint="#1B4D2E"
-        app:tint="#FFFFFF"
         app:layout_anchor="@id/bottomAppBar"
         app:maxImageSize="28dp" />
 

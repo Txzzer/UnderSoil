@@ -4,31 +4,30 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green"
+    android:background="@drawable/bg_screen_gradient"
     android:padding="20dp">
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="10dp"
-        android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
+        android:padding="12dp"
+        android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/us_text_primary" />
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
         android:text="Add Sector"
-        android:textColor="@color/text_dark"
-        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.AgriTech.Headline"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/backButton"
@@ -36,56 +35,43 @@
 
     <TextView
         android:id="@+id/sectorNameLabel"
+        style="@style/Widget.AgriTech.SectionHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-medium"
+        android:layout_marginTop="24dp"
         android:text="Sector Name"
-        android:textColor="@color/text_dark"
-        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backButton" />
 
     <EditText
         android:id="@+id/sectorNameInput"
+        style="@style/Widget.AgriTech.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_pill_white"
-        android:elevation="1dp"
-        android:fontFamily="sans-serif"
+        android:layout_marginTop="10dp"
+        android:drawableStart="@drawable/ic_sector_node"
         android:hint="e.g. Sector A"
         android:inputType="textCapWords"
-        android:paddingHorizontal="18dp"
-        android:paddingVertical="14dp"
-        android:textColor="@color/text_dark"
-        android:textColorHint="@color/text_sub"
-        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sectorNameLabel" />
 
     <TextView
         android:id="@+id/cropsLabel"
+        style="@style/Widget.AgriTech.SectionHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-medium"
+        android:layout_marginTop="24dp"
         android:text="Assign Crops from My Garden"
-        android:textColor="@color/text_dark"
-        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sectorNameInput" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardCropsContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="1dp"
         app:layout_constraintBottom_toTopOf="@id/addSectorButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,22 +81,21 @@
             android:id="@+id/rvSelectCrops"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_slide_up"
             android:padding="8dp"
             android:scrollbars="vertical" />
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/addSectorButton"
+        style="@style/Widget.AgriTech.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_pill_green"
-        android:elevation="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingVertical="16dp"
+        android:minHeight="56dp"
         android:text="Add new sector"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="16sp"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

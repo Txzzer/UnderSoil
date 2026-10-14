@@ -63,7 +63,7 @@ public class IotWateringActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_SECTOR_ID, sector.getId());
             intent.putExtra(EXTRA_SECTOR_NAME, sector.getName());
             startActivity(intent);
-            overridePendingTransition(0, 0);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
         rvSectors.setLayoutManager(new LinearLayoutManager(this));
