@@ -12,8 +12,8 @@ using UnderSoilAPI.Models;
 namespace UnderSoilAPI.Migrations
 {
     [DbContext(typeof(UnderSoilContext))]
-    [Migration("20261014120308_initial")]
-    partial class initial
+    [Migration("20261015080827_UnderSoilDB")]
+    partial class UnderSoilDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

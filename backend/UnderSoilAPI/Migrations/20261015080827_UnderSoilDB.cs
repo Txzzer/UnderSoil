@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UnderSoilAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class UnderSoilDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
