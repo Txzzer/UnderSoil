@@ -31,7 +31,7 @@
     <div class="topline">
       <div>
         <h1>Devices</h1>
-        <p>11 of 12 sensors and controllers online</p>
+        <p id="devices-subtitle">Loading devices…</p>
       </div>
     </div>
 
@@ -46,70 +46,16 @@
         <thead>
           <tr>
             <th>Device ID</th>
-            <th>Type</th>
-            <th>Sector</th>
-            <th>Battery</th>
+            <th>Flow rate</th>
+            <th>Valve</th>
+            <th>Temp</th>
+            <th>Humidity</th>
             <th>Status</th>
             <th>Last seen</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>ESP-A1</td>
-            <td>Flow sensor</td>
-            <td>Sector A</td>
-            <td>86%</td>
-            <td><span class="status-pill ok">Online</span></td>
-            <td>Just now</td>
-          </tr>
-          <tr>
-            <td>ESP-A2</td>
-            <td>Soil moisture</td>
-            <td>Sector A</td>
-            <td>74%</td>
-            <td><span class="status-pill ok">Online</span></td>
-            <td>1 min ago</td>
-          </tr>
-          <tr>
-            <td>ESP-B1</td>
-            <td>Flow sensor</td>
-            <td>Sector B</td>
-            <td>91%</td>
-            <td><span class="status-pill ok">Online</span></td>
-            <td>Just now</td>
-          </tr>
-          <tr>
-            <td>ESP-C1</td>
-            <td>Flow sensor</td>
-            <td>Sector C</td>
-            <td>62%</td>
-            <td><span class="status-pill amber">Flow anomaly</span></td>
-            <td>2 min ago</td>
-          </tr>
-          <tr>
-            <td>ESP-C2</td>
-            <td>Valve controller</td>
-            <td>Sector C</td>
-            <td>58%</td>
-            <td><span class="status-pill ok">Online</span></td>
-            <td>2 min ago</td>
-          </tr>
-          <tr>
-            <td>ESP-D1</td>
-            <td>Soil moisture</td>
-            <td>Sector D</td>
-            <td>79%</td>
-            <td><span class="status-pill ok">Online</span></td>
-            <td>3 min ago</td>
-          </tr>
-          <tr>
-            <td>ESP-E1</td>
-            <td>Flow sensor</td>
-            <td>Sector E</td>
-            <td>12%</td>
-            <td><span class="status-pill offline">Offline</span></td>
-            <td>6 hr ago</td>
-          </tr>
+        <tbody id="devices-body">
+          <tr><td colspan="7">Loading devices…</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,5 +70,6 @@
       }
     })();
   </script>
+  <script src="js/devices.js"></script>
 </body>
 </html>

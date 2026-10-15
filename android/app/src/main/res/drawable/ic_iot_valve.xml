@@ -7,31 +7,31 @@
     <!-- Pipe Line Left -->
     <path
         android:pathData="M2,14 L7,14"
-        android:strokeColor="#191C20"
+        android:strokeColor="@color/us_text_primary"
         android:strokeWidth="2"
         android:strokeLineCap="round"/>
     <!-- Pipe Line Right -->
     <path
         android:pathData="M17,14 L22,14"
-        android:strokeColor="#191C20"
+        android:strokeColor="@color/us_text_primary"
         android:strokeWidth="2"
         android:strokeLineCap="round"/>
     <!-- Valve Body Box -->
     <path
         android:pathData="M7,11 L17,11 L17,17 L7,17 Z"
-        android:strokeColor="#191C20"
+        android:strokeColor="@color/us_text_primary"
         android:strokeWidth="2"
         android:strokeLineJoin="round"/>
     <!-- Vertical Stem -->
     <path
         android:pathData="M12,11 L12,7"
-        android:strokeColor="#191C20"
+        android:strokeColor="@color/us_text_primary"
         android:strokeWidth="2"
         android:strokeLineCap="round"/>
     <!-- Valve Handle -->
     <path
         android:pathData="M8,7 L16,7 M14,5 L16,7 L14,9"
-        android:strokeColor="#191C20"
+        android:strokeColor="@color/us_text_primary"
         android:strokeWidth="2"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"/>

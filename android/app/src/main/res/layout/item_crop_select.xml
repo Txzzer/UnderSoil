@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="8dp">
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="2dp">
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/cbSelectCrop"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:fontFamily="sans-serif"
+        android:minHeight="48dp"
+        android:paddingStart="8dp"
         android:text="Tomato"
-        android:textColor="@color/text_dark"
-        android:textSize="14sp" />
+        android:textColor="@color/us_text_primary"
+        android:textSize="15sp"
+        app:buttonTint="@color/us_bio_green" />
 
 </LinearLayout>

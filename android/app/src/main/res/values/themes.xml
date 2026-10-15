@@ -1,8 +1,114 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Undersoil" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+
+    <!--
+        Organic Modern theme.
+        Colors resolve from values/colors.xml (light) or values-night/colors.xml
+        (dark); window flags for dark mode are overridden in values-night/themes.xml.
+    -->
+    <style name="AgriTech.Theme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary: Forest Green -->
+        <item name="colorPrimary">@color/us_bio_green</item>
+        <item name="colorOnPrimary">@color/us_on_bio_green</item>
+        <item name="colorPrimaryContainer">@color/us_bio_green_container</item>
+        <item name="colorOnPrimaryContainer">@color/us_on_bio_green_container</item>
+        <item name="colorPrimaryInverse">@color/us_bio_green_dim</item>
+
+        <!-- Secondary: Water Blue -->
+        <item name="colorSecondary">@color/us_aqua</item>
+        <item name="colorOnSecondary">@color/us_on_aqua</item>
+        <item name="colorSecondaryContainer">@color/us_aqua_container</item>
+        <item name="colorOnSecondaryContainer">@color/us_on_aqua_container</item>
+
+        <!-- Tertiary: Ochre -->
+        <item name="colorTertiary">@color/us_amber</item>
+        <item name="colorOnTertiary">@color/us_surface</item>
+        <item name="colorTertiaryContainer">@color/us_amber_container</item>
+        <item name="colorOnTertiaryContainer">@color/us_text_primary</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/us_danger</item>
+        <item name="colorOnError">@color/us_on_danger</item>
+        <item name="colorErrorContainer">@color/us_danger_container</item>
+        <item name="colorOnErrorContainer">@color/us_text_primary</item>
+
+        <!-- Surfaces -->
+        <item name="android:colorBackground">@color/us_bg</item>
+        <item name="colorOnBackground">@color/us_text_primary</item>
+        <item name="colorSurface">@color/us_surface</item>
+        <item name="colorOnSurface">@color/us_text_primary</item>
+        <item name="colorSurfaceVariant">@color/us_surface_raised</item>
+        <item name="colorOnSurfaceVariant">@color/us_text_secondary</item>
+        <item name="colorSurfaceInverse">@color/us_text_primary</item>
+        <item name="colorOnSurfaceInverse">@color/us_bg</item>
+        <item name="colorSurfaceBright">@color/us_surface_raised</item>
+        <item name="colorSurfaceDim">@color/us_bg</item>
+        <item name="colorSurfaceContainerLowest">@color/us_surface</item>
+        <item name="colorSurfaceContainerLow">@color/us_surface</item>
+        <item name="colorSurfaceContainer">@color/us_surface_card</item>
+        <item name="colorSurfaceContainerHigh">@color/us_surface_raised</item>
+        <item name="colorSurfaceContainerHighest">@color/us_surface_raised</item>
+        <item name="colorOutline">@color/us_outline_strong</item>
+        <item name="colorOutlineVariant">@color/us_outline</item>
+        <item name="colorControlNormal">@color/us_text_secondary</item>
+        <item name="colorControlActivated">@color/us_bio_green</item>
+        <item name="colorControlHighlight">@color/us_bio_green_glow</item>
+
+        <!-- Text -->
+        <item name="android:textColorPrimary">@color/us_text_primary</item>
+        <item name="android:textColorSecondary">@color/us_text_secondary</item>
+        <item name="android:textColorTertiary">@color/us_text_hint</item>
+        <item name="android:textColorHint">@color/us_text_hint</item>
+        <item name="android:textColorLink">@color/us_aqua</item>
+        <item name="android:textColorHighlight">@color/us_bio_green_container</item>
+        <item name="android:editTextColor">@color/us_text_primary</item>
+
+        <!-- Window -->
+        <item name="android:windowBackground">@color/us_bg</item>
+        <item name="android:statusBarColor">@color/us_bg</item>
+        <item name="android:navigationBarColor">@color/us_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:isLightTheme">true</item>
+        <item name="isLightTheme">true</item>
+        <item name="android:windowAnimationStyle">@style/AgriTech.WindowAnimation</item>
+
+        <!-- Component defaults -->
+        <item name="materialCardViewStyle">@style/Widget.AgriTech.CardView</item>
+        <item name="materialButtonStyle">@style/Widget.AgriTech.Button</item>
+        <item name="borderlessButtonStyle">@style/Widget.AgriTech.Button.Text</item>
+        <item name="bottomNavigationStyle">@style/Widget.AgriTech.BottomNavigation</item>
+        <item name="bottomAppBarStyle">@style/Widget.AgriTech.BottomAppBar</item>
+        <item name="floatingActionButtonStyle">@style/Widget.AgriTech.FAB</item>
+        <item name="textInputStyle">@style/Widget.AgriTech.TextInputLayout</item>
+        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+        <item name="shapeAppearanceCornerSmall">@style/ShapeAppearance.AgriTech.Small</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.AgriTech.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.AgriTech.Large</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.AgriTech.Dialog</item>
+        <item name="android:alertDialogTheme">@style/ThemeOverlay.AgriTech.Dialog</item>
     </style>
 
+    <style name="Base.Theme.Undersoil" parent="AgriTech.Theme" />
+
     <style name="Theme.Undersoil" parent="Base.Theme.Undersoil" />
+
+    <!-- Global activity transitions: slide forward, fade on return -->
+    <style name="AgriTech.WindowAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="ThemeOverlay.AgriTech.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/us_surface_card</item>
+        <item name="colorSurfaceContainerHigh">@color/us_surface_card</item>
+        <item name="colorOnSurface">@color/us_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/us_text_secondary</item>
+        <item name="colorPrimary">@color/us_bio_green</item>
+        <item name="android:textColorPrimary">@color/us_text_primary</item>
+        <item name="android:textColorSecondary">@color/us_text_secondary</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.AgriTech.Large</item>
+    </style>
 </resources>

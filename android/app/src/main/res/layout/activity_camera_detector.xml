@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="@color/us_bg">
 
     <!-- Image Display / Camera Feed -->
     <ImageView
@@ -23,6 +23,7 @@
         android:id="@+id/headerContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/us_scrim"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
@@ -30,24 +31,34 @@
 
         <ImageButton
             android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="@drawable/bg_circle_white"
             android:contentDescription="Back"
-            android:elevation="4dp"
-            android:padding="10dp"
-            android:src="@drawable/ic_back_arrow" />
+            android:padding="12dp"
+            android:src="@drawable/ic_back_arrow"
+            app:tint="@color/us_text_primary" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:fontFamily="sans-serif-medium"
-            android:text="Agri AI Crop Health Detector"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Neural leaf scan"
+                android:textAppearance="@style/TextAppearance.AgriTech.Label"
+                android:textColor="@color/us_bio_green" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Agri AI Crop Health Detector"
+                android:textAppearance="@style/TextAppearance.AgriTech.Title" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -68,52 +79,41 @@
         android:id="@+id/cardControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="#1A241B"
+        app:cardBackgroundColor="@color/us_surface"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toTopOf="@id/cardDiagnosisResult">
+        app:layout_constraintBottom_toTopOf="@id/cardDiagnosisResult"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="14dp">
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTakePhoto"
+                style="@style/Widget.AgriTech.Button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="Camera"
+                app:icon="@drawable/ic_camera"
+                app:iconGravity="textStart" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnTakePhoto"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#2E7D32"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingVertical="14dp"
-                    android:text="📷 Camera"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:cornerRadius="14dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPickGallery"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#0288D1"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingVertical="14dp"
-                    android:text="🖼️ Upload Image"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:cornerRadius="14dp" />
-
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPickGallery"
+                style="@style/Widget.AgriTech.Button.Aqua"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:text="Upload Image"
+                app:icon="@drawable/ic_document"
+                app:iconGravity="textStart" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -121,93 +121,112 @@
     <!-- Bottom ML Diagnosis Result Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardDiagnosisResult"
+        style="@style/Widget.AgriTech.CardView.Glow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingHorizontal="20dp"
             android:padding="20dp">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diagnosis"
+                android:textAppearance="@style/TextAppearance.AgriTech.Label" />
+
+            <TextView
+                android:id="@+id/tvDiagnosisStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvDiagnosisStatus"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Awaiting Scan..."
-                    android:textColor="#757575"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvConfidenceText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text=""
-                    android:textColor="#212121"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                android:layout_marginTop="4dp"
+                android:text="Awaiting Scan..."
+                android:textAppearance="@style/TextAppearance.AgriTech.Headline"
+                android:textColor="@color/us_text_secondary"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tvClassLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-medium"
                 android:text="Take or upload a photo of a leaf to begin."
-                android:textColor="#424242"
+                android:textColor="@color/us_text_primary"
                 android:textSize="14sp" />
 
-            <!-- Confidence Progress Bar -->
-            <ProgressBar
-                android:id="@+id/pbConfidence"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            <!-- Confidence readout -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/Widget.AgriTech.IconTile.Aqua"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_confidence" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="AI confidence"
+                    android:textAppearance="@style/TextAppearance.AgriTech.Label" />
+
+                <TextView
+                    android:id="@+id/tvConfidenceText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text=""
+                    android:textColor="@color/us_aqua"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Confidence Progress Bar -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/pbConfidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:max="100"
                 android:progress="0"
-                android:progressDrawable="@drawable/bg_pill_green" />
+                app:indicatorColor="@color/us_aqua"
+                app:trackColor="@color/us_surface_raised"
+                app:trackCornerRadius="4dp"
+                app:trackThickness="8dp" />
 
             <TextView
                 android:id="@+id/tvRecommendation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="2dp"
                 android:text=""
-                android:textColor="#616161"
+                android:textAppearance="@style/TextAppearance.AgriTech.Body"
                 android:textSize="13sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShowRecommendations"
+                style="@style/Widget.AgriTech.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:backgroundTint="#2E7D32"
-                android:fontFamily="sans-serif-medium"
-                android:paddingVertical="12dp"
                 android:text="Show Recommendations"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="15sp"
                 android:visibility="gone"
-                app:cornerRadius="14dp" />
+                app:icon="@drawable/ic_shield"
+                app:iconGravity="textStart" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

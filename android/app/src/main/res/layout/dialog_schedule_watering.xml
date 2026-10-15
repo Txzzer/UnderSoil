@@ -9,36 +9,38 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPickDate"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        style="@style/Widget.AgriTech.Button.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select Date"
-        android:textAllCaps="false"
-        app:cornerRadius="12dp" />
+        app:icon="@drawable/ic_document"
+        app:iconGravity="textStart" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPickTime"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        style="@style/Widget.AgriTech.Button.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Select Time"
-        android:textAllCaps="false"
-        app:cornerRadius="12dp" />
+        app:icon="@drawable/ic_clock"
+        app:iconGravity="textStart" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilDuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Duration (minutes)">
+        android:hint="Duration (minutes)"
+        app:startIconDrawable="@drawable/ic_flow_rate">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:maxLength="3" />
+            android:maxLength="3"
+            android:textColor="@color/us_text_primary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,9 +48,15 @@
         android:id="@+id/tvExpectedVolume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
+        android:drawableStart="@drawable/ic_drop"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/us_aqua"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center_vertical"
         android:text="Expected volume: -"
-        android:textColor="#616161"
-        android:textSize="14sp" />
+        android:textColor="@color/us_aqua"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.undersoil.data.ScanLog;
 import com.example.undersoil.data.ScanLogDatabaseHelper;
@@ -39,6 +42,7 @@ public class LogResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_result);
+        applyWindowInsets();
 
         dbHelper = ScanLogDatabaseHelper.getInstance(this);
 
@@ -56,6 +60,20 @@ public class LogResultActivity extends AppCompatActivity {
 
         // Only populate on first launch so an in-progress edit survives rotation
         bindLog(log, savedInstanceState == null);
+    }
+
+    /**
+     * Targeting SDK 35 forces edge-to-edge on Android 15+, where adjustResize no longer shrinks
+     * the window. Pad the root by the system bars and keyboard instead, so the scroll view
+     * shrinks and keeps the focused note field visible above the keyboard.
+     */
+    private void applyWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.logResultRoot), (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, ime.bottom));
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     private void initViews() {

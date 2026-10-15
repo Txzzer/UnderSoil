@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green">
+    android:background="@drawable/bg_screen_gradient">
 
     <ImageButton
         android:id="@+id/closeButton"
@@ -39,7 +39,7 @@
         android:background="@drawable/bg_circle_green"
         android:padding="8dp"
         android:src="@drawable/ic_translate"
-        app:tint="@color/white"
+        app:tint="@color/us_on_bio_green"
         android:contentDescription="Retry"
         app:layout_constraintBottom_toBottomOf="@id/illustration"
         app:layout_constraintEnd_toEndOf="@id/illustration" />
@@ -71,19 +71,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notFoundTitle" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/tryAgainButton"
+        style="@style/Widget.AgriTech.Button"
+        android:minHeight="56dp"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:background="@drawable/bg_pill_green"
-        android:elevation="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingVertical="16dp"
         android:text="Try Again"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notFoundMessage" />

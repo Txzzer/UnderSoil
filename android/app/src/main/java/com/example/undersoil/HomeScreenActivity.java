@@ -153,21 +153,21 @@ public class HomeScreenActivity extends AppCompatActivity implements IoTAlertMan
         if (ivProfile != null) {
             ivProfile.setOnClickListener(v -> {
                 startActivity(new Intent(this, Settings.class));
-                overridePendingTransition(0, 0);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             });
         }
 
         if (cardDiagnose != null) {
             cardDiagnose.setOnClickListener(v -> {
                 startActivity(new Intent(this, MainActivity.class));
-                overridePendingTransition(0, 0);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             });
         }
 
         if (cardIotWatering != null) {
             cardIotWatering.setOnClickListener(v -> {
                 startActivity(new Intent(this, IotWateringActivity.class));
-                overridePendingTransition(0, 0);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             });
         }
     }
@@ -187,11 +187,11 @@ public class HomeScreenActivity extends AppCompatActivity implements IoTAlertMan
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_iot) {
                     startActivity(new Intent(this, IotWateringActivity.class));
-                    overridePendingTransition(0, 0);
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     return true;
                 } else if (itemId == R.id.nav_garden) {
                     startActivity(new Intent(this, MainActivity.class));
-                    overridePendingTransition(0, 0);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     return true;
                 }
                 return false;

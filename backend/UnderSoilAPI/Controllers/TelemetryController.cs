@@ -35,5 +35,33 @@ namespace UnderSoilAPI.Controllers
 
             return Ok(latestData);
         }
+
+        // GET /api/telemetry/latest — most recent reading per device
+        [HttpGet("latest-per-device")]
+        public async Task<IActionResult> GetLatestPerDevice()
+        {
+            var latest = await _db.TelemetryReadings
+                .GroupBy(t => t.DeviceId)
+                .Select(g => g.OrderByDescending(t => t.Timestamp).First())
+                .ToListAsync();
+
+            return Ok(latest);
+        }
+
+        // GET /api/telemetry?deviceId=ESP-A1 — full history for one device (used by Reports later if needed)
+        [HttpGet]
+        public async Task<IActionResult> GetTelemetry([FromQuery] string? deviceId)
+        {
+            var query = _db.TelemetryReadings.AsQueryable();
+            if (!string.IsNullOrEmpty(deviceId))
+                query = query.Where(t => t.DeviceId == deviceId);
+
+            var readings = await query
+                .OrderByDescending(t => t.Timestamp)
+                .Take(200)
+                .ToListAsync();
+
+            return Ok(readings);
+        }
     }
 }

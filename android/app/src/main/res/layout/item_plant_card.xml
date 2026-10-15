@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp">
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,12 +14,14 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPlantPhoto"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/bg_photo_placeholder"
-            android:contentDescription="Plant Image" />
+            android:contentDescription="Plant Image"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriTech.Small" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,28 +34,29 @@
                 android:id="@+id/tvPlantName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
                 android:text="Tomato"
-                android:textColor="@color/text_dark"
+                android:textAppearance="@style/TextAppearance.AgriTech.Title"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvScientificName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
+                android:layout_marginTop="2dp"
                 android:text="Solanum lycopersicum"
-                android:textColor="@color/text_sub"
-                android:textSize="12sp" />
+                android:textColor="@color/us_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="italic" />
 
         </LinearLayout>
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:contentDescription="View"
             android:src="@drawable/ic_chevron_right"
-            android:contentDescription="View" />
+            app:tint="@color/us_bio_green" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

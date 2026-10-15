@@ -36,13 +36,11 @@
       <a class="btn-outline" href="sectors.html">View all sectors</a>
     </div>
 
-    <div class="banner alert">
-      <strong>1 active alert</strong> — Sector C mainline flow is 38% below expected. Check valve 3 for a possible leak.
-    </div>
+    <div class="banner alert" id="dashboard-banner" style="display:none;"></div>
 
     <dl class="facts">
-      <div><dt>Sectors under watch</dt><dd>5</dd></div>
-      <div><dt>Devices online</dt><dd>11 <span>of 12</span></dd></div>
+      <div><dt>Sectors under watch</dt><dd id="fact-sectors">—</dd></div>
+      <div><dt>Devices online</dt><dd id="fact-devices">—</dd></div>
       <div><dt>Disease scans this week</dt><dd>23</dd></div>
       <div><dt>Water used today</dt><dd>1,840 <span>L</span></dd></div>
     </dl>
@@ -85,28 +83,8 @@
 
     <div class="card">
       <h2>Active alerts</h2>
-      <ul class="alerts-list">
-        <li>
-          <div>
-            <span class="sev high">High</span>
-            <div style="margin-top:6px;">Sector C mainline flow 38% below expected — possible leak near valve 3.</div>
-          </div>
-          <span class="when">12 min ago</span>
-        </li>
-        <li>
-          <div>
-            <span class="sev med">Medium</span>
-            <div style="margin-top:6px;">Soil moisture sensor S-07 (Sector E) has not reported in 6 hours.</div>
-          </div>
-          <span class="when">2 hr ago</span>
-        </li>
-        <li>
-          <div>
-            <span class="sev med">Medium</span>
-            <div style="margin-top:6px;">Leaf blight suspected on Tomato scan #214 — flagged for review.</div>
-          </div>
-          <span class="when">Yesterday</span>
-        </li>
+      <ul class="alerts-list" id="alerts-list">
+        <li>Loading alerts…</li>
       </ul>
     </div>
   </main>
@@ -120,5 +98,6 @@
       }
     })();
   </script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>

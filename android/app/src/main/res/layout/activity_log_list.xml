@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green"
+    android:background="@drawable/bg_screen_gradient"
     android:padding="20dp">
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="10dp"
-        android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
+        android:padding="12dp"
+        android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/us_text_primary" />
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
         android:text="Crop Logs"
-        android:textColor="@color/text_dark"
-        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.AgriTech.Headline"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/backButton"
@@ -36,13 +36,11 @@
 
     <TextView
         android:id="@+id/tvLogHeader"
+        style="@style/Widget.AgriTech.SectionHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-medium"
+        android:layout_marginTop="24dp"
         android:text="Scan History"
-        android:textColor="@color/main_green"
-        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backButton" />
 
@@ -50,7 +48,7 @@
         android:id="@+id/recyclerContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/diagnosisButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,60 +60,61 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:scrollbars="vertical" />
+            android:layoutAnimation="@anim/layout_slide_up"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_scan_log" />
 
         <TextView
             android:id="@+id/tvEmptyLogs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif"
+            android:drawableTop="@drawable/ic_leaf_scan"
+            android:drawablePadding="14dp"
+            android:drawableTint="@color/us_text_hint"
+            android:lineSpacingExtra="4dp"
             android:text="No scan logs yet for this crop.\nTap 'Scan Plant' to run a diagnosis."
             android:textAlignment="center"
-            android:textColor="@color/text_sub"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.AgriTech.Body"
             android:visibility="gone" />
     </FrameLayout>
 
     <ImageButton
         android:id="@+id/diagnosisButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/bg_circle_green"
+        android:contentDescription="Start diagnosis"
         android:elevation="4dp"
         android:scaleType="center"
         android:src="@drawable/ic_camera"
-        android:contentDescription="Start diagnosis"
         app:layout_constraintBottom_toTopOf="@id/diagnosisLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/us_on_bio_green" />
 
     <TextView
         android:id="@+id/diagnosisLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif-medium"
         android:text="Scan Plant"
-        android:textColor="@color/text_dark"
-        android:textSize="14sp"
+        android:textAppearance="@style/TextAppearance.AgriTech.Label"
+        android:textColor="@color/us_bio_green"
         app:layout_constraintBottom_toTopOf="@id/viewInfoButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/viewInfoButton"
+        style="@style/Widget.AgriTech.Button.Outlined"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_pill_green"
-        android:elevation="2dp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingVertical="14dp"
+        android:minHeight="56dp"
         android:text="View Plant Information"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="15sp"
+        app:icon="@drawable/ic_info_circle"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

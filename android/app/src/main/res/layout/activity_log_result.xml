@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/logResultRoot"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green">
+    android:background="@drawable/bg_screen_gradient">
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="10dp"
-        android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
+        android:padding="12dp"
+        android:src="@drawable/ic_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/us_text_primary" />
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="20dp"
         android:text="Log"
-        android:textColor="@color/text_dark"
-        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.AgriTech.Headline"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/backButton"
@@ -47,128 +47,170 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp">
+            android:paddingHorizontal="20dp">
 
             <TextView
                 android:id="@+id/tvCropName"
+                style="@style/Widget.AgriTech.SectionHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="Crop"
-                android:textColor="@color/main_green"
-                android:textSize="16sp" />
+                android:text="Crop" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivCropImage"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="14dp"
                 android:background="@drawable/bg_photo_placeholder"
                 android:contentDescription="Scanned crop photo"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriTech.Medium"
+                app:strokeColor="@color/us_outline"
+                app:strokeWidth="1dp" />
 
-            <TextView
-                android:id="@+id/tvLogDate"
+            <!-- Data readouts -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_pill_white"
-                android:elevation="1dp"
-                android:fontFamily="sans-serif"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="14dp"
-                android:text="Date: -"
-                android:textColor="@color/text_dark"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvLogDiagnosis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_pill_white"
-                android:elevation="1dp"
-                android:fontFamily="sans-serif"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="14dp"
-                android:text="Diagnosis: -"
-                android:textColor="@color/text_dark"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvLogConfidence"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_pill_white"
-                android:elevation="1dp"
-                android:fontFamily="sans-serif-medium"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="14dp"
-                android:text="Confidence Score - 0%"
-                android:textColor="@color/main_green"
-                android:textSize="14sp" />
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="1dp">
+                android:layout_marginTop="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            style="@style/Widget.AgriTech.IconTile.Amber"
+                            android:src="@drawable/ic_document" />
+
+                        <TextView
+                            android:id="@+id/tvLogDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:fontFamily="monospace"
+                            android:text="Date: -"
+                            android:textColor="@color/us_text_primary"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="@color/us_outline" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            style="@style/Widget.AgriTech.IconTile"
+                            android:src="@drawable/ic_leaf_scan" />
+
+                        <TextView
+                            android:id="@+id/tvLogDiagnosis"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:text="Diagnosis: -"
+                            android:textColor="@color/us_text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="@color/us_outline" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            style="@style/Widget.AgriTech.IconTile.Aqua"
+                            android:src="@drawable/ic_confidence" />
+
+                        <TextView
+                            android:id="@+id/tvLogConfidence"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-condensed"
+                            android:text="Confidence Score - 0%"
+                            android:textColor="@color/us_aqua"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Notes:"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp" />
+                        android:text="Notes"
+                        android:textAppearance="@style/TextAppearance.AgriTech.Label" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilLogNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="8dp"
                         android:hint="Add a short note"
                         app:counterEnabled="true"
-                        app:counterMaxLength="50">
+                        app:counterMaxLength="50"
+                        app:counterTextColor="@color/us_text_hint">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLogNote"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
                             android:imeOptions="actionDone"
                             android:inputType="textCapSentences"
                             android:maxLength="50"
-                            android:textColor="@color/text_dark"
-                            android:textSize="13sp" />
+                            android:textColor="@color/us_text_primary"
+                            android:textSize="14sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveNote"
+                style="@style/Widget.AgriTech.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_pill_green"
-                android:elevation="2dp"
-                android:fontFamily="sans-serif-medium"
-                android:paddingVertical="14dp"
-                android:text="Save Note"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:minHeight="56dp"
+                android:text="Save Note" />
 
             <View
                 android:layout_width="match_parent"

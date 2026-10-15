@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -391,11 +390,11 @@ public class Camera_detector extends AppCompatActivity {
 
                     if (isHealthy) {
                         tvDiagnosisStatus.setText("HEALTHY 🌱");
-                        tvDiagnosisStatus.setTextColor(Color.parseColor("#2E7D32"));
+                        tvDiagnosisStatus.setTextColor(ContextCompat.getColor(this, R.color.us_bio_green));
                         tvRecommendation.setText(String.format("Foliage for %s shows optimal health with no detected symptoms of blight or infection.", plantName));
                     } else {
                         tvDiagnosisStatus.setText("DISEASE DETECTED ⚠️");
-                        tvDiagnosisStatus.setTextColor(Color.parseColor("#D32F2F"));
+                        tvDiagnosisStatus.setTextColor(ContextCompat.getColor(this, R.color.us_danger));
                         tvRecommendation.setText(getRecommendationForCondition(plantName, conditionName));
                     }
 

@@ -1,154 +1,173 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Users — UnderSoil Admin</title>
-<link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Users — UnderSoil Admin</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 <div class="app">
+
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="brand">
       <img src="assets/mark.svg" alt="">
-      <span class="brand-word">UnderSoil<span class="brand-sub">Admin</span></span>
+      <span class="brand-word">
+        UnderSoil<span class="brand-sub">Admin</span>
+      </span>
     </div>
+
     <nav class="nav">
-      <a href="dashboard.html"><span class="nav-dot"></span>Farm overview</a>
-      <a href="sectors.html"><span class="nav-dot"></span>Sectors &amp; crops</a>
-      <a href="devices.html"><span class="nav-dot"></span>Devices</a>
-      <a href="users.html" class="active"><span class="nav-dot"></span>Users</a>
-      <a href="reports.html"><span class="nav-dot"></span>Reports</a>
+      <a href="dashboard.html">
+        <span class="nav-dot"></span>Farm overview
+      </a>
+      <a href="sectors.html">
+        <span class="nav-dot"></span>Sectors &amp; crops
+      </a>
+      <a href="devices.html">
+        <span class="nav-dot"></span>Devices
+      </a>
+      <a href="users.html" class="active">
+        <span class="nav-dot"></span>Users
+      </a>
+      <a href="reports.html">
+        <span class="nav-dot"></span>Reports
+      </a>
     </nav>
+
     <div class="sidebar-foot">
-      <span class="who" id="sidebar-user-name">Poppy Mantyi</span>
+      <span class="who" id="sidebar-user-name">Loading...</span>
       Farm administrator
-      <br><a href="#" onclick="logout(); return false;">Sign out</a>
+      <br>
+      <a href="#" onclick="logout(); return false;">Sign out</a>
     </div>
   </aside>
 
+  <!-- Main content -->
   <main class="main">
+
     <div class="topline">
       <div>
         <h1>Users</h1>
-        <p>4 people with accounts on UnderSoil</p>
+        <p id="user-count">Loading users...</p>
       </div>
+
       <a class="btn-primary" href="#edit-user">+ Add user</a>
     </div>
 
+    <!-- Users table -->
     <div class="card">
       <h2>All users</h2>
+
+      <p id="table-message" role="status" aria-live="polite"></p>
+
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Role</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th></th>
+            <th>Email</th>
+            <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+
+        <tbody id="users-table-body">
           <tr>
-            <td>Poppy Mantyi</td>
-            <td>Farm administrator</td>
-            <td>+27 71 234 5678</td>
-            <td><span class="status-pill ok">Active</span></td>
-            <td>
-              <div class="row-actions">
-                <button class="icon-btn" type="button">Edit</button>
-                <button class="icon-btn danger" type="button">Remove</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Sipho Dlamini</td>
-            <td>Farmer</td>
-            <td>+27 82 345 6789</td>
-            <td><span class="status-pill ok">Active</span></td>
-            <td>
-              <div class="row-actions">
-                <button class="icon-btn" type="button">Edit</button>
-                <button class="icon-btn danger" type="button">Remove</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Lerato Nkosi</td>
-            <td>Agronomist</td>
-            <td>+27 63 456 7890</td>
-            <td><span class="status-pill ok">Active</span></td>
-            <td>
-              <div class="row-actions">
-                <button class="icon-btn" type="button">Edit</button>
-                <button class="icon-btn danger" type="button">Remove</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Jabulani Zulu</td>
-            <td>Farmer</td>
-            <td>+27 84 567 8901</td>
-            <td><span class="status-pill offline">Inactive</span></td>
-            <td>
-              <div class="row-actions">
-                <button class="icon-btn" type="button">Edit</button>
-                <button class="icon-btn danger" type="button">Remove</button>
-              </div>
-            </td>
+            <td colspan="4">Loading users...</td>
           </tr>
         </tbody>
       </table>
     </div>
 
+    <!-- Add / Edit user form -->
     <div class="card" id="edit-user">
-      <h2>Add / edit user</h2>
-      <form onsubmit="return false;">
+      <h2 id="form-title">Add user</h2>
+
+      <form id="user-form">
+        <input type="hidden" id="u-id">
+
         <div class="form-grid">
+
           <div class="field">
             <label for="u-name">Full name</label>
-            <input id="u-name" type="text" placeholder="e.g. Nomvula Khumalo">
+            <input
+              id="u-name"
+              type="text"
+              placeholder="e.g. Nomvula Khumalo"
+              autocomplete="name"
+              required>
           </div>
+
           <div class="field">
             <label for="u-role">Role</label>
-            <select id="u-role">
-              <option>Farmer</option>
-              <option>Agronomist</option>
-              <option>Farm administrator</option>
+            <select id="u-role" required>
+              <option value="Farmer">Farmer</option>
+              <option value="Admin">Admin</option>
             </select>
           </div>
+
           <div class="field">
-            <label for="u-phone">Phone number</label>
-            <input id="u-phone" type="tel" placeholder="+27 7X XXX XXXX">
+            <label for="u-email">Email address</label>
+            <input
+              id="u-email"
+              type="email"
+              placeholder="name@example.com"
+              autocomplete="email"
+              required>
           </div>
+
           <div class="field">
-            <label for="u-email">Email</label>
-            <input id="u-email" type="email" placeholder="name@undersoil.farm">
+            <label for="u-password">Password</label>
+            <input
+              id="u-password"
+              type="password"
+              minlength="8"
+              autocomplete="new-password"
+              placeholder="At least 8 characters">
+            <small>
+              Required when adding a user. When editing, leave blank
+              to keep the current password.
+            </small>
           </div>
-          <div class="field full">
-            <label>App access</label>
-            <div class="checks">
-              <label><input type="checkbox" checked> Mobile app (field data, sectors, devices)</label>
-              <label><input type="checkbox"> Admin dashboard</label>
-            </div>
-          </div>
+
         </div>
+
+        <p id="form-message" role="status" aria-live="polite"></p>
+
         <div class="form-actions">
-          <button class="btn-primary" type="submit">Save user</button>
-          <button class="btn-quiet" type="reset">Clear</button>
+          <button class="btn-primary" type="submit" id="save-user-btn">
+            Save user
+          </button>
+
+          <button class="btn-quiet" type="button" id="clear-user-form">
+            Clear
+          </button>
         </div>
       </form>
     </div>
+
   </main>
 </div>
-  <script src="js/auth.js"></script>
-  <script>
-    (function () {
-      const session = requireAdminSession();
-      if (session) {
-        document.getElementById('sidebar-user-name').textContent = session.user.name;
-      }
-    })();
-  </script>
+
+<!-- Existing authentication script -->
+<script src="js/auth.js"></script>
+
+<!-- Check admin session -->
+<script>
+  (function () {
+    const session = requireAdminSession();
+
+    if (session) {
+      document.getElementById('sidebar-user-name').textContent =
+        session.user.name || 'Administrator';
+    }
+  })();
+</script>
+
+<!-- User management functionality will go here -->
+<script src="js/users.js"></script>
+
 </body>
 </html>

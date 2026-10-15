@@ -94,3 +94,51 @@ function logout() {
   clearSession();
   window.location.href = "login.html";
 }
+
+// Shared GET helper for authenticated admin reads. Returns parsed JSON on
+// success; throws an Error with a human-readable message on failure. On a
+// 401/403 it clears the session and bounces to login, same as an expired
+// token would.
+async function apiGet(path) {
+  const session = getSession();
+  if (!session) {
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      headers: { Authorization: `Bearer ${session.token}` }
+    });
+  } catch (e) {
+    throw new Error("Can't reach the server. Is the backend running?");
+  }
+
+  if (res.status === 401 || res.status === 403) {
+    clearSession();
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+  if (!res.ok) {
+    throw new Error(`Request failed (${res.status}).`);
+  }
+  return res.json();
+}
+
+// Rough relative-time formatter ("Just now", "5 min ago", "3 hr ago") for
+// device/alert timestamps, so we're not just dumping raw ISO strings.
+function timeAgo(isoString) {
+  const then = new Date(isoString).getTime();
+  if (isNaN(then)) return isoString;
+  const diffMs = Date.now() - then;
+  const mins = Math.floor(diffMs / 60000);
+  if (mins < 1) return "Just now";
+  if (mins === 1) return "1 min ago";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs === 1) return "1 hr ago";
+  if (hrs < 24) return `${hrs} hr ago`;
+  const days = Math.floor(hrs / 24);
+  return days === 1 ? "1 day ago" : `${days} days ago`;
+}

@@ -98,7 +98,7 @@ namespace UnderSoilAPI.Controllers
                 new Claim("role", user.Role)
             };
 
-            var expiresAt = DateTime.UtcNow.AddMinutes(2);
+            var expiresAt = DateTime.UtcNow.AddDays(TokenLifetimeDays);
             expiresAt = DateTimeOffset.FromUnixTimeSeconds(new DateTimeOffset(expiresAt).ToUnixTimeSeconds()).UtcDateTime;
 
             var token = new JwtSecurityToken(

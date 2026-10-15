@@ -31,7 +31,7 @@
     <div class="topline">
       <div>
         <h1>Sectors &amp; crops</h1>
-        <p>5 sectors mapped across Greenfields Smallholding</p>
+        <p id="sectors-subtitle">Loading sectors…</p>
       </div>
     </div>
 
@@ -46,54 +46,12 @@
         <thead>
           <tr>
             <th>Sector</th>
-            <th>Crop</th>
-            <th>Area</th>
-            <th>Planted</th>
-            <th>Flow rate</th>
-            <th>Status</th>
+            <th>Crops</th>
+            <th>Synced</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Sector A</td>
-            <td>Spinach</td>
-            <td>0.4 ha</td>
-            <td>12 Aug 2026</td>
-            <td>6.2 L/min</td>
-            <td><span class="status-pill ok">Healthy</span></td>
-          </tr>
-          <tr>
-            <td>Sector B</td>
-            <td>Tomato</td>
-            <td>0.6 ha</td>
-            <td>03 Jul 2026</td>
-            <td>5.8 L/min</td>
-            <td><span class="status-pill ok">Healthy</span></td>
-          </tr>
-          <tr>
-            <td>Sector C</td>
-            <td>Maize</td>
-            <td>1.1 ha</td>
-            <td>21 Jun 2026</td>
-            <td>2.1 L/min</td>
-            <td><span class="status-pill alert">Leak risk</span></td>
-          </tr>
-          <tr>
-            <td>Sector D</td>
-            <td>Cabbage</td>
-            <td>0.5 ha</td>
-            <td>29 Aug 2026</td>
-            <td>4.9 L/min</td>
-            <td><span class="status-pill ok">Healthy</span></td>
-          </tr>
-          <tr>
-            <td>Sector E</td>
-            <td>Beans</td>
-            <td>0.3 ha</td>
-            <td>14 Sep 2026</td>
-            <td>—</td>
-            <td><span class="status-pill offline">Offline</span></td>
-          </tr>
+        <tbody id="sectors-body">
+          <tr><td colspan="3">Loading sectors…</td></tr>
         </tbody>
       </table>
     </div>
@@ -108,5 +66,6 @@
       }
     })();
   </script>
+  <script src="js/sectors.js"></script>
 </body>
 </html>

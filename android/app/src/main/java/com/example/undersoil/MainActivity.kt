@@ -1,6 +1,7 @@
 package com.example.undersoil
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +12,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.undersoil.data.GardenDatabase
 import com.example.undersoil.data.GardenEntity
+import com.example.undersoil.data.GrowingCondition
 import com.example.undersoil.data.Plant
 import com.example.undersoil.data.PlantVillageData
+import com.example.undersoil.data.ScanLog
+import com.example.undersoil.data.ScanLogDatabaseHelper
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -34,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: SavedGardenAdapter
 
     private val savedPlantsList = mutableListOf<Plant>()
+    private val latestScans = mutableMapOf<Int, ScanLog>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter = SavedGardenAdapter(
             savedPlantsList,
+            latestScans,
             onPlantClick = { plant ->
                 val intent = Intent(this, LogListActivity::class.java)
                 intent.putExtra(LogListActivity.EXTRA_CROP_NAME, plant.name)
@@ -89,11 +96,15 @@ class MainActivity : AppCompatActivity() {
             val dao = GardenDatabase.getInstance(this).gardenDao()
             val savedEntities = dao.getAllSync(userId)
 
+            val scanLogDb = ScanLogDatabaseHelper.getInstance(this)
+
             savedPlantsList.clear()
+            latestScans.clear()
             for (entity in savedEntities) {
                 val plant = getPlantById(entity.plantId)
                 if (plant != null) {
                     savedPlantsList.add(plant)
+                    scanLogDb.getLatestLogByCropName(plant.name, userId)?.let { latestScans[plant.id] = it }
                 }
             }
             adapter.notifyDataSetChanged()
@@ -133,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_iot -> {
                     startActivity(Intent(this, IotWateringActivity::class.java))
-                    overridePendingTransition(0, 0)
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
                     true
                 }
                 R.id.nav_garden -> {
@@ -145,13 +156,14 @@ class MainActivity : AppCompatActivity() {
 
         fabHome.setOnClickListener {
             startActivity(Intent(this, HomeScreenActivity::class.java))
-            overridePendingTransition(0, 0)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
     }
 }
 
 class SavedGardenAdapter(
     private val plants: List<Plant>,
+    private val latestScans: Map<Int, ScanLog>,
     private val onPlantClick: (Plant) -> Unit,
     private val onDeleteClick: (Plant) -> Unit
 ) : RecyclerView.Adapter<SavedGardenAdapter.ViewHolder>() {
@@ -161,6 +173,8 @@ class SavedGardenAdapter(
         val tvPlantStatus: TextView = itemView.findViewById(R.id.tvPlantStatus)
         val ivPlantPhoto: ImageView = itemView.findViewById(R.id.ivPlantPhoto)
         val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
+        val ivConditionPrimary: ImageView = itemView.findViewById(R.id.ivConditionPrimary)
+        val ivConditionSecondary: ImageView = itemView.findViewById(R.id.ivConditionSecondary)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -171,12 +185,45 @@ class SavedGardenAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val plant = plants[position]
         holder.tvPlantName.text = plant.name
-        holder.tvPlantStatus.text = "Healthy"
+        bindStatus(holder.tvPlantStatus, latestScans[plant.id])
         holder.ivPlantPhoto.setImageResource(plant.imageResId)
+        bindCondition(holder.ivConditionPrimary, plant.favouredConditions.getOrNull(0))
+        bindCondition(holder.ivConditionSecondary, plant.favouredConditions.getOrNull(1))
 
         holder.itemView.setOnClickListener { onPlantClick(plant) }
         holder.btnDelete.setOnClickListener { onDeleteClick(plant) }
     }
 
     override fun getItemCount(): Int = plants.size
+
+    private fun bindCondition(iconView: ImageView, condition: GrowingCondition?) {
+        if (condition == null) {
+            iconView.visibility = View.GONE
+            return
+        }
+        iconView.visibility = View.VISIBLE
+        iconView.setImageResource(condition.iconResId)
+        iconView.setBackgroundResource(condition.backgroundResId)
+        iconView.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(iconView.context, condition.tintResId))
+        iconView.contentDescription = condition.label
+    }
+
+    /** Shows the condition from the plant's most recent scan; unscanned plants keep the default "Healthy". */
+    private fun bindStatus(statusView: TextView, latestScan: ScanLog?) {
+        // Diagnosis is stored as "<Plant> • <Condition>"
+        val condition = latestScan?.diagnosis?.substringAfter("•")?.trim()?.takeIf { it.isNotEmpty() }
+        val isHealthy = condition == null || condition.contains("healthy", ignoreCase = true)
+        val context = statusView.context
+
+        statusView.text = condition ?: "Healthy"
+        if (isHealthy) {
+            statusView.setTextColor(ContextCompat.getColor(context, R.color.us_bio_green))
+            statusView.backgroundTintList = null
+        } else {
+            statusView.setTextColor(ContextCompat.getColor(context, R.color.us_danger))
+            statusView.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.us_danger_container))
+        }
+    }
 }

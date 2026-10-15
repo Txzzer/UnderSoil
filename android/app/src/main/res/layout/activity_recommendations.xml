@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_light_green">
+    android:background="@drawable/bg_screen_gradient">
 
     <ImageButton
         android:id="@+id/backButton"
@@ -12,10 +12,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/bg_circle_white"
-        android:elevation="2dp"
-        android:padding="10dp"
+        android:padding="12dp"
         android:src="@drawable/ic_back_arrow"
         android:contentDescription="Back"
+        app:tint="@color/us_text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,11 +24,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
         android:text="Recommendations"
-        android:textColor="@color/text_dark"
-        android:textSize="18sp"
+        android:textAppearance="@style/TextAppearance.AgriTech.Headline"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/backButton"
@@ -56,8 +55,13 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text=""
-                android:textColor="@color/main_green"
-                android:textSize="20sp" />
+                android:drawableStart="@drawable/ic_shield"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/us_bio_green"
+                android:gravity="center_vertical"
+                android:textColor="@color/us_bio_green"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDiseaseDescription"
@@ -70,13 +74,11 @@
                 android:textSize="14sp"
                 android:visibility="gone" />
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.AgriTech.CardView.Glow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="1dp">
+                android:layout_marginTop="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -87,10 +89,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Treatment Recommendations:"
-                        android:textColor="@color/text_dark"
-                        android:textSize="14sp" />
+                        android:text="Treatment Recommendations"
+                        android:textAppearance="@style/TextAppearance.AgriTech.Label"
+                        android:textColor="@color/us_bio_green" />
 
                     <TextView
                         android:id="@+id/tvTreatmentRecommendations"
@@ -100,11 +101,11 @@
                         android:fontFamily="sans-serif"
                         android:lineSpacingExtra="4dp"
                         android:text=""
-                        android:textColor="@color/text_sub"
-                        android:textSize="13sp" />
+                        android:textColor="@color/us_text_primary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

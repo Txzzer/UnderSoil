@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============================================================ -->
+    <!-- Organic Modern palette - DARK                                 -->
+    <!-- Charcoal / slate surfaces with muted green accents.           -->
+    <!-- ============================================================ -->
+
+    <!-- Surfaces -->
+    <color name="us_bg">#181C1A</color>
+    <color name="us_surface">#1F2421</color>
+    <color name="us_surface_card">#242A27</color>
+    <color name="us_surface_raised">#2E3531</color>
+    <color name="us_surface_input">#282E2B</color>
+    <color name="us_scrim">#99000000</color>
+
+    <!-- Outlines -->
+    <color name="us_outline">#353D39</color>
+    <color name="us_outline_strong">#4A534E</color>
+
+    <!-- Text -->
+    <color name="us_text_primary">#ECEFEA</color>
+    <color name="us_text_secondary">#AEB6B0</color>
+    <color name="us_text_hint">#7F8882</color>
+    <color name="us_text_disabled">#59615C</color>
+
+    <!-- Primary: muted Leaf Green -->
+    <color name="us_bio_green">#86B98B</color>
+    <color name="us_bio_green_dim">#6C9A71</color>
+    <color name="us_bio_green_container">#2B4230</color>
+    <color name="us_bio_green_glow">#2686B98B</color>
+    <color name="us_on_bio_green">#102614</color>
+    <color name="us_on_bio_green_container">#CFE6D1</color>
+
+    <!-- Secondary: Water Blue -->
+    <color name="us_aqua">#82B4CF</color>
+    <color name="us_aqua_dim">#6896AF</color>
+    <color name="us_aqua_container">#22394A</color>
+    <color name="us_on_aqua">#0E2633</color>
+    <color name="us_on_aqua_container">#CFE4EF</color>
+
+    <!-- Tertiary: Ochre -->
+    <color name="us_amber">#D9A266</color>
+    <color name="us_amber_container">#45341F</color>
+
+    <!-- Error: Terracotta -->
+    <color name="us_danger">#E0897B</color>
+    <color name="us_danger_container">#4A2A25</color>
+    <color name="us_on_danger">#3A110B</color>
+
+    <!-- Harvest gold -->
+    <color name="us_violet">#DDBE66</color>
+    <color name="us_sun_container">#403820</color>
+
+    <!-- Sage -->
+    <color name="us_sage">#34463A</color>
+
+    <!-- Hero / photo placeholder fills -->
+    <color name="us_hero_start">#26352B</color>
+    <color name="us_hero_end">#22323A</color>
+
+    <!-- Gauge zone tints -->
+    <color name="gauge_green_faint">#2F4434</color>
+    <color name="gauge_orange_faint">#45391F</color>
+    <color name="gauge_red_faint">#472C27</color>
+</resources>

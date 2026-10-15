@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Flat, soft halo behind the IoT valve status dot. Gently "breathes" from code. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/us_bio_green_container" />
+</shape>

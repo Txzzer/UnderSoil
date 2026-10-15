@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ============================================================ -->
+    <!-- Shapes                                                        -->
+    <!-- ============================================================ -->
+    <style name="ShapeAppearance.AgriTech.Small" parent="ShapeAppearance.Material3.Corner.Small">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="ShapeAppearance.AgriTech.Medium" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.AgriTech.Large" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.AgriTech.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearance.AgriTech.Button" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- ============================================================ -->
+    <!-- Cards                                                         -->
+    <!-- ============================================================ -->
+    <style name="Widget.AgriTech.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/us_surface_card</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="strokeColor">@color/us_outline</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="rippleColor">@color/us_bio_green_glow</item>
+    </style>
+
+    <!-- Highlighted / primary content: same flat card, slightly more lift -->
+    <style name="Widget.AgriTech.CardView.Glow">
+        <item name="cardElevation">2dp</item>
+    </style>
+
+    <!-- Water / IoT content: plain flat card (the blue lives in icons and data) -->
+    <style name="Widget.AgriTech.CardView.Aqua" />
+
+    <!-- Alerts: soft terracotta fill, no stroke -->
+    <style name="Widget.AgriTech.CardView.Alert">
+        <item name="cardBackgroundColor">@color/us_danger_container</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <!-- ============================================================ -->
+    <!-- Buttons (all derive from Widget.Material3.Button)             -->
+    <!-- ============================================================ -->
+    <style name="Widget.AgriTech.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/selector_button_primary_bg</item>
+        <item name="android:textColor">@color/selector_button_primary_text</item>
+        <item name="iconTint">@color/selector_button_primary_text</item>
+        <item name="rippleColor">#33FFFFFF</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgriTech.Button</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- Aqua variant for water / IoT actions -->
+    <style name="Widget.AgriTech.Button.Aqua">
+        <item name="backgroundTint">@color/selector_button_aqua_bg</item>
+        <item name="android:textColor">@color/us_on_aqua</item>
+        <item name="iconTint">@color/us_on_aqua</item>
+    </style>
+
+    <!-- Destructive variant -->
+    <style name="Widget.AgriTech.Button.Danger">
+        <item name="backgroundTint">@color/us_danger</item>
+        <item name="android:textColor">@color/us_on_danger</item>
+        <item name="iconTint">@color/us_on_danger</item>
+    </style>
+
+    <style name="Widget.AgriTech.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/us_bio_green</item>
+        <item name="iconTint">@color/us_bio_green</item>
+        <item name="strokeColor">@color/us_bio_green</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@color/us_bio_green_glow</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgriTech.Button</item>
+    </style>
+
+    <style name="Widget.AgriTech.Button.Outlined.Danger">
+        <item name="android:textColor">@color/us_danger</item>
+        <item name="iconTint">@color/us_danger</item>
+        <item name="strokeColor">@color/us_danger</item>
+        <item name="rippleColor">@color/us_danger_container</item>
+    </style>
+
+    <style name="Widget.AgriTech.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/us_bio_green</item>
+        <item name="iconTint">@color/us_bio_green</item>
+        <item name="rippleColor">@color/us_bio_green_glow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgriTech.Button</item>
+    </style>
+
+    <style name="Widget.AgriTech.Button.Text.Danger">
+        <item name="android:textColor">@color/us_danger</item>
+        <item name="iconTint">@color/us_danger</item>
+        <item name="rippleColor">@color/us_danger_container</item>
+    </style>
+
+    <!-- Circular icon-only button used for back / toolbar actions -->
+    <style name="Widget.AgriTech.IconButton" parent="Widget.Material3.Button.IconButton.Filled.Tonal">
+        <item name="backgroundTint">@color/us_surface_raised</item>
+        <item name="iconTint">@color/us_text_primary</item>
+        <item name="iconSize">20dp</item>
+        <item name="rippleColor">@color/us_bio_green_glow</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- ============================================================ -->
+    <!-- Bottom navigation (Material 3 with soft sage pill indicator)  -->
+    <!-- ============================================================ -->
+    <style name="Widget.AgriTech.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="elevation">0dp</item>
+        <item name="itemIconTint">@color/bottom_nav_item_tint</item>
+        <item name="itemTextColor">@color/bottom_nav_item_tint</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="itemRippleColor">@color/us_bio_green_glow</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.AgriTech.BottomNavigation.ActiveIndicator</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.AgriTech.NavLabel.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.AgriTech.NavLabel</item>
+    </style>
+
+    <style name="Widget.AgriTech.BottomNavigation.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/bottom_nav_indicator</item>
+        <item name="android:width">64dp</item>
+        <item name="android:height">32dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgriTech.Pill</item>
+    </style>
+
+    <style name="Widget.AgriTech.BottomAppBar" parent="Widget.Material3.BottomAppBar">
+        <item name="backgroundTint">@color/us_surface</item>
+        <item name="elevation">6dp</item>
+        <item name="fabAnchorMode">cradle</item>
+        <item name="fabAlignmentMode">center</item>
+        <item name="fabCradleMargin">8dp</item>
+        <item name="fabCradleRoundedCornerRadius">20dp</item>
+        <item name="fabCradleVerticalOffset">4dp</item>
+    </style>
+
+    <style name="Widget.AgriTech.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/us_bio_green</item>
+        <item name="tint">@color/us_on_bio_green</item>
+        <item name="rippleColor">#33FFFFFF</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.AgriTech.Pill</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <!-- ============================================================ -->
+    <!-- Text inputs                                                   -->
+    <!-- ============================================================ -->
+    <style name="Widget.AgriTech.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/us_surface_input</item>
+        <item name="boxStrokeColor">@color/selector_input_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/us_bio_green</item>
+        <item name="android:textColorHint">@color/us_text_hint</item>
+        <item name="startIconTint">@color/us_text_secondary</item>
+        <item name="endIconTint">@color/us_text_secondary</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+    </style>
+
+    <!-- Plain EditText styled as a soft rounded field -->
+    <style name="Widget.AgriTech.EditText" parent="">
+        <item name="android:background">@drawable/bg_input_field</item>
+        <item name="android:textColor">@color/us_text_primary</item>
+        <item name="android:textColorHint">@color/us_text_hint</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:drawableTint">@color/us_text_secondary</item>
+        <item name="android:drawablePadding">12dp</item>
+    </style>
+
+    <!-- ============================================================ -->
+    <!-- Typography                                                    -->
+    <!-- ============================================================ -->
+    <style name="TextAppearance.AgriTech.Display" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textColor">@color/us_text_primary</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="TextAppearance.AgriTech.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/us_text_primary</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.AgriTech.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/us_text_primary</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.AgriTech.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/us_text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Small all-caps label above a data point, e.g. "FLOW RATE" -->
+    <style name="TextAppearance.AgriTech.Label" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">@color/us_text_secondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Large numeric readout, e.g. "12.4 L/min" -->
+    <style name="TextAppearance.AgriTech.DataValue" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/us_text_primary</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+
+    <style name="TextAppearance.AgriTech.NavLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.04</item>
+    </style>
+
+    <style name="TextAppearance.AgriTech.NavLabel.Active">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Section heading with the accent bar (see bg_section_accent) -->
+    <style name="Widget.AgriTech.SectionHeader" parent="">
+        <item name="android:textAppearance">@style/TextAppearance.AgriTech.Label</item>
+        <item name="android:drawableStart">@drawable/bg_section_accent</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <!-- 40dp rounded tile holding a data-point icon -->
+    <style name="Widget.AgriTech.IconTile" parent="">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:background">@drawable/bg_icon_tile_green</item>
+        <item name="tint">@color/us_bio_green</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Widget.AgriTech.IconTile.Aqua">
+        <item name="android:background">@drawable/bg_icon_tile_aqua</item>
+        <item name="tint">@color/us_aqua</item>
+    </style>
+
+    <style name="Widget.AgriTech.IconTile.Amber">
+        <item name="android:background">@drawable/bg_icon_tile_amber</item>
+        <item name="tint">@color/us_amber</item>
+    </style>
+
+    <style name="Widget.AgriTech.IconTile.Danger">
+        <item name="android:background">@drawable/bg_icon_tile_danger</item>
+        <item name="tint">@color/us_danger</item>
+    </style>
+</resources>
