@@ -68,29 +68,6 @@
 
             <!-- Weather / Temp Summary -->
 
-            <!-- Search Bar -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="@color/us_surface_input"
-                app:cardElevation="0dp">
-
-                <EditText
-                    android:id="@+id/et_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:drawableStart="@drawable/ic_search"
-                    android:drawablePadding="12dp"
-                    android:drawableTint="@color/us_text_secondary"
-                    android:hint="Search plants &amp; Flowers"
-                    android:padding="16dp"
-                    android:textColor="@color/us_text_primary"
-                    android:textColorHint="@color/us_text_hint"
-                    android:textSize="14sp" />
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- Field Conditions Hero Card -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.AgriTech.CardView.Glow"
@@ -288,9 +265,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:background="@color/us_danger_container"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
@@ -340,53 +314,9 @@
                             android:textSize="16sp"
                             android:layout_marginBottom="24dp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="14dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                style="@style/Widget.AgriTech.IconTile.Aqua"
-                                android:src="@drawable/ic_flow_rate" />
-
-                            <TextView
-                                android:id="@+id/tv_alert_flowrate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:text="Flowrate 20L/min"
-                                android:textAppearance="@style/TextAppearance.AgriTech.Title" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="18dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                style="@style/Widget.AgriTech.IconTile"
-                                android:src="@drawable/ic_sector_node" />
-
-                            <TextView
-                                android:id="@+id/tv_alert_sector"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:text="Sector A"
-                                android:textColor="@color/us_text_primary"
-                                android:textSize="16sp" />
-                        </LinearLayout>
-
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_turn_off_water"
                             style="@style/Widget.AgriTech.Button.Danger"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Turn off water" />
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Turn off water"
