@@ -6,18 +6,44 @@
 const DASHBOARD_ONLINE_THRESHOLD_MS = 10 * 60 * 1000;
 
 (async function () {
-  loadSectorCount();
+  loadSectors();
   loadDeviceCount();
   loadAlerts();
 })();
 
-async function loadSectorCount() {
-  const el = document.getElementById("fact-sectors");
+// Drives both the "Sectors under watch" tile and the Farm plan card — one
+// fetch, two uses, since they're the same data.
+async function loadSectors() {
+  const countEl = document.getElementById("fact-sectors");
+  const canvas = document.getElementById("plan-canvas");
+
   try {
     const sectors = await apiGet("/api/sectors");
-    el.textContent = sectors.length;
+    countEl.textContent = sectors.length;
+
+    if (!sectors.length) {
+      canvas.innerHTML = "<p>No sectors mapped yet.</p>";
+      return;
+    }
+
+    // The Sector model only has a name and crop list right now — no flow
+    // rate or health status — so these plots show what's actually there
+    // instead of faking a status badge that isn't backed by real data.
+    canvas.innerHTML = sectors.map(s => {
+      const name = s.name ?? s.Name ?? "—";
+      const crops = s.cropNames ?? s.CropNames ?? "—";
+      const synced = s.isSynced ?? s.IsSynced;
+      return `
+        <div class="plot">
+          <div class="plot-head"><h3>${escapeHtml(name)}</h3><span class="plot-tag">${synced ? "Synced" : "Pending sync"}</span></div>
+          <p class="plot-meta">Crop: <b>${escapeHtml(crops)}</b></p>
+          <div class="mainline"></div>
+        </div>
+      `;
+    }).join("");
   } catch (err) {
-    el.textContent = "—";
+    countEl.textContent = "—";
+    canvas.innerHTML = `<p>Couldn't load sectors — ${escapeHtml(err.message)}</p>`;
   }
 }
 
