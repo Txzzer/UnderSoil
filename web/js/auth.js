@@ -177,6 +177,14 @@ async function apiRequest(path, method, body) {
 // Shared toast notifications. Every page that wants to use this needs a
 // <div class="toast-container" id="toast-container"></div> in its HTML and
 // css/modals.css linked (that's where the toast styling lives).
+// type is one of "success" | "error" | "warning" | "info".
+const TOAST_ICONS = {
+  success: "✓", // check
+  error: "×",   // x
+  warning: "!",
+  info: "i"
+};
+
 function showToast(message, type = "success") {
   const container = document.getElementById("toast-container");
   if (!container) return; // page didn't opt in — fail quietly rather than throw
@@ -185,8 +193,14 @@ function showToast(message, type = "success") {
   toast.className = `toast ${type}`;
   toast.setAttribute("role", "status");
 
-  const text = document.createElement("span");
-  text.textContent = message;
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = TOAST_ICONS[type] || TOAST_ICONS.info;
+
+  const body = document.createElement("span");
+  body.className = "toast-body";
+  body.textContent = message;
 
   const close = document.createElement("button");
   close.className = "toast-close";
@@ -195,7 +209,10 @@ function showToast(message, type = "success") {
   close.textContent = "×";
   close.addEventListener("click", () => toast.remove());
 
-  toast.append(text, close);
+  const progress = document.createElement("span");
+  progress.className = "toast-progress";
+
+  toast.append(icon, body, close, progress);
   container.appendChild(toast);
 
   setTimeout(() => toast.remove(), 4500);

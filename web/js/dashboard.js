@@ -9,7 +9,59 @@ const DASHBOARD_ONLINE_THRESHOLD_MS = 10 * 60 * 1000;
   loadSectors();
   loadDeviceCount();
   loadAlerts();
+  loadScanCount();
+  loadWaterToday();
 })();
+
+async function loadScanCount() {
+  const el = document.getElementById("fact-scans");
+  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+  try {
+    const logs = await apiGet("/api/scanlogs");
+    const cutoff = Date.now() - ONE_WEEK_MS;
+
+    const thisWeek = logs.filter(log => {
+      const dateStr = log.dateStr ?? log.DateStr;
+      if (!dateStr) return false;
+      const parsed = new Date(dateStr).getTime();
+      return !isNaN(parsed) && parsed >= cutoff;
+    });
+
+    el.textContent = thisWeek.length;
+  } catch (err) {
+    el.textContent = "—";
+  }
+}
+
+// Needs /api/wateringschedules, which needs WateringSchedules added as a
+// DbSet + its table created first — see WateringSchedulesController.cs.
+// Fails quietly (stays "—") until that's in place.
+async function loadWaterToday() {
+  const el = document.getElementById("fact-water");
+
+  try {
+    const schedules = await apiGet("/api/wateringschedules");
+
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    const total = schedules
+      .filter(w => {
+        const startTime = w.startTime ?? w.StartTime;
+        return startTime && startTime >= startOfDay;
+      })
+      .reduce((sum, w) => {
+        const actual = w.actualVolume ?? w.ActualVolume ?? 0;
+        const expected = w.expectedVolume ?? w.ExpectedVolume ?? 0;
+        return sum + (actual > 0 ? actual : expected);
+      }, 0);
+
+    el.innerHTML = `${Math.round(total).toLocaleString()} <span>L</span>`;
+  } catch (err) {
+    el.textContent = "—";
+  }
+}
 
 // Drives both the "Sectors under watch" tile and the Farm plan card — one
 // fetch, two uses, since they're the same data.
