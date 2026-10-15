@@ -50,6 +50,7 @@ const ONLINE_THRESHOLD_MS = 10 * 60 * 1000;
   } catch (err) {
     body.innerHTML = `<tr><td colspan="7">Couldn't load devices — ${escapeHtml(err.message)}</td></tr>`;
     subtitle.textContent = "Couldn't load devices";
+    showToast(`Couldn't load devices — ${err.message}`, "error");
   }
 })();
 

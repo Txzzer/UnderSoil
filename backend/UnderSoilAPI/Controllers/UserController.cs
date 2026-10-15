@@ -133,6 +133,13 @@ namespace UnderSoilAPI.Controllers
                 return Conflict(
                     "That email address is already registered.");
             }
+            // Don't let the last admin get demoted — would lock everyone out of the dashboard.
+            if (user.Role == "Admin" && request.Role != "Admin")
+            {
+                var adminCount = await _context.Users.CountAsync(u => u.Role == "Admin");
+                if (adminCount <= 1)
+                    return BadRequest("Can't change the role of the last admin account.");
+            }
 
             user.Name = name;
             user.Email = email;
@@ -172,6 +179,14 @@ namespace UnderSoilAPI.Controllers
             if (user == null)
             {
                 return NotFound("User not found.");
+            }
+
+            // Don't let the last admin get deleted — would lock everyone out of the dashboard.
+            if (user.Role == "Admin")
+            {
+                var adminCount = await _context.Users.CountAsync(u => u.Role == "Admin");
+                if (adminCount <= 1)
+                    return BadRequest("Can't remove the last admin account.");
             }
 
             _context.Users.Remove(user);

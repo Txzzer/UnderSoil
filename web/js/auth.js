@@ -126,6 +126,98 @@ async function apiGet(path) {
   return res.json();
 }
 
+// Shared helper for authenticated writes (POST/PUT/DELETE). `body`, if
+// given, is JSON-stringified. Returns parsed JSON for responses with a
+// body, or null for a 204 No Content. Throws an Error with a
+// human-readable message on failure.
+async function apiRequest(path, method, body) {
+  const session = getSession();
+  if (!session) {
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.token}`
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    });
+  } catch (e) {
+    throw new Error("Can't reach the server. Is the backend running?");
+  }
+
+  if (res.status === 401 || res.status === 403) {
+    clearSession();
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+  if (res.status === 204) return null;
+
+  if (!res.ok) {
+    let message = `Request failed (${res.status}).`;
+    try {
+      const data = await res.json();
+      if (data?.message) message = data.message;
+    } catch (e) { /* body wasn't JSON — keep the default message */ }
+    throw new Error(message);
+  }
+
+  try {
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+// Shared toast notifications. Every page that wants to use this needs a
+// <div class="toast-container" id="toast-container"></div> in its HTML and
+// css/modals.css linked (that's where the toast styling lives).
+// type is one of "success" | "error" | "warning" | "info".
+const TOAST_ICONS = {
+  success: "✓", // check
+  error: "×",   // x
+  warning: "!",
+  info: "i"
+};
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  if (!container) return; // page didn't opt in — fail quietly rather than throw
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.setAttribute("role", "status");
+
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = TOAST_ICONS[type] || TOAST_ICONS.info;
+
+  const body = document.createElement("span");
+  body.className = "toast-body";
+  body.textContent = message;
+
+  const close = document.createElement("button");
+  close.className = "toast-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Dismiss");
+  close.textContent = "×";
+  close.addEventListener("click", () => toast.remove());
+
+  const progress = document.createElement("span");
+  progress.className = "toast-progress";
+
+  toast.append(icon, body, close, progress);
+  container.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 4500);
+}
+
 // Rough relative-time formatter ("Just now", "5 min ago", "3 hr ago") for
 // device/alert timestamps, so we're not just dumping raw ISO strings.
 function timeAgo(isoString) {

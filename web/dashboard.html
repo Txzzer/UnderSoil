@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard — UnderSoil Admin</title>
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/modals.css">
 </head>
 <body>
 <div class="app">
@@ -41,43 +42,14 @@
     <dl class="facts">
       <div><dt>Sectors under watch</dt><dd id="fact-sectors">—</dd></div>
       <div><dt>Devices online</dt><dd id="fact-devices">—</dd></div>
-      <div><dt>Disease scans this week</dt><dd>23</dd></div>
-      <div><dt>Water used today</dt><dd>1,840 <span>L</span></dd></div>
+      <div><dt>Disease scans this week</dt><dd id="fact-scans">—</dd></div>
+      <div><dt>Water used today</dt><dd id="fact-water">—</dd></div>
     </dl>
 
     <div class="card">
       <h2>Farm plan</h2>
-      <div class="plan-canvas">
-        <div class="plot is-ok">
-          <div class="plot-head"><h3>Sector A</h3><span class="plot-tag">Healthy</span></div>
-          <p class="plot-meta">Crop: <b>Spinach</b></p>
-          <p class="plot-meta">Flow: <b>6.2 L/min</b></p>
-          <div class="mainline"></div>
-        </div>
-        <div class="plot is-ok">
-          <div class="plot-head"><h3>Sector B</h3><span class="plot-tag">Healthy</span></div>
-          <p class="plot-meta">Crop: <b>Tomato</b></p>
-          <p class="plot-meta">Flow: <b>5.8 L/min</b></p>
-          <div class="mainline"></div>
-        </div>
-        <div class="plot is-alert">
-          <div class="plot-head"><h3>Sector C</h3><span class="plot-tag">Leak risk</span></div>
-          <p class="plot-meta">Crop: <b>Maize</b></p>
-          <p class="plot-meta">Flow: <b>2.1 L/min</b></p>
-          <div class="mainline"></div>
-        </div>
-        <div class="plot is-ok">
-          <div class="plot-head"><h3>Sector D</h3><span class="plot-tag">Healthy</span></div>
-          <p class="plot-meta">Crop: <b>Cabbage</b></p>
-          <p class="plot-meta">Flow: <b>4.9 L/min</b></p>
-          <div class="mainline"></div>
-        </div>
-        <div class="plot is-offline">
-          <div class="plot-head"><h3>Sector E</h3><span class="plot-tag">Offline</span></div>
-          <p class="plot-meta">Crop: <b>Beans</b></p>
-          <p class="plot-meta">Flow: <b>—</b></p>
-          <div class="mainline"></div>
-        </div>
+      <div class="plan-canvas" id="plan-canvas">
+        <p>Loading sectors…</p>
       </div>
     </div>
 
@@ -89,6 +61,7 @@
     </div>
   </main>
 </div>
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
   <script src="js/auth.js"></script>
   <script>
     (function () {
