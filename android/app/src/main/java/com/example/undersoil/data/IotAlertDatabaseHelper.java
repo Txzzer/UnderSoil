@@ -111,6 +111,50 @@ public class IotAlertDatabaseHelper extends SQLiteOpenHelper {
         return alert;
     }
 
+    /**
+     * Newest alerts for a user. date_time is "yyyy-MM-dd HH:mm", which sorts correctly as text;
+     * rowid breaks ties between alerts saved in the same minute.
+     */
+    public List<IotAlert> getRecentAlerts(String userId, int limit) {
+        List<IotAlert> alerts = new ArrayList<>();
+        if (userId == null) return alerts;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(
+                TABLE_ALERTS,
+                null,
+                COLUMN_USER_ID + " = ?",
+                new String[]{userId},
+                null,
+                null,
+                COLUMN_DATE_TIME + " DESC, rowid DESC",
+                String.valueOf(limit)
+        );
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int idIdx = cursor.getColumnIndex(COLUMN_ID);
+                int devIdx = cursor.getColumnIndex(COLUMN_DEVICE_ID);
+                int userIdx = cursor.getColumnIndex(COLUMN_USER_ID);
+                int descIdx = cursor.getColumnIndex(COLUMN_ALERT_DESC);
+                int dateIdx = cursor.getColumnIndex(COLUMN_DATE_TIME);
+                int syncIdx = cursor.getColumnIndex(COLUMN_IS_SYNCED);
+
+                do {
+                    alerts.add(new IotAlert(
+                            cursor.getString(idIdx),
+                            cursor.getString(devIdx),
+                            cursor.getString(userIdx),
+                            cursor.getString(descIdx),
+                            cursor.getString(dateIdx),
+                            cursor.getInt(syncIdx) == 1
+                    ));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return alerts;
+    }
+
     public List<IotAlert> getUnsyncedAlerts() {
         List<IotAlert> alerts = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();

@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import com.example.undersoil.data.IotAlertDatabaseHelper;
 import com.example.undersoil.data.SessionManager;
 import com.example.undersoil.data.SyncManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -68,11 +70,21 @@ public class IoTAlertManager {
         void onValveToggleResult(boolean success, boolean targetState, String message);
     }
 
+    /** Called on the main thread after a new alert has been written to the local database. */
+    public interface AlertSavedListener {
+        void onAlertSaved();
+    }
+
     private static IoTAlertManager instance;
 
     private final Context appContext;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private final List<AlertSavedListener> alertSavedListeners = new CopyOnWriteArrayList<>();
+
+    // DEBUG-TRIGGER: null = real telemetry; true/false = fake high/normal flow (debug builds only).
+    // Remove everything tagged DEBUG-TRIGGER (plus the Gson/ApplicationInfo imports) to drop it.
+    private Boolean debugFakeFlow = null;
 
     private WeakReference<Activity> currentActivity = new WeakReference<>(null);
     private AlertDialog activeDialog;
@@ -148,6 +160,22 @@ public class IoTAlertManager {
         listeners.remove(listener);
     }
 
+    public void addAlertSavedListener(AlertSavedListener listener) {
+        if (!alertSavedListeners.contains(listener)) alertSavedListeners.add(listener);
+    }
+
+    public void removeAlertSavedListener(AlertSavedListener listener) {
+        alertSavedListeners.remove(listener);
+    }
+
+    // DEBUG-TRIGGER: flips fake flow between high and normal. No-op in release builds.
+    public boolean toggleDebugFakeFlow() {
+        if ((appContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) return false;
+        debugFakeFlow = (debugFakeFlow == null) || !debugFakeFlow;
+        Log.d(TAG, "Debug fake flow: " + (debugFakeFlow ? "HIGH" : "NORMAL"));
+        return debugFakeFlow;
+    }
+
     public SensorData getLastData() {
         return lastData;
     }
@@ -164,6 +192,18 @@ public class IoTAlertManager {
         String token = SessionManager.getInstance(appContext).getToken();
         if (token == null || token.trim().isEmpty()) {
             // Not logged in: skip the request so ApiClient's 401 handler doesn't loop to Log_in
+            scheduleNext(POLLING_INTERVAL_MS);
+            return;
+        }
+
+        // DEBUG-TRIGGER: feed fake telemetry instead of calling the backend
+        if (debugFakeFlow != null) {
+            String json = String.format(Locale.US,
+                    "{\"deviceId\":\"debug-device\",\"flowRateLitersPerMin\":%.1f,\"valveIsOpen\":false}",
+                    debugFakeFlow ? 5.0 : 0.0);
+            lastData = new Gson().fromJson(json, SensorData.class);
+            for (Listener l : listeners) l.onTelemetry(lastData);
+            evaluateAlert(lastData);
             scheduleNext(POLLING_INTERVAL_MS);
             return;
         }
@@ -250,8 +290,11 @@ public class IoTAlertManager {
             String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
 
             IotAlert alert = new IotAlert(data.getDeviceId(), userId, desc, dateTime);
-            IotAlertDatabaseHelper.getInstance(appContext).insertAlert(alert, userId);
+            String savedId = IotAlertDatabaseHelper.getInstance(appContext).insertAlert(alert, userId);
             SyncManager.scheduleSync(appContext);
+            if (savedId != null) {
+                for (AlertSavedListener l : alertSavedListeners) l.onAlertSaved();
+            }
         } catch (Exception e) {
             Log.e(TAG, "Failed to persist IoT alert", e);
         }

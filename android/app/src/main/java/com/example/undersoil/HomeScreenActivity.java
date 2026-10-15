@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -13,10 +18,24 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.undersoil.data.IotAlert;
+import com.example.undersoil.data.IotAlertDatabaseHelper;
 
-public class HomeScreenActivity extends AppCompatActivity {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class HomeScreenActivity extends AppCompatActivity implements IoTAlertManager.AlertSavedListener {
 
     private static final int NOTIFICATION_PERMISSION_CODE = 1002;
+    private static final int ALERTS_LOG_LIMIT = 5;
+
+    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
+    private LinearLayout llAlertsLog;
+    private TextView tvNoAlerts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +45,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         checkAndRequestNotificationPermission();
         setupClickListeners();
         setupBottomNavigation();
+        setupAlertsLog();
 
         // Schedule background sync when network connection is active
         com.example.undersoil.data.SyncManager.scheduleSync(this);
@@ -40,6 +60,75 @@ public class HomeScreenActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
+            return;
+        }
+
+        IoTAlertManager.get().addAlertSavedListener(this);
+        loadAlertsLog();
+    }
+
+    @Override
+    protected void onPause() {
+        IoTAlertManager.get().removeAlertSavedListener(this);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        IoTAlertManager.get().removeAlertSavedListener(this);
+        dbExecutor.shutdownNow();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onAlertSaved() {
+        loadAlertsLog();
+    }
+
+    private void setupAlertsLog() {
+        llAlertsLog = findViewById(R.id.ll_alerts_log);
+        tvNoAlerts = findViewById(R.id.tv_no_alerts);
+
+        // DEBUG-TRIGGER: long-press the "Alerts Log" header to flip fake flow HIGH/NORMAL (debug builds only)
+        findViewById(R.id.tv_alerts_log_header).setOnLongClickListener(v -> {
+            boolean high = IoTAlertManager.get().toggleDebugFakeFlow();
+            Toast.makeText(this, "Debug fake flow: " + (high ? "HIGH" : "NORMAL"), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+    }
+
+    private void loadAlertsLog() {
+        String userId = com.example.undersoil.data.SessionManager.getInstance(this).getUserIdString();
+        dbExecutor.execute(() -> {
+            List<IotAlert> alerts = IotAlertDatabaseHelper.getInstance(getApplicationContext())
+                    .getRecentAlerts(userId, ALERTS_LOG_LIMIT);
+            runOnUiThread(() -> {
+                if (!isFinishing() && !isDestroyed()) showAlertsLog(alerts);
+            });
+        });
+    }
+
+    private void showAlertsLog(List<IotAlert> alerts) {
+        llAlertsLog.removeAllViews();
+        tvNoAlerts.setVisibility(alerts.isEmpty() ? View.VISIBLE : View.GONE);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (IotAlert alert : alerts) {
+            View row = inflater.inflate(R.layout.item_iot_alert, llAlertsLog, false);
+            ((TextView) row.findViewById(R.id.tv_alert_time)).setText(formatAlertTime(alert.getDateTime()));
+            llAlertsLog.addView(row);
+        }
+    }
+
+    /** "2026-10-14 17:24" (as saved by IoTAlertManager) -> "14 Oct 2026, 17:24"; raw string if unparseable. */
+    private String formatAlertTime(String dateTime) {
+        if (dateTime == null) return "";
+        try {
+            SimpleDateFormat stored = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            SimpleDateFormat shown = new SimpleDateFormat("d MMM yyyy, HH:mm", Locale.getDefault());
+            return shown.format(stored.parse(dateTime));
+        } catch (ParseException e) {
+            return dateTime;
         }
     }
 

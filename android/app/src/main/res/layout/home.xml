@@ -54,29 +54,6 @@
                     android:src="@drawable/profile" />
             </LinearLayout>
 
-            <!-- Search Bar -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#E5E5E5"
-                android:layout_marginBottom="24dp">
-
-                <EditText
-                    android:id="@+id/et_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="Search plants &amp; Flowers"
-                    android:padding="16dp"
-                    android:textColorHint="#707B81"
-                    android:textSize="14sp"
-                    android:drawableStart="@android:drawable/ic_menu_search"
-                    android:drawablePadding="12dp"/>
-            </com.google.android.material.card.MaterialCardView>
-
             <!-- Weather / Temp Summary -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -214,7 +191,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Alert"
+                        android:text="Alerts Log"
+                        android:id="@+id/tv_alerts_log_header"
                         android:textColor="#FF383C"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -227,21 +205,20 @@
                         android:orientation="vertical"
                         android:padding="24dp">
 
-                        <TextView
-                            android:id="@+id/tv_alert_flowrate"
-                            android:layout_width="wrap_content"
+                        <!-- Rows are added by HomeScreenActivity (latest 5 alerts) -->
+                        <LinearLayout
+                            android:id="@+id/ll_alerts_log"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Flowrate 20L/min"
-                            android:textColor="#191C20"
-                            android:textSize="18sp"
-                            android:layout_marginBottom="16dp"/>
+                            android:orientation="vertical"
+                            android:layout_marginBottom="8dp"/>
 
                         <TextView
-                            android:id="@+id/tv_alert_sector"
+                            android:id="@+id/tv_no_alerts"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sector A"
-                            android:textColor="#191C20"
+                            android:text="No alerts yet"
+                            android:textColor="#707B81"
                             android:textSize="16sp"
                             android:layout_marginBottom="24dp"/>
 
