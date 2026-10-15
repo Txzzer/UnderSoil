@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Users — UnderSoil Admin</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/modals.css">
 </head>
 
 <body>
@@ -54,14 +55,12 @@
         <p id="user-count">Loading users...</p>
       </div>
 
-      <a class="btn-primary" href="#edit-user">+ Add user</a>
+      <button class="btn-primary" type="button" id="add-user-btn">+ Add user</button>
     </div>
 
     <!-- Users table -->
     <div class="card">
       <h2>All users</h2>
-
-      <p id="table-message" role="status" aria-live="polite"></p>
 
       <table>
         <thead>
@@ -81,75 +80,95 @@
       </table>
     </div>
 
-    <!-- Add / Edit user form -->
-    <div class="card" id="edit-user">
-      <h2 id="form-title">Add user</h2>
-
-      <form id="user-form">
-        <input type="hidden" id="u-id">
-
-        <div class="form-grid">
-
-          <div class="field">
-            <label for="u-name">Full name</label>
-            <input
-              id="u-name"
-              type="text"
-              placeholder="e.g. Nomvula Khumalo"
-              autocomplete="name"
-              required>
-          </div>
-
-          <div class="field">
-            <label for="u-role">Role</label>
-            <select id="u-role" required>
-              <option value="Farmer">Farmer</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="u-email">Email address</label>
-            <input
-              id="u-email"
-              type="email"
-              placeholder="name@example.com"
-              autocomplete="email"
-              required>
-          </div>
-
-          <div class="field">
-            <label for="u-password">Password</label>
-            <input
-              id="u-password"
-              type="password"
-              minlength="8"
-              autocomplete="new-password"
-              placeholder="At least 8 characters">
-            <small>
-              Required when adding a user. When editing, leave blank
-              to keep the current password.
-            </small>
-          </div>
-
-        </div>
-
-        <p id="form-message" role="status" aria-live="polite"></p>
-
-        <div class="form-actions">
-          <button class="btn-primary" type="submit" id="save-user-btn">
-            Save user
-          </button>
-
-          <button class="btn-quiet" type="button" id="clear-user-form">
-            Clear
-          </button>
-        </div>
-      </form>
-    </div>
-
   </main>
 </div>
+
+<!-- Add/Edit user modal -->
+<div class="modal-overlay" id="user-modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="form-title">
+    <div class="modal-head">
+      <h2 id="form-title">Add user</h2>
+      <button type="button" class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+    </div>
+
+    <form id="user-form">
+      <input type="hidden" id="u-id">
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="u-name">Full name</label>
+          <input
+            id="u-name"
+            type="text"
+            placeholder="e.g. Nomvula Khumalo"
+            autocomplete="name"
+            required>
+        </div>
+
+        <div class="field">
+          <label for="u-role">Role</label>
+          <select id="u-role" required>
+            <option value="Farmer">Farmer</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="u-email">Email address</label>
+          <input
+            id="u-email"
+            type="email"
+            placeholder="name@example.com"
+            autocomplete="email"
+            required>
+        </div>
+
+        <div class="field">
+          <label for="u-password">Password</label>
+          <input
+            id="u-password"
+            type="password"
+            minlength="8"
+            autocomplete="new-password"
+            placeholder="At least 8 characters">
+          <small>
+            Required when adding a user. When editing, leave blank
+            to keep the current password.
+          </small>
+        </div>
+      </div>
+
+      <p id="form-message" role="status" aria-live="polite"></p>
+
+      <div class="form-actions">
+        <button class="btn-primary" type="submit" id="save-user-btn">
+          Save user
+        </button>
+        <button class="btn-quiet" type="button" id="cancel-user-form">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal-overlay" id="confirm-modal-overlay" hidden>
+  <div class="modal modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-head">
+      <h2 id="confirm-title">Remove user</h2>
+      <button type="button" class="modal-close" id="confirm-close-btn" aria-label="Close">&times;</button>
+    </div>
+    <p id="confirm-message"></p>
+    <div class="form-actions">
+      <button class="btn-danger" type="button" id="confirm-delete-btn">Remove</button>
+      <button class="btn-quiet" type="button" id="cancel-delete-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notifications -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <!-- Existing authentication script -->
 <script src="js/auth.js"></script>
@@ -166,7 +185,7 @@
   })();
 </script>
 
-<!-- User management functionality will go here -->
+<!-- User management functionality -->
 <script src="js/users.js"></script>
 
 </body>

@@ -126,6 +126,54 @@ async function apiGet(path) {
   return res.json();
 }
 
+// Shared helper for authenticated writes (POST/PUT/DELETE). `body`, if
+// given, is JSON-stringified. Returns parsed JSON for responses with a
+// body, or null for a 204 No Content. Throws an Error with a
+// human-readable message on failure.
+async function apiRequest(path, method, body) {
+  const session = getSession();
+  if (!session) {
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.token}`
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    });
+  } catch (e) {
+    throw new Error("Can't reach the server. Is the backend running?");
+  }
+
+  if (res.status === 401 || res.status === 403) {
+    clearSession();
+    window.location.href = "login.html";
+    throw new Error("Session expired.");
+  }
+  if (res.status === 204) return null;
+
+  if (!res.ok) {
+    let message = `Request failed (${res.status}).`;
+    try {
+      const data = await res.json();
+      if (data?.message) message = data.message;
+    } catch (e) { /* body wasn't JSON — keep the default message */ }
+    throw new Error(message);
+  }
+
+  try {
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
 // Rough relative-time formatter ("Just now", "5 min ago", "3 hr ago") for
 // device/alert timestamps, so we're not just dumping raw ISO strings.
 function timeAgo(isoString) {

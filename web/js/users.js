@@ -1,6 +1,6 @@
-
- // UnderSoil Admin — user management
- // Supports loading, adding, editing, and removing users.
+// UnderSoil Admin — user management
+// Loading, adding, editing, and removing users, via modals + toasts
+// instead of an inline always-visible form and native confirm() popups.
 
 (function () {
   const session = requireAdminSession();
@@ -10,7 +10,8 @@
 
   const tableBody = document.getElementById("users-table-body");
   const userCount = document.getElementById("user-count");
-  const tableMessage = document.getElementById("table-message");
+
+  const modalOverlay = document.getElementById("user-modal-overlay");
   const form = document.getElementById("user-form");
   const formTitle = document.getElementById("form-title");
   const formMessage = document.getElementById("form-message");
@@ -22,10 +23,39 @@
   const emailInput = document.getElementById("u-email");
   const passwordInput = document.getElementById("u-password");
 
+  const confirmOverlay = document.getElementById("confirm-modal-overlay");
+  const confirmMessage = document.getElementById("confirm-message");
+  const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+
+  const toastContainer = document.getElementById("toast-container");
+
   let users = [];
+  let pendingDeleteUser = null;
 
   function getToken() {
     return sessionStorage.getItem("undersoil_token");
+  }
+
+  // ---------- Toasts ----------
+  function showToast(message, type = "success") {
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.setAttribute("role", "status");
+
+    const text = document.createElement("span");
+    text.textContent = message;
+
+    const close = document.createElement("button");
+    close.className = "toast-close";
+    close.type = "button";
+    close.setAttribute("aria-label", "Dismiss");
+    close.textContent = "×";
+    close.addEventListener("click", () => toast.remove());
+
+    toast.append(text, close);
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 4500);
   }
 
   function setMessage(element, message, isError = false) {
@@ -33,6 +63,7 @@
     element.style.color = isError ? "#b42318" : "";
   }
 
+  // ---------- API ----------
   async function apiRequest(path, options = {}) {
     const token = getToken();
 
@@ -62,7 +93,6 @@
 
     if (!response.ok) {
       const detail = await response.text();
-
       throw new Error(
         detail || `The server returned error ${response.status}.`
       );
@@ -80,7 +110,7 @@
     return cell;
   }
 
-  // Display all users and create their action buttons.
+  // ---------- Table ----------
   function renderUsers() {
     tableBody.replaceChildren();
 
@@ -107,25 +137,19 @@
       const actions = document.createElement("div");
       actions.className = "row-actions";
 
-      // EDIT BUTTON
+      // EDIT BUTTON — opens the modal pre-filled
       const editButton = document.createElement("button");
       editButton.type = "button";
       editButton.className = "icon-btn";
       editButton.textContent = "Edit";
+      editButton.addEventListener("click", () => openModal("edit", user));
 
-      editButton.addEventListener("click", () => {
-        editUser(user);
-      });
-
-      // REMOVE BUTTON
+      // REMOVE BUTTON — opens the confirm modal
       const removeButton = document.createElement("button");
       removeButton.type = "button";
       removeButton.className = "icon-btn danger";
       removeButton.textContent = "Remove";
-
-      removeButton.addEventListener("click", () => {
-        deleteUser(user, removeButton);
-      });
+      removeButton.addEventListener("click", () => openConfirmModal(user));
 
       actions.append(editButton, removeButton);
       actionsCell.appendChild(actions);
@@ -147,9 +171,7 @@
 
     try {
       users = await apiRequest("/api/Users");
-
       renderUsers();
-      setMessage(tableMessage, "");
     } catch (error) {
       userCount.textContent = "Unable to load users";
       tableBody.replaceChildren();
@@ -160,86 +182,119 @@
       errorRow.appendChild(errorCell);
       tableBody.appendChild(errorRow);
 
-      setMessage(tableMessage, error.message, true);
+      showToast(error.message, "error");
     }
   }
 
-  // EDIT: Populate the form with the selected user's details.
-  function editUser(user) {
-    idInput.value = user.id;
-    nameInput.value = user.name ?? "";
-    emailInput.value = user.email ?? "";
-    roleInput.value = user.role ?? "Farmer";
+  // ---------- Add / edit modal ----------
+  function openModal(mode, user) {
+    form.reset();
+    setMessage(formMessage, "");
 
-    // Never populate the password with the existing password hash.
-    passwordInput.value = "";
-    passwordInput.required = false;
+    if (mode === "edit") {
+      idInput.value = user.id;
+      nameInput.value = user.name ?? "";
+      emailInput.value = user.email ?? "";
+      roleInput.value = user.role ?? "Farmer";
 
-    formTitle.textContent = "Edit user";
-    saveButton.textContent = "Update user";
+      // Never populate the password with the existing hash.
+      passwordInput.value = "";
+      passwordInput.required = false;
 
-    setMessage(
-      formMessage,
-      "Update the user's details. Leave the password blank to keep it unchanged."
-    );
+      formTitle.textContent = "Edit user";
+      saveButton.textContent = "Update user";
+    } else {
+      idInput.value = "";
+      passwordInput.required = true;
 
-    setMessage(tableMessage, "");
+      formTitle.textContent = "Add user";
+      saveButton.textContent = "Save user";
+    }
 
-    // Bring the form into view.
-    document.getElementById("edit-user").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    modalOverlay.hidden = false;
+    nameInput.focus();
   }
 
+  function closeModal() {
+    modalOverlay.hidden = true;
+    form.reset();
+    setMessage(formMessage, "");
+  }
+
+  document.getElementById("add-user-btn")
+    .addEventListener("click", () => openModal("add"));
+  document.getElementById("modal-close-btn")
+    .addEventListener("click", closeModal);
+  document.getElementById("cancel-user-form")
+    .addEventListener("click", closeModal);
+
+  // Click outside the modal box closes it.
+  modalOverlay.addEventListener("click", event => {
+    if (event.target === modalOverlay) closeModal();
+  });
+
+  // ---------- Delete confirm modal ----------
+  function openConfirmModal(user) {
+    pendingDeleteUser = user;
+    confirmMessage.textContent =
+      `Are you sure you want to remove ${user.name} (${user.email})? This action cannot be undone.`;
+    confirmOverlay.hidden = false;
+  }
+
+  function closeConfirmModal() {
+    confirmOverlay.hidden = true;
+    pendingDeleteUser = null;
+    confirmDeleteBtn.disabled = false;
+    confirmDeleteBtn.textContent = "Remove";
+  }
+
+  document.getElementById("confirm-close-btn")
+    .addEventListener("click", closeConfirmModal);
+  document.getElementById("cancel-delete-btn")
+    .addEventListener("click", closeConfirmModal);
+
+  confirmOverlay.addEventListener("click", event => {
+    if (event.target === confirmOverlay) closeConfirmModal();
+  });
+
   // DELETE: Remove a user after confirmation.
-  async function deleteUser(user, button) {
-    const confirmed = window.confirm(
-      `Are you sure you want to remove ${user.name} (${user.email})? This action cannot be undone.`
-    );
+  confirmDeleteBtn.addEventListener("click", async () => {
+    if (!pendingDeleteUser) return;
+    const user = pendingDeleteUser;
 
-    if (!confirmed) return;
-
-    button.disabled = true;
-    const originalText = button.textContent;
-    button.textContent = "Removing...";
+    confirmDeleteBtn.disabled = true;
+    confirmDeleteBtn.textContent = "Removing...";
 
     try {
       await apiRequest(`/api/Users/${encodeURIComponent(user.id)}`, {
         method: "DELETE"
       });
 
-      // If the deleted user is currently being edited, clear the form.
+      // If the deleted user is currently open in the edit modal, close it too.
       if (String(idInput.value) === String(user.id)) {
-        clearForm();
+        closeModal();
       }
 
-      setMessage(
-        tableMessage,
-        `${user.name} was removed successfully.`
-      );
-
+      closeConfirmModal();
+      showToast(`${user.name} was removed.`, "success");
       await loadUsers();
     } catch (error) {
-      setMessage(tableMessage, error.message, true);
-      button.disabled = false;
-      button.textContent = originalText;
+      // Includes the last-admin safeguard message from the backend, if that's
+      // why the delete was rejected.
+      confirmDeleteBtn.disabled = false;
+      confirmDeleteBtn.textContent = "Remove";
+      showToast(error.message, "error");
     }
-  }
+  });
 
-  // Reset the form to Add mode.
-  function clearForm() {
-    form.reset();
-    idInput.value = "";
+  // Escape closes whichever modal is currently open.
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    if (!confirmOverlay.hidden) closeConfirmModal();
+    else if (!modalOverlay.hidden) closeModal();
+  });
 
-    formTitle.textContent = "Add user";
-    saveButton.textContent = "Save user";
-    passwordInput.required = true;
-
-    setMessage(formMessage, "");
-  }
-
-  // CREATE and UPDATE: Handle form submission.
+  // ---------- Create and update ----------
   form.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -280,30 +335,15 @@
     }
 
     if (role !== "Farmer" && role !== "Admin") {
-      setMessage(
-        formMessage,
-        "Please select a valid role.",
-        true
-      );
+      setMessage(formMessage, "Please select a valid role.", true);
       return;
     }
 
-    // Build the request body.
-    const requestBody = {
-      name,
-      email,
-      role
-    };
-
-    // Include the password only if one was provided.
-    if (password) {
-      requestBody.password = password;
-    }
+    const requestBody = { name, email, role };
+    if (password) requestBody.password = password;
 
     saveButton.disabled = true;
-    saveButton.textContent = isEditing
-      ? "Updating..."
-      : "Saving...";
+    saveButton.textContent = isEditing ? "Updating..." : "Saving...";
 
     try {
       if (isEditing) {
@@ -316,56 +356,30 @@
           }
         );
 
-        clearForm();
-
-        setMessage(
-          formMessage,
-          "User updated successfully."
-        );
-
-        setMessage(
-          tableMessage,
-          "User details updated successfully."
-        );
+        closeModal();
+        showToast("User updated successfully.", "success");
       } else {
         // POST: Create a new user.
         await apiRequest("/api/Users", {
           method: "POST",
-          body: JSON.stringify({
-            ...requestBody,
-            password
-          })
+          body: JSON.stringify({ ...requestBody, password })
         });
 
-        clearForm();
-
-        setMessage(
-          formMessage,
-          "User created successfully."
-        );
-
-        setMessage(
-          tableMessage,
-          "User created successfully."
-        );
+        closeModal();
+        showToast("User created successfully.", "success");
       }
 
       await loadUsers();
     } catch (error) {
+      // Stays inline in the modal (not a toast) since it's tied to the form
+      // the user is actively filling in — e.g. "That email is already
+      // registered," or the last-admin safeguard message on a role change.
       setMessage(formMessage, error.message, true);
     } finally {
       saveButton.disabled = false;
-
-      // Keep the appropriate button label if a request failed.
-      saveButton.textContent = idInput.value
-        ? "Update user"
-        : "Save user";
+      saveButton.textContent = idInput.value ? "Update user" : "Save user";
     }
   });
-
-  // CLEAR: Return to Add mode.
-  document.getElementById("clear-user-form")
-    .addEventListener("click", clearForm);
 
   // Initial page load.
   loadUsers();
