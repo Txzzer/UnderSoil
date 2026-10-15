@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\android\app\src\main\assets\recommendations.json" Link="Data\recommendations.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="MQTTnet" Version="3.1.2" />
     <PackageReference Include="MQTTnet.AspNetCore" Version="3.1.2" />

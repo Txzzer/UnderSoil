@@ -119,6 +119,77 @@ using (var scope = app.Services.CreateScope())
         "[ActualVolume] FLOAT NOT NULL, " +
         "[Status] NVARCHAR(MAX) NOT NULL, " +
         "[IsSynced] BIT NOT NULL);");
+    db.Database.ExecuteSqlRaw(
+        "IF OBJECT_ID(N'[GardenCrops]', N'U') IS NULL CREATE TABLE [GardenCrops] (" +
+        "[Id] NVARCHAR(450) NOT NULL PRIMARY KEY, " +
+        "[PlantId] INT NOT NULL, " +
+        "[UserId] NVARCHAR(MAX) NOT NULL, " +
+        "[IsSynced] BIT NOT NULL);");
+    db.Database.ExecuteSqlRaw(
+        "IF OBJECT_ID(N'[Plants]', N'U') IS NULL CREATE TABLE [Plants] (" +
+        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
+        "[Name] NVARCHAR(MAX) NOT NULL, " +
+        "[Description] NVARCHAR(MAX) NOT NULL, " +
+        "[WaterNeeds] NVARCHAR(MAX) NOT NULL, " +
+        "[SunlightNeeds] NVARCHAR(MAX) NOT NULL, " +
+        "[FertilizerNeeds] NVARCHAR(MAX) NOT NULL, " +
+        "[HumidityNeeds] NVARCHAR(MAX) NOT NULL);");
+    db.Database.ExecuteSqlRaw(
+        "IF OBJECT_ID(N'[DiseaseTreatments]', N'U') IS NULL CREATE TABLE [DiseaseTreatments] (" +
+        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
+        "[Label] NVARCHAR(MAX) NOT NULL, " +
+        "[CropName] NVARCHAR(MAX) NOT NULL, " +
+        "[DiseaseName] NVARCHAR(MAX) NOT NULL, " +
+        "[Cause] NVARCHAR(MAX) NOT NULL, " +
+        "[Recommendations] NVARCHAR(MAX) NOT NULL);");
+    db.Database.ExecuteSqlRaw(
+        "IF OBJECT_ID(N'[ValveCommands]', N'U') IS NULL CREATE TABLE [ValveCommands] (" +
+        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
+        "[UserId] NVARCHAR(MAX) NOT NULL, " +
+        "[DeviceId] NVARCHAR(MAX) NULL, " +
+        "[ValveIsOpen] BIT NOT NULL, " +
+        "[DurationMinutes] INT NULL, " +
+        "[Source] NVARCHAR(MAX) NOT NULL, " +
+        "[IssuedAt] DATETIME2 NOT NULL);");
+
+    if (!db.Plants.Any())
+    {
+        db.Plants.AddRange(
+            new Plant { Name = "Tomato", Description = "Tomatoes add elegance to indoor spaces and carry a positive symbolic message.", WaterNeeds = "250 ml", SunlightNeeds = "Normal", FertilizerNeeds = "70 ml", HumidityNeeds = "54%" },
+            new Plant { Name = "Potato", Description = "Potatoes are versatile root vegetables that thrive in loose, well-drained soil.", WaterNeeds = "200 ml", SunlightNeeds = "High", FertilizerNeeds = "50 ml", HumidityNeeds = "40%" },
+            new Plant { Name = "Apple", Description = "Apple trees require careful pruning and consistent watering to produce high yields.", WaterNeeds = "300 ml", SunlightNeeds = "High", FertilizerNeeds = "100 ml", HumidityNeeds = "50%" },
+            new Plant { Name = "Corn", Description = "Corn is a staple cereal crop that requires significant space and full sun.", WaterNeeds = "400 ml", SunlightNeeds = "High", FertilizerNeeds = "80 ml", HumidityNeeds = "45%" },
+            new Plant { Name = "Grape", Description = "Grapes grow on vigorous vines and need strong trellising for support.", WaterNeeds = "150 ml", SunlightNeeds = "High", FertilizerNeeds = "40 ml", HumidityNeeds = "60%" },
+            new Plant { Name = "Cherry", Description = "Cherry trees produce sweet stone fruits and prefer well-drained soil.", WaterNeeds = "250 ml", SunlightNeeds = "High", FertilizerNeeds = "60 ml", HumidityNeeds = "50%" },
+            new Plant { Name = "Peach", Description = "Peaches prefer temperate climates and require winter chilling hours.", WaterNeeds = "250 ml", SunlightNeeds = "High", FertilizerNeeds = "70 ml", HumidityNeeds = "50%" },
+            new Plant { Name = "Pepper", Description = "Peppers thrive in warm weather and produce better yields with consistent moisture.", WaterNeeds = "200 ml", SunlightNeeds = "High", FertilizerNeeds = "60 ml", HumidityNeeds = "45%" },
+            new Plant { Name = "Strawberry", Description = "Strawberries are low-growing perennials that multiply via runners.", WaterNeeds = "150 ml", SunlightNeeds = "Normal", FertilizerNeeds = "30 ml", HumidityNeeds = "60%" });
+        db.SaveChanges();
+    }
+
+    if (!db.DiseaseTreatments.Any())
+    {
+        var recommendationsPath = Path.Combine(AppContext.BaseDirectory, "Data", "recommendations.json");
+        using var recommendationsDocument = JsonDocument.Parse(File.ReadAllText(recommendationsPath));
+        var treatments = recommendationsDocument.RootElement.EnumerateObject().Select(entry =>
+        {
+            var value = entry.Value;
+            var recommendations = value.GetProperty("recommendations").EnumerateArray()
+                .Select(recommendation => recommendation.GetString() ?? string.Empty);
+
+            return new DiseaseTreatment
+            {
+                Label = entry.Name,
+                CropName = value.GetProperty("crop").GetString() ?? string.Empty,
+                DiseaseName = value.GetProperty("disease").GetString() ?? string.Empty,
+                Cause = value.GetProperty("cause").GetString() ?? string.Empty,
+                Recommendations = string.Join("\n", recommendations)
+            };
+        }).ToList();
+
+        db.DiseaseTreatments.AddRange(treatments);
+        db.SaveChanges();
+    }
 }
 
 // Read MQTT client settings from configuration (appsettings.json / environment)

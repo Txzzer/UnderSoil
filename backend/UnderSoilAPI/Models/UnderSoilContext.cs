@@ -16,5 +16,8 @@ namespace UnderSoilAPI.Models
         public DbSet<GardenEntity> GardenCrops { get; set; }
         public DbSet<IotAlert> IotAlerts { get; set; }
         public DbSet<WateringSchedule> WateringSchedules { get; set; }
+        public DbSet<Plant> Plants { get; set; }
+        public DbSet<DiseaseTreatment> DiseaseTreatments { get; set; }
+        public DbSet<ValveCommand> ValveCommands { get; set; }
     }
 }

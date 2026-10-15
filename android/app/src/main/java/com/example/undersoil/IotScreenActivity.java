@@ -19,9 +19,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import network.ApiClient;
+import network.ApiService;
 import network.SensorData;
+import network.ValveHistoryEntry;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class IotScreenActivity extends AppCompatActivity implements IoTAlertManager.Listener {
 
@@ -43,6 +55,11 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
     private TextView tvWarningBannerText;
     private Button btnWarningAction;
 
+    private static final int VALVE_HISTORY_LIMIT = 5;
+
+    private MaterialCardView cardValveHistory;
+    private android.widget.LinearLayout llValveHistory;
+
     private BottomNavigationView bottomNavigationView;
     private FloatingActionButton fabHome;
 
@@ -62,6 +79,7 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
         setupGauges();
         setupValveToggle();
         setupBottomNavigation();
+        loadValveHistory();
     }
 
     private void extractIntentExtras() {
@@ -94,6 +112,9 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
         cardWarningBanner = findViewById(R.id.cardWarningBanner);
         tvWarningBannerText = findViewById(R.id.tvWarningBannerText);
         btnWarningAction = findViewById(R.id.btnWarningAction);
+
+        cardValveHistory = findViewById(R.id.cardValveHistory);
+        llValveHistory = findViewById(R.id.llValveHistory);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         fabHome = findViewById(R.id.fabHome);
@@ -179,6 +200,8 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
     public void onPollError(String message) {
         tvStreamStatus.setText("● " + message);
         tvStreamStatus.setTextColor(ContextCompat.getColor(this, R.color.status_error));
+        // Device unreachable: don't show possibly stale valve history
+        cardValveHistory.setVisibility(View.GONE);
     }
 
     @Override
@@ -290,6 +313,83 @@ public class IotScreenActivity extends AppCompatActivity implements IoTAlertMana
         viewValveGlow.setScaleY(1f);
         viewValveGlow.setAlpha(1f);
         viewValveCore.setAlpha(1f);
+    }
+
+    // ---- Recent valve actions ----
+
+    /** Fetches valve history once per screen open; the card stays hidden if offline or the call fails. */
+    private void loadValveHistory() {
+        cardValveHistory.setVisibility(View.GONE);
+        if (!isNetworkAvailable()) return;
+
+        ApiService api = ApiClient.getClient(this).create(ApiService.class);
+        api.getValveHistory().enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<List<ValveHistoryEntry>> call, Response<List<ValveHistoryEntry>> response) {
+                if (isFinishing() || isDestroyed()) return;
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    showValveHistory(response.body());
+                } else {
+                    cardValveHistory.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ValveHistoryEntry>> call, Throwable t) {
+                if (isFinishing() || isDestroyed()) return;
+                cardValveHistory.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void showValveHistory(List<ValveHistoryEntry> entries) {
+        // Newest first; ISO-8601 timestamps sort chronologically as text, missing ones go last
+        List<ValveHistoryEntry> sorted = new ArrayList<>(entries);
+        sorted.sort((a, b) -> {
+            String ta = a.getTimestamp(), tb = b.getTimestamp();
+            if (ta == null) return (tb == null) ? 0 : 1;
+            if (tb == null) return -1;
+            return tb.compareTo(ta);
+        });
+
+        llValveHistory.removeAllViews();
+        android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
+        for (int i = 0; i < Math.min(VALVE_HISTORY_LIMIT, sorted.size()); i++) {
+            ValveHistoryEntry entry = sorted.get(i);
+            View row = inflater.inflate(R.layout.item_valve_action, llValveHistory, false);
+
+            TextView tvAction = row.findViewById(R.id.tvValveAction);
+            tvAction.setText(entry.isValveIsOpen() ? "Opened" : "Closed");
+            tvAction.setTextColor(ContextCompat.getColor(this,
+                    entry.isValveIsOpen() ? R.color.valve_open : R.color.valve_closed));
+            ((TextView) row.findViewById(R.id.tvValveActionTime)).setText(formatHistoryTime(entry.getTimestamp()));
+
+            llValveHistory.addView(row);
+        }
+        cardValveHistory.setVisibility(View.VISIBLE);
+    }
+
+    /** "2026-10-15T14:32:10Z" -> "15 Oct, 14:32" in the device time zone; raw string if unparseable. */
+    private String formatHistoryTime(String rawTimestamp) {
+        if (rawTimestamp == null || rawTimestamp.isEmpty()) return "";
+        DateTimeFormatter shown = DateTimeFormatter.ofPattern("d MMM, HH:mm", Locale.getDefault());
+        try {
+            return shown.format(Instant.parse(rawTimestamp).atZone(ZoneId.systemDefault()));
+        } catch (Exception ignored) {
+        }
+        try {
+            // No offset in the string (e.g. .NET DateTime without Kind): show it as-is
+            return shown.format(LocalDateTime.parse(rawTimestamp));
+        } catch (Exception ignored) {
+        }
+        return rawTimestamp;
+    }
+
+    private boolean isNetworkAvailable() {
+        android.net.ConnectivityManager cm = getSystemService(android.net.ConnectivityManager.class);
+        if (cm == null) return false;
+        android.net.NetworkCapabilities caps = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        return caps != null && caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     private String formatTimestamp(String rawTimestamp) {

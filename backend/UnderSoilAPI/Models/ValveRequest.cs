@@ -4,8 +4,7 @@ namespace UnderSoilAPI.Models
 {
     public class ValveRequest
     {
-        
         public bool ValveIsOpen { get; set; }
-
+        public int? DurationMinutes { get; set; }
     }
 }

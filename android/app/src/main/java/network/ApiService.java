@@ -16,6 +16,9 @@ public interface ApiService {
     @POST("api/v1/Valve/toggle")
     Call<Void> toggleValve(@Body ValveRequest request);
 
+    @GET("api/v1/Valve/history")
+    Call<List<ValveHistoryEntry>> getValveHistory();
+
     @GET("api/v1/Telemetry/latest")
     Call<SensorData> getLatestSensorData();
 
