@@ -67,6 +67,7 @@ async function loadAlerts() {
   } catch (err) {
     list.innerHTML = `<li>Couldn't load alerts — ${escapeHtml(err.message)}</li>`;
     banner.style.display = "none";
+    showToast(`Couldn't load alerts — ${err.message}`, "error");
   }
 }
 

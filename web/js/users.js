@@ -27,8 +27,6 @@
   const confirmMessage = document.getElementById("confirm-message");
   const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
 
-  const toastContainer = document.getElementById("toast-container");
-
   let users = [];
   let pendingDeleteUser = null;
 
@@ -36,27 +34,7 @@
     return sessionStorage.getItem("undersoil_token");
   }
 
-  // ---------- Toasts ----------
-  function showToast(message, type = "success") {
-    const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
-    toast.setAttribute("role", "status");
-
-    const text = document.createElement("span");
-    text.textContent = message;
-
-    const close = document.createElement("button");
-    close.className = "toast-close";
-    close.type = "button";
-    close.setAttribute("aria-label", "Dismiss");
-    close.textContent = "×";
-    close.addEventListener("click", () => toast.remove());
-
-    toast.append(text, close);
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => toast.remove(), 4500);
-  }
+  // showToast() comes from auth.js — shared across every page.
 
   function setMessage(element, message, isError = false) {
     element.textContent = message;

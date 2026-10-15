@@ -26,6 +26,7 @@
   } catch (err) {
     body.innerHTML = `<tr><td colspan="3">Couldn't load sectors — ${escapeHtml(err.message)}</td></tr>`;
     subtitle.textContent = "Couldn't load sectors";
+    showToast(`Couldn't load sectors — ${err.message}`, "error");
   }
 })();
 

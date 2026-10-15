@@ -174,6 +174,33 @@ async function apiRequest(path, method, body) {
   }
 }
 
+// Shared toast notifications. Every page that wants to use this needs a
+// <div class="toast-container" id="toast-container"></div> in its HTML and
+// css/modals.css linked (that's where the toast styling lives).
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  if (!container) return; // page didn't opt in — fail quietly rather than throw
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.setAttribute("role", "status");
+
+  const text = document.createElement("span");
+  text.textContent = message;
+
+  const close = document.createElement("button");
+  close.className = "toast-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Dismiss");
+  close.textContent = "×";
+  close.addEventListener("click", () => toast.remove());
+
+  toast.append(text, close);
+  container.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 4500);
+}
+
 // Rough relative-time formatter ("Just now", "5 min ago", "3 hr ago") for
 // device/alert timestamps, so we're not just dumping raw ISO strings.
 function timeAgo(isoString) {
