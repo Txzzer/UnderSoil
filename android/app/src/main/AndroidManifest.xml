@@ -31,75 +31,70 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".garden.GardenActivity"
             android:exported="true" />
 
         <activity
-            android:name=".Log_in"
+            android:name=".auth.LoginActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".Sign_up"
+            android:name=".auth.SignUpActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".HomeScreenActivity"
+            android:name=".home.HomeScreenActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ExplorePlantsActivity"
+            android:name=".garden.ExplorePlantsActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".PlantDetailsActivity"
+            android:name=".garden.PlantDetailsActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".Camera_detector"
+            android:name=".scan.ScanActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".LogListActivity"
+            android:name=".scan.LogListActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".RecommendationsActivity"
+            android:name=".scan.RecommendationsActivity"
             android:exported="false" />
         <activity
-            android:name=".LogResultActivity"
+            android:name=".scan.LogResultActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".IotWateringActivity"
+            android:name=".iot.IotWateringActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
 
         <activity
-            android:name=".AddSectorActivity"
+            android:name=".iot.AddSectorActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
 
         <activity
-            android:name=".IotScreenActivity"
+            android:name=".iot.IotScreenActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".Settings"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 

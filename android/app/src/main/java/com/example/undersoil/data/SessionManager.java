@@ -7,7 +7,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
-import com.example.undersoil.Log_in;
+import com.example.undersoil.auth.LoginActivity;
 
 import org.json.JSONObject;
 
@@ -95,7 +95,7 @@ public class SessionManager {
         long now = System.currentTimeMillis();
         long lastSeen = pref.getLong(KEY_LAST_SEEN_TIME, 0);
 
-        // Check clock tampering (clock rolled back by more than 5 minutes / 300,000 ms)
+        // A clock set back more than 5 minutes could be used to dodge token expiry
         if (lastSeen > 0 && (lastSeen - now) > 5 * 60 * 1000) {
             return InvalidReason.CLOCK_ROLLBACK;
         }
@@ -120,7 +120,7 @@ public class SessionManager {
             return false;
         }
 
-        // Update high-water mark time
+        // Remember the latest time seen so a rolled-back clock can be spotted
         long now = System.currentTimeMillis();
         long lastSeen = pref.getLong(KEY_LAST_SEEN_TIME, 0);
         if (now > lastSeen) {
@@ -203,7 +203,7 @@ public class SessionManager {
     public void logoutUser(Context context) {
         clearSessionOnly(InvalidReason.NOT_LOGGED_IN);
 
-        Intent intent = new Intent(context, Log_in.class);
+        Intent intent = new Intent(context, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
     }

@@ -8,7 +8,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import network.ApiClient;
+import com.example.undersoil.iot.IotAlertManager;
+import com.example.undersoil.network.ApiClient;
 
 public class UnderSoilApp extends Application {
 
@@ -22,14 +23,14 @@ public class UnderSoilApp extends Application {
         Log.d(TAG, "Application created");
 
         ApiClient.getClient(this);
-        IoTAlertManager.init(this);
+        IotAlertManager.init(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityStarted(@NonNull Activity activity) {
                 startedActivityCount++;
                 if (startedActivityCount == 1) {
-                    IoTAlertManager.get().startPolling();
+                    IotAlertManager.get().startPolling();
                 }
             }
 
@@ -38,18 +39,18 @@ public class UnderSoilApp extends Application {
                 startedActivityCount--;
                 if (startedActivityCount <= 0) {
                     startedActivityCount = 0;
-                    IoTAlertManager.get().stopPolling();
+                    IotAlertManager.get().stopPolling();
                 }
             }
 
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
-                IoTAlertManager.get().setCurrentActivity(activity);
+                IotAlertManager.get().setCurrentActivity(activity);
             }
 
             @Override
             public void onActivityPaused(@NonNull Activity activity) {
-                IoTAlertManager.get().clearCurrentActivity(activity);
+                IotAlertManager.get().clearCurrentActivity(activity);
             }
 
             @Override

@@ -174,7 +174,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <com.example.undersoil.CircularGaugeView
+                        <com.example.undersoil.widget.CircularGaugeView
                             android:id="@+id/gaugeTemperature"
                             android:layout_width="140dp"
                             android:layout_height="140dp" />
@@ -199,7 +199,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <com.example.undersoil.CircularGaugeView
+                        <com.example.undersoil.widget.CircularGaugeView
                             android:id="@+id/gaugeHumidity"
                             android:layout_width="140dp"
                             android:layout_height="140dp" />
