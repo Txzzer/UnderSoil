@@ -99,58 +99,14 @@ var app = builder.Build();
 app.UseCors("UnderSoilDashboard");
 
 
-// Ensure database exists
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<UnderSoilContext>();
-    db.Database.EnsureCreated();
 
-    // EnsureCreated() doesn't alter existing tables: add columns introduced after the DB was created
-    db.Database.ExecuteSqlRaw(
-        "IF COL_LENGTH('ScanLogs', 'Notes') IS NULL ALTER TABLE [ScanLogs] ADD [Notes] NVARCHAR(50) NULL;");
-    db.Database.ExecuteSqlRaw(
-        "IF OBJECT_ID(N'[WateringSchedules]', N'U') IS NULL CREATE TABLE [WateringSchedules] (" +
-        "[Id] NVARCHAR(450) NOT NULL PRIMARY KEY, " +
-        "[UserId] NVARCHAR(MAX) NOT NULL, " +
-        "[SectorId] NVARCHAR(MAX) NOT NULL, " +
-        "[StartTime] BIGINT NOT NULL, " +
-        "[DurationMinutes] INT NOT NULL, " +
-        "[ExpectedVolume] FLOAT NOT NULL, " +
-        "[ActualVolume] FLOAT NOT NULL, " +
-        "[Status] NVARCHAR(MAX) NOT NULL, " +
-        "[IsSynced] BIT NOT NULL);");
-    db.Database.ExecuteSqlRaw(
-        "IF OBJECT_ID(N'[GardenCrops]', N'U') IS NULL CREATE TABLE [GardenCrops] (" +
-        "[Id] NVARCHAR(450) NOT NULL PRIMARY KEY, " +
-        "[PlantId] INT NOT NULL, " +
-        "[UserId] NVARCHAR(MAX) NOT NULL, " +
-        "[IsSynced] BIT NOT NULL);");
-    db.Database.ExecuteSqlRaw(
-        "IF OBJECT_ID(N'[Plants]', N'U') IS NULL CREATE TABLE [Plants] (" +
-        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
-        "[Name] NVARCHAR(MAX) NOT NULL, " +
-        "[Description] NVARCHAR(MAX) NOT NULL, " +
-        "[WaterNeeds] NVARCHAR(MAX) NOT NULL, " +
-        "[SunlightNeeds] NVARCHAR(MAX) NOT NULL, " +
-        "[FertilizerNeeds] NVARCHAR(MAX) NOT NULL, " +
-        "[HumidityNeeds] NVARCHAR(MAX) NOT NULL);");
-    db.Database.ExecuteSqlRaw(
-        "IF OBJECT_ID(N'[DiseaseTreatments]', N'U') IS NULL CREATE TABLE [DiseaseTreatments] (" +
-        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
-        "[Label] NVARCHAR(MAX) NOT NULL, " +
-        "[CropName] NVARCHAR(MAX) NOT NULL, " +
-        "[DiseaseName] NVARCHAR(MAX) NOT NULL, " +
-        "[Cause] NVARCHAR(MAX) NOT NULL, " +
-        "[Recommendations] NVARCHAR(MAX) NOT NULL);");
-    db.Database.ExecuteSqlRaw(
-        "IF OBJECT_ID(N'[ValveCommands]', N'U') IS NULL CREATE TABLE [ValveCommands] (" +
-        "[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, " +
-        "[UserId] NVARCHAR(MAX) NOT NULL, " +
-        "[DeviceId] NVARCHAR(MAX) NULL, " +
-        "[ValveIsOpen] BIT NOT NULL, " +
-        "[DurationMinutes] INT NULL, " +
-        "[Source] NVARCHAR(MAX) NOT NULL, " +
-        "[IssuedAt] DATETIME2 NOT NULL);");
+    if (app.Environment.IsDevelopment())
+    {
+        db.Database.Migrate();
+    }
 
     if (!db.Plants.Any())
     {

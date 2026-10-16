@@ -6,11 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UnderSoilAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class UnderSoilDB : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "DiseaseTreatments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CropName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiseaseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cause = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Recommendations = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiseaseTreatments", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "GardenCrops",
                 columns: table => new
@@ -40,6 +57,24 @@ namespace UnderSoilAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IotAlerts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Plants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WaterNeeds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SunlightNeeds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FertilizerNeeds = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HumidityNeeds = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plants", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,6 +144,24 @@ namespace UnderSoilAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ValveCommands",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DeviceId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ValveIsOpen = table.Column<bool>(type: "bit", nullable: false),
+                    DurationMinutes = table.Column<int>(type: "int", nullable: true),
+                    Source = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IssuedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValveCommands", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WateringSchedules",
                 columns: table => new
                 {
@@ -132,10 +185,16 @@ namespace UnderSoilAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DiseaseTreatments");
+
+            migrationBuilder.DropTable(
                 name: "GardenCrops");
 
             migrationBuilder.DropTable(
                 name: "IotAlerts");
+
+            migrationBuilder.DropTable(
+                name: "Plants");
 
             migrationBuilder.DropTable(
                 name: "ScanLogs");
@@ -148,6 +207,9 @@ namespace UnderSoilAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "ValveCommands");
 
             migrationBuilder.DropTable(
                 name: "WateringSchedules");
