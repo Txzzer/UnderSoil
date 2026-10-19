@@ -22,12 +22,6 @@ android {
         noCompress += "tflite"
     }
 
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
-        }
-    }
-
     buildTypes {
         release {
             optimization {
@@ -46,28 +40,32 @@ android {
     }
 }
 
+// Old TFLite artifacts ship 4 KB-aligned native libs; LiteRT replaces them (same org.tensorflow.lite packages)
+configurations.configureEach {
+    exclude(group = "org.tensorflow")
+}
+
 dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-    implementation(libs.tensorflow.lite.gpu)
-    implementation(libs.tensorflow.lite.support)
 
-    // TensorFlow Lite 2.17.0 (Supports CAST opcode v6+)
-    implementation("org.tensorflow:tensorflow-lite:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-api:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-support-api:0.4.4")
-    implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
+    // LiteRT (formerly TensorFlow Lite) - 16 KB page-size compatible
+    implementation(libs.litert)
+    implementation(libs.litert.support)
+    implementation(libs.litert.metadata)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
-    
+
     // Compose
-    val composeBom = platform("androidx.compose:compose-bom:2024.02.01")
+    val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
+    // graphics-path 1.1.0+ ships 16 KB-aligned libandroidx.graphics.path.so
+    implementation(libs.graphics.path)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
