@@ -1,6 +1,0 @@
-numpy
-tensorflow
-keras
-scikit-learn
-pillow
-tflite-support
