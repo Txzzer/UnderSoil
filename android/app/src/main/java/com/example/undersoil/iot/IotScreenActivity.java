@@ -69,6 +69,9 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
     private FloatingActionButton fabHome;
 
     private boolean isValveOpen = false;
+    private boolean isDeviceOnline = true;
+
+    private static final float OFFLINE_ALPHA = 0.4f;
 
     private String sectorId;
     private String sectorName;
@@ -199,6 +202,31 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
     }
 
     @Override
+    public void onDeviceOffline(SensorData lastKnown) {
+        isDeviceOnline = false;
+        tvStreamStatus.setText("● Device offline");
+        tvStreamStatus.setTextColor(ContextCompat.getColor(this, R.color.status_error));
+
+        // Keep the last known values visible but dimmed so they aren't mistaken for live data
+        gaugeTemperature.setValue((float) lastKnown.getTemperatureCelsius(), false);
+        gaugeHumidity.setValue((float) lastKnown.getHumidityPercentage(), false);
+        tvFlowRate.setText(String.format(Locale.US, "%.1f L/min", lastKnown.getFlowRateLitersPerMin()));
+        setTelemetryAlpha(OFFLINE_ALPHA);
+
+        cardWarningBanner.setVisibility(View.GONE);
+        tvFlowStatus.setText("No data");
+        tvFlowStatus.setTextColor(ContextCompat.getColor(this, R.color.us_text_secondary));
+
+        if (lastKnown.getDeviceId() != null) {
+            tvDeviceId.setText(String.format("Device ID: %s", lastKnown.getDeviceId()));
+        }
+        tvLastUpdated.setText(String.format("Last seen: %s", formatAge(lastKnown.getSecondsSinceLastReading())));
+
+        // Valve commands can't reach a device that isn't reporting
+        setValveButtonsEnabled(false);
+    }
+
+    @Override
     public void onPollError(String message) {
         tvStreamStatus.setText("● " + message);
         tvStreamStatus.setTextColor(ContextCompat.getColor(this, R.color.status_error));
@@ -208,7 +236,7 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
 
     @Override
     public void onValveToggleResult(boolean success, boolean targetState, String message) {
-        setValveButtonsEnabled(true);
+        setValveButtonsEnabled(isDeviceOnline);
 
         if (success) {
             isValveOpen = targetState;
@@ -218,6 +246,13 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
     }
 
     private void updateTelemetryUi(SensorData data) {
+        if (!isDeviceOnline) {
+            // Device came back after being offline
+            isDeviceOnline = true;
+            setTelemetryAlpha(1f);
+            setValveButtonsEnabled(!IotAlertManager.get().isTogglingValve());
+        }
+
         tvStreamStatus.setText("● Live (3s)");
         tvStreamStatus.setTextColor(ContextCompat.getColor(this, R.color.status_connected));
 
@@ -237,6 +272,22 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
             isValveOpen = data.isValveIsOpen();
             updateValveUi(isValveOpen);
         }
+    }
+
+    private void setTelemetryAlpha(float alpha) {
+        gaugeTemperature.setAlpha(alpha);
+        gaugeHumidity.setAlpha(alpha);
+        tvFlowRate.setAlpha(alpha);
+    }
+
+    /** 45 -> "45 s ago", 300 -> "5 min ago", 7200 -> "2 h ago", 172800 -> "2 d ago". */
+    private String formatAge(Double seconds) {
+        if (seconds == null) return "unknown";
+        long s = Math.round(seconds);
+        if (s < 60) return s + " s ago";
+        if (s < 3600) return (s / 60) + " min ago";
+        if (s < 86400) return (s / 3600) + " h ago";
+        return (s / 86400) + " d ago";
     }
 
     private void updateFlowWarningUi(SensorData data) {
@@ -413,7 +464,11 @@ public class IotScreenActivity extends AppCompatActivity implements IotAlertMana
 
         SensorData lastData = manager.getLastData();
         if (lastData != null) {
-            updateTelemetryUi(lastData);
+            if (lastData.isOnline()) {
+                updateTelemetryUi(lastData);
+            } else {
+                onDeviceOffline(lastData);
+            }
         }
         if (isValveOpen) {
             startValvePulse();

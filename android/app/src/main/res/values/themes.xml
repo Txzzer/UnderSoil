@@ -93,6 +93,13 @@
 
     <style name="Theme.Undersoil" parent="Base.Theme.Undersoil" />
 
+    <!-- Launch splash (AndroidX SplashScreen, works below Android 12 too); us_bg follows light/dark mode -->
+    <style name="Theme.Undersoil.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/us_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Undersoil</item>
+    </style>
+
     <!-- Global activity transitions: slide forward, fade on return -->
     <style name="AgriTech.WindowAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>

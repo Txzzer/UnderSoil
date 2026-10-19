@@ -24,6 +24,13 @@ public class SensorData {
     @SerializedName(value = "timestamp", alternate = {"Timestamp", "time", "Time", "created_at", "CreatedAt"})
     private String timestamp;
 
+    // Computed by the backend from how long ago it last received a reading; null on older backends
+    @SerializedName(value = "isOnline", alternate = {"IsOnline"})
+    private Boolean isOnline;
+
+    @SerializedName(value = "secondsSinceLastReading", alternate = {"SecondsSinceLastReading"})
+    private Double secondsSinceLastReading;
+
     public SensorData() {
     }
 
@@ -53,5 +60,15 @@ public class SensorData {
 
     public String getTimestamp() {
         return timestamp;
+    }
+
+    /** False when the device has stopped reporting; treated as online if the backend doesn't send the field. */
+    public boolean isOnline() {
+        return isOnline == null || isOnline;
+    }
+
+    /** Seconds since the backend last received a reading, or null if unknown. */
+    public Double getSecondsSinceLastReading() {
+        return secondsSinceLastReading;
     }
 }

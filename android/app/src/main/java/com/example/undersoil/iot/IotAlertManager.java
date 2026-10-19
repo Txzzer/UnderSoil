@@ -69,6 +69,9 @@ public class IotAlertManager {
     public interface Listener {
         void onTelemetry(SensorData data);
 
+        /** The backend is reachable but the device has stopped reporting; {@code lastKnown} is its last reading. */
+        void onDeviceOffline(SensorData lastKnown);
+
         void onPollError(String message);
 
         void onValveToggleResult(boolean success, boolean targetState, String message);
@@ -223,8 +226,14 @@ public class IotAlertManager {
                     consecutiveFailures = 0;
                     failureNotified = false;
                     lastData = response.body();
-                    for (Listener l : listeners) l.onTelemetry(lastData);
-                    evaluateAlert(lastData);
+                    if (lastData.isOnline()) {
+                        for (Listener l : listeners) l.onTelemetry(lastData);
+                        evaluateAlert(lastData);
+                    } else {
+                        // Stale reading: don't show it as live or keep alerting on it
+                        for (Listener l : listeners) l.onDeviceOffline(lastData);
+                        clearAlert();
+                    }
                     scheduleNext(POLLING_INTERVAL_MS);
                 } else {
                     Log.w(TAG, "Telemetry poll HTTP " + response.code());
@@ -273,11 +282,15 @@ public class IotAlertManager {
                 showAlertDialog();
             }
         } else {
-            alertActive = false;
-            snoozedUntilMs = 0;
-            dismissDialog();
-            cancelAlertNotification();
+            clearAlert();
         }
+    }
+
+    private void clearAlert() {
+        alertActive = false;
+        snoozedUntilMs = 0;
+        dismissDialog();
+        cancelAlertNotification();
     }
 
     private void snooze() {

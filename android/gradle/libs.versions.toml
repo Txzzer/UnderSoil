@@ -10,6 +10,7 @@ constraintlayout = "2.2.2"
 litert = "1.4.2"
 composeBom = "2026.09.00"
 graphicsPath = "1.1.0"
+coreSplashscreen = "1.2.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -24,6 +25,7 @@ litert-support = { group = "com.google.ai.edge.litert", name = "litert-support",
 litert-metadata = { group = "com.google.ai.edge.litert", name = "litert-metadata", version.ref = "litert" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 graphics-path = { group = "androidx.graphics", name = "graphics-path", version.ref = "graphicsPath" }
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

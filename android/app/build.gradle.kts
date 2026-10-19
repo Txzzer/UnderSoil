@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    implementation(libs.core.splashscreen)
 
     // LiteRT (formerly TensorFlow Lite) - 16 KB page-size compatible
     implementation(libs.litert)

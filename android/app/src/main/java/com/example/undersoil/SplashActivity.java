@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 
 import com.example.undersoil.auth.LoginActivity;
 import com.example.undersoil.data.SessionManager;
@@ -13,6 +14,8 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Shows the logo splash (Theme.Undersoil.Starting) and switches to the app theme; must precede super.onCreate
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
         SessionManager sessionManager = SessionManager.getInstance(this);
