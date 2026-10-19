@@ -17,6 +17,8 @@ import com.example.undersoil.data.db.GardenDatabase;
 import com.example.undersoil.data.db.GardenEntity;
 import com.example.undersoil.data.model.Plant;
 import com.example.undersoil.data.model.PlantVillageData;
+import com.example.undersoil.data.sync.PendingDeletes;
+import com.example.undersoil.data.sync.SyncManager;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -65,6 +67,9 @@ public class PlantDetailsActivity extends AppCompatActivity {
                 }
 
                 gardenDao.insert(new GardenEntity(UUID.randomUUID().toString(), plant.getId(), userId, false));
+                // Re-adding cancels a delete that hasn't reached the server yet
+                PendingDeletes.removeGardenPlant(this, userId, plant.getId());
+                SyncManager.scheduleSync(this);
                 Toast.makeText(this, "Added " + plant.getName() + " to My Garden!", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(this, GardenActivity.class);

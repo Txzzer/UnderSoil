@@ -23,6 +23,8 @@ import com.example.undersoil.data.model.GrowingCondition
 import com.example.undersoil.data.model.Plant
 import com.example.undersoil.data.model.PlantVillageData
 import com.example.undersoil.data.model.ScanLog
+import com.example.undersoil.data.sync.PendingDeletes
+import com.example.undersoil.data.sync.SyncManager
 import com.example.undersoil.home.HomeScreenActivity
 import com.example.undersoil.iot.IotWateringActivity
 import com.example.undersoil.scan.LogListActivity
@@ -129,6 +131,9 @@ class GardenActivity : AppCompatActivity() {
             val userId = SessionManager.getInstance(this).getUserIdString()
             val dao = GardenDatabase.getInstance(this).gardenDao()
             dao.deleteByPlantAndUser(plant.id, userId)
+            // Tell the server too, or the next sync would restore the plant
+            PendingDeletes.addGardenPlant(this, userId, plant.id)
+            SyncManager.scheduleSync(this)
             Toast.makeText(this, "Removed ${plant.name} from My Garden", Toast.LENGTH_SHORT).show()
             loadSavedPlants()
         } catch (e: Exception) {

@@ -118,6 +118,29 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         return readLogs(cursor);
     }
 
+    // Saves a server copy, unless the local row has changes that haven't been uploaded yet.
+    // The server has no photo, so an existing row keeps its local image path.
+    public void upsertFromServer(ScanLog log) {
+        if (log.getId() == null || log.getId().trim().isEmpty()) return;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, log.getId());
+        values.put(COLUMN_USER_ID, log.getUserId());
+        values.put(COLUMN_CROP_NAME, log.getCropName());
+        values.put(COLUMN_DIAGNOSIS, log.getDiagnosis());
+        values.put(COLUMN_CONFIDENCE, log.getConfidence());
+        values.put(COLUMN_DATE, log.getDateStr());
+        values.put(COLUMN_NOTES, log.getNotes());
+        values.put(COLUMN_IS_SYNCED, 1);
+
+        int updated = db.update(TABLE_LOGS, values,
+                COLUMN_ID + " = ? AND " + COLUMN_IS_SYNCED + " = 1", new String[]{log.getId()});
+        if (updated == 0) {
+            db.insertWithOnConflict(TABLE_LOGS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
     public long getLogCount(String userId) {
         return DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_LOGS,
                 COLUMN_USER_ID + " = ?", new String[]{userId});

@@ -46,6 +46,8 @@ public class FaqActivity extends AppCompatActivity {
     };
 
     private static final String[][] ACCOUNT_FAQ = {
+            {"Why does the app ask for my location?",
+                    "Only to show the weather where you are on the Home screen. UnderSoil uses your approximate location, never your exact position, and doesn't save it to your account. If you turn it off, tap \"Location off\" on the Home screen to enable it again."},
             {"How do I log out?",
                     "Go to Settings and tap \"Logout\" at the bottom of the screen."}
     };

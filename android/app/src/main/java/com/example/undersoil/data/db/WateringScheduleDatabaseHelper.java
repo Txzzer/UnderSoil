@@ -76,6 +76,30 @@ public class WateringScheduleDatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_SCHEDULES, null, values) != -1;
     }
 
+    // Saves a server copy (which carries the server-owned status and actual volume),
+    // unless the local row has changes that haven't been uploaded yet
+    public void upsertFromServer(WateringSchedule schedule) {
+        if (schedule.getId() == null || schedule.getId().trim().isEmpty()) return;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, schedule.getId());
+        values.put(COLUMN_USER_ID, schedule.getUserId());
+        values.put(COLUMN_SECTOR_ID, schedule.getSectorId());
+        values.put(COLUMN_START_TIME, schedule.getStartTime());
+        values.put(COLUMN_DURATION_MINUTES, schedule.getDurationMinutes());
+        values.put(COLUMN_EXPECTED_VOLUME, schedule.getExpectedVolume());
+        values.put(COLUMN_ACTUAL_VOLUME, schedule.getActualVolume());
+        values.put(COLUMN_STATUS, schedule.getStatus());
+        values.put(COLUMN_IS_SYNCED, 1);
+
+        int updated = db.update(TABLE_SCHEDULES, values,
+                COLUMN_ID + " = ? AND " + COLUMN_IS_SYNCED + " = 1", new String[]{schedule.getId()});
+        if (updated == 0) {
+            db.insertWithOnConflict(TABLE_SCHEDULES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
     public List<WateringSchedule> getUnsyncedSchedules() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(

@@ -72,6 +72,25 @@ public class SectorDatabaseHelper extends SQLiteOpenHelper {
         return (row != -1) ? sectorId : null;
     }
 
+    // Saves a server copy, unless the local row has changes that haven't been uploaded yet
+    public void upsertFromServer(Sector sector) {
+        if (sector.getId() == null || sector.getId().trim().isEmpty()) return;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, sector.getId());
+        values.put(COLUMN_USER_ID, sector.getUserId());
+        values.put(COLUMN_NAME, sector.getName());
+        values.put(COLUMN_CROP_NAMES, sector.getCropNames());
+        values.put(COLUMN_IS_SYNCED, 1);
+
+        int updated = db.update(TABLE_SECTORS, values,
+                COLUMN_ID + " = ? AND " + COLUMN_IS_SYNCED + " = 1", new String[]{sector.getId()});
+        if (updated == 0) {
+            db.insertWithOnConflict(TABLE_SECTORS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
     public List<Sector> getAllSectors(String userId) {
         List<Sector> sectors = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();

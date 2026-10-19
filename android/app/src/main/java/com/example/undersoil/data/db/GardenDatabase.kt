@@ -27,6 +27,10 @@ interface GardenDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(gardenEntity: GardenEntity)
 
+    // Server copies never replace a local row; garden rows have nothing editable besides the plant
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAllFromServer(gardenEntities: List<GardenEntity>)
+
     @Query("SELECT EXISTS(SELECT 1 FROM my_garden WHERE plantId = :plantId AND userId = :userId)")
     fun isInGarden(plantId: Int, userId: String): Boolean
 

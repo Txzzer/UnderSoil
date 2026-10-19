@@ -15,32 +15,12 @@ import androidx.work.WorkerParameters;
 
 import com.example.undersoil.R;
 import com.example.undersoil.data.SessionManager;
-import com.example.undersoil.data.db.GardenDao;
-import com.example.undersoil.data.db.GardenDatabase;
-import com.example.undersoil.data.db.IotAlertDatabaseHelper;
-import com.example.undersoil.data.db.ScanLogDatabaseHelper;
-import com.example.undersoil.data.db.SectorDatabaseHelper;
-import com.example.undersoil.data.db.WateringScheduleDatabaseHelper;
-import com.example.undersoil.network.ApiClient;
-import com.example.undersoil.network.ApiService;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class SyncWorker extends Worker {
 
     public static final String CHANNEL_ID = "undersoil_sync_channel";
     public static final String CHANNEL_NAME = "UnderSoil Sync Notifications";
     private static final int NOTIFICATION_ID = 1001;
-
-    /** The server rejected our token, so there's no point sending the remaining batches. */
-    private static class UnauthorizedException extends Exception {
-    }
 
     public SyncWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -62,23 +42,14 @@ public class SyncWorker extends Worker {
         showNotification(notificationManager, "UnderSoil Syncing...", "Synchronizing offline data with the cloud", true);
 
         try {
-            ApiService api = ApiClient.getClient(context).create(ApiService.class);
-            SectorDatabaseHelper sectors = SectorDatabaseHelper.getInstance(context);
-            GardenDao garden = GardenDatabase.Companion.getInstance(context).gardenDao();
-            ScanLogDatabaseHelper scanLogs = ScanLogDatabaseHelper.getInstance(context);
-            IotAlertDatabaseHelper alerts = IotAlertDatabaseHelper.getInstance(context);
-            WateringScheduleDatabaseHelper schedules = WateringScheduleDatabaseHelper.getInstance(context);
-
-            upload(sectors.getUnsyncedSectors(), api::syncSectors, s -> sectors.markSectorAsSynced(s.getId()));
-            upload(garden.getUnsyncedCrops(), api::syncGarden, c -> garden.markCropAsSynced(c.getId()));
-            upload(scanLogs.getUnsyncedLogs(), api::syncScanLogs, l -> scanLogs.markLogAsSynced(l.getId()));
-            upload(alerts.getUnsyncedAlerts(), api::syncAlerts, a -> alerts.markAlertAsSynced(a.getId()));
-            upload(schedules.getUnsyncedSchedules(), api::syncSchedules, s -> schedules.markScheduleAsSynced(s.getId()));
+            // Upload first so the download below can't resurrect older server copies of local edits
+            SyncRunner.uploadPending(context);
+            SyncRunner.downloadAll(context);
 
             showNotification(notificationManager, "UnderSoil Sync", "Sync Complete", false);
             return Result.success();
 
-        } catch (UnauthorizedException e) {
+        } catch (SyncRunner.UnauthorizedException e) {
             sessionManager.clearSessionOnly(SessionManager.InvalidReason.EXPIRED);
             if (notificationManager != null) notificationManager.cancel(NOTIFICATION_ID);
             return Result.success();
@@ -86,19 +57,6 @@ public class SyncWorker extends Worker {
         } catch (Exception e) {
             showNotification(notificationManager, "UnderSoil Sync Failed", "Will retry when network connection is restored", false);
             return Result.retry();
-        }
-    }
-
-    private <T> void upload(List<T> items, Function<List<T>, Call<Void>> request, Consumer<T> markSynced)
-            throws IOException, UnauthorizedException {
-        if (items.isEmpty()) return;
-
-        Response<Void> response = request.apply(items).execute();
-        if (response.code() == 401) {
-            throw new UnauthorizedException();
-        }
-        if (response.isSuccessful()) {
-            for (T item : items) markSynced.accept(item);
         }
     }
 

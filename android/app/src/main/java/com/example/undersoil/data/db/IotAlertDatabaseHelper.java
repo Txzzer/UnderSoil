@@ -73,6 +73,26 @@ public class IotAlertDatabaseHelper extends SQLiteOpenHelper {
         return (row != -1) ? alertId : null;
     }
 
+    // Saves a server copy, unless the local row has changes that haven't been uploaded yet
+    public void upsertFromServer(IotAlert alert) {
+        if (alert.getId() == null || alert.getId().trim().isEmpty()) return;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, alert.getId());
+        values.put(COLUMN_DEVICE_ID, alert.getDeviceId());
+        values.put(COLUMN_USER_ID, alert.getUserId());
+        values.put(COLUMN_ALERT_DESC, alert.getAlertDesc());
+        values.put(COLUMN_DATE_TIME, alert.getDateTime());
+        values.put(COLUMN_IS_SYNCED, 1);
+
+        int updated = db.update(TABLE_ALERTS, values,
+                COLUMN_ID + " = ? AND " + COLUMN_IS_SYNCED + " = 1", new String[]{alert.getId()});
+        if (updated == 0) {
+            db.insertWithOnConflict(TABLE_ALERTS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
     public IotAlert getLatestAlert(String userId) {
         if (userId == null) return null;
         SQLiteDatabase db = this.getReadableDatabase();

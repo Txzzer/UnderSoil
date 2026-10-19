@@ -31,6 +31,9 @@ public interface ApiService {
     @POST("api/sync/garden")
     Call<Void> syncGarden(@Body List<GardenEntity> gardenCrops);
 
+    @POST("api/sync/garden/delete")
+    Call<Void> deleteGardenPlants(@Body List<Integer> plantIds);
+
     @POST("api/sync/logs")
     Call<Void> syncScanLogs(@Body List<ScanLog> logs);
 
@@ -39,6 +42,10 @@ public interface ApiService {
 
     @POST("api/sync/schedules")
     Call<Void> syncSchedules(@Body List<WateringSchedule> schedules);
+
+    // Restore: everything the server holds for the logged-in user
+    @GET("api/sync/all")
+    Call<UserDataResponse> getAllUserData();
 
     @POST("api/auth/login")
     Call<AuthResponse> loginUser(@Body LoginRequest request);
