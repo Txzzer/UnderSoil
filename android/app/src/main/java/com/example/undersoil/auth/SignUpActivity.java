@@ -115,7 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        // Accounts are created on the server, so sign-up cannot work offline
+        // accounts are created on the server, so sign-up cannot work offline
         if (!isNetworkAvailable()) {
             Toast.makeText(this, "You need an internet connection to create an account", Toast.LENGTH_LONG).show();
             return;

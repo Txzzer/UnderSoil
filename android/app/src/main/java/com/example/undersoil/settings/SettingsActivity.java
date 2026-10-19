@@ -1,5 +1,6 @@
 package com.example.undersoil.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -19,6 +20,21 @@ public class SettingsActivity extends AppCompatActivity {
         ImageButton backButton = findViewById(R.id.backButton);
         if (backButton != null) {
             backButton.setOnClickListener(v -> finish());
+        }
+
+        View viewProfileButton = findViewById(R.id.viewProfileButton);
+        if (viewProfileButton != null) {
+            viewProfileButton.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        }
+
+        View helpButton = findViewById(R.id.helpButton);
+        if (helpButton != null) {
+            helpButton.setOnClickListener(v -> startActivity(new Intent(this, HelpActivity.class)));
+        }
+
+        View faqButton = findViewById(R.id.faqButton);
+        if (faqButton != null) {
+            faqButton.setOnClickListener(v -> startActivity(new Intent(this, FaqActivity.class)));
         }
 
         View logoutButton = findViewById(R.id.logoutButton);

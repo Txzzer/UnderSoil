@@ -54,10 +54,14 @@
                 android:textColor="@color/us_bio_green" />
 
             <LinearLayout
+                android:id="@+id/viewProfileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/bg_outline_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="16dp">
@@ -65,9 +69,9 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_user_edit"
+                    android:src="@drawable/ic_user"
                     app:tint="@color/us_bio_green"
-                    android:contentDescription="Edit profile" />
+                    android:contentDescription="View profile" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -75,7 +79,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:text="Edit profile"
+                    android:text="View profile"
                     android:textColor="@color/text_dark"
                     android:textSize="14sp" />
 
@@ -232,10 +236,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/helpButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_outline_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="16dp">
@@ -258,11 +266,49 @@
                     android:textSize="14sp" />
 
                 <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@drawable/ic_external_link"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_right"
                     app:tint="@color/us_text_hint"
-                    android:contentDescription="External link" />
+                    android:contentDescription="Open" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/faqButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_outline_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/us_bio_green"
+                    android:contentDescription="FAQ" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:text="FAQ"
+                    android:textColor="@color/text_dark"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/us_text_hint"
+                    android:contentDescription="Open" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

@@ -98,6 +98,18 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".settings.HelpActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".settings.FaqActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".settings.ProfileActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package com.example.undersoil.data.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -117,7 +118,12 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         return readLogs(cursor);
     }
 
-    /** Returns the most recent scan for the crop, or null if it has never been scanned. */
+    public long getLogCount(String userId) {
+        return DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_LOGS,
+                COLUMN_USER_ID + " = ?", new String[]{userId});
+    }
+
+    // Returns the most recent scan for the crop, or null if it has never been scanned.
     public ScanLog getLatestLogByCropName(String cropName, String userId) {
         if (cropName == null || cropName.trim().isEmpty()) {
             return null;
@@ -164,12 +170,9 @@ public class ScanLogDatabaseHelper extends SQLiteOpenHelper {
         return readLogs(cursor);
     }
 
-    /**
-     * Updates a log's note and flags it unsynced so SyncWorker re-uploads the edit.
-     * Notes longer than {@link #MAX_NOTE_LENGTH} are truncated.
-     *
-     * @return true if a row was updated
-     */
+     // Updates a log's note and flags it unsynced so SyncWorker re-uploads the edit.
+     // Notes longer than {@link #MAX_NOTE_LENGTH} are truncated.
+     // @return true if a row was updated
     public boolean updateLogNote(String logId, String note) {
         if (logId == null) return false;
 

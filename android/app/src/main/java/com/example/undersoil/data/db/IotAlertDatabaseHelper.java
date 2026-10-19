@@ -60,9 +60,7 @@ public class IotAlertDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        String alertId = (alert.getId() != null && !alert.getId().trim().isEmpty())
-                ? alert.getId()
-                : UUID.randomUUID().toString();
+        String alertId = (alert.getId() == null || alert.getId().trim().isEmpty()) ? UUID.randomUUID().toString() : alert.getId();
 
         values.put(COLUMN_ID, alertId);
         values.put(COLUMN_DEVICE_ID, alert.getDeviceId());

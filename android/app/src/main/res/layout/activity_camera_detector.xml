@@ -56,7 +56,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Agri AI Crop Health Detector"
+                android:text="UnderSoil AI Crop Health Detector"
                 android:textAppearance="@style/TextAppearance.AgriTech.Title" />
         </LinearLayout>
 

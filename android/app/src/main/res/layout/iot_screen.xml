@@ -297,20 +297,22 @@
                             android:text="0.0 L/min"
                             android:textAppearance="@style/TextAppearance.AgriTech.DataValue"
                             android:textColor="@color/flow_rate_blue" />
-                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvFlowStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_status_badge"
-                        android:backgroundTint="@color/us_surface_raised"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="6dp"
-                        android:text="No Flow"
-                        android:textColor="@color/us_text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        <!-- Badge sits under the reading so long alert text can't squeeze it -->
+                        <TextView
+                            android:id="@+id/tvFlowStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_status_badge"
+                            android:backgroundTint="@color/us_surface_raised"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="No Flow"
+                            android:textColor="@color/us_text_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
