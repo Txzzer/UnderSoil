@@ -177,3 +177,31 @@
   from { width: 100%; }
   to { width: 0%; }
 }
+
+/* Inline form error inside a modal (hidden until there's a message) */
+.form-message:empty {
+  display: none;
+}
+
+.form-message {
+  margin: 16px 0 0;
+  padding: 10px 13px;
+  border-radius: 8px;
+  font-size: 13.5px;
+}
+
+.form-message.error {
+  background: var(--alert-bg, #fdecea);
+  color: var(--alert, #b42318);
+  border: 1px solid #EBCAC6;
+}
+
+.field input.invalid,
+.field select.invalid {
+  border-color: var(--alert, #b42318);
+}
+
+/* Stop the page behind an open modal from scrolling */
+body.modal-open {
+  overflow: hidden;
+}

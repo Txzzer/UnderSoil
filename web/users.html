@@ -91,7 +91,7 @@
       <button type="button" class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
     </div>
 
-    <form id="user-form">
+    <form id="user-form" novalidate>
       <input type="hidden" id="u-id">
 
       <div class="form-grid">
@@ -138,7 +138,7 @@
         </div>
       </div>
 
-      <p id="form-message" role="status" aria-live="polite"></p>
+      <p id="form-message" class="form-message" role="alert" aria-live="assertive"></p>
 
       <div class="form-actions">
         <button class="btn-primary" type="submit" id="save-user-btn">

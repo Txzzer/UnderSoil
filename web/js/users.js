@@ -38,7 +38,44 @@
 
   function setMessage(element, message, isError = false) {
     element.textContent = message;
-    element.style.color = isError ? "#b42318" : "";
+    element.classList.toggle("error", isError && message !== "");
+  }
+
+  // Shows a form error and highlights/focuses the field it relates to.
+  function showFieldError(input, message) {
+    clearFieldErrors();
+    setMessage(formMessage, message, true);
+    if (input) {
+      input.classList.add("invalid");
+      input.focus();
+    }
+  }
+
+  function clearFieldErrors() {
+    form.querySelectorAll(".invalid")
+      .forEach(el => el.classList.remove("invalid"));
+  }
+
+  // The backend returns either a plain string ("That email address is
+  // already registered.") or, for model-binding failures, a ProblemDetails
+  // JSON object. Turn either into a readable sentence.
+  function extractErrorMessage(text, status) {
+    if (!text) return `The server returned error ${status}.`;
+
+    try {
+      const data = JSON.parse(text);
+
+      if (typeof data === "string") return data;
+
+      if (data?.errors) {
+        const first = Object.values(data.errors).flat()[0];
+        if (first) return first;
+      }
+
+      return data?.message || data?.title || `The server returned error ${status}.`;
+    } catch (e) {
+      return text;
+    }
   }
 
   // ---------- API ----------
@@ -52,28 +89,33 @@
       );
     }
 
-    const response = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-        ...(options.headers || {})
-      }
-    });
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          ...(options.headers || {})
+        }
+      });
+    } catch (e) {
+      throw new Error("Can't reach the server. Is the backend running?");
+    }
 
-    if (response.status === 401 || response.status === 403) {
-      throw new Error(
-        response.status === 401
-          ? "Your session has expired or the token was rejected. Please sign in again."
-          : "Access denied. An administrator account is required."
-      );
+    if (response.status === 401) {
+      showToast("Your session has expired. Please sign in again.", "error");
+      setTimeout(logout, 1500);
+      throw new Error("Your session has expired. Please sign in again.");
+    }
+
+    if (response.status === 403) {
+      throw new Error("Access denied. An administrator account is required.");
     }
 
     if (!response.ok) {
       const detail = await response.text();
-      throw new Error(
-        detail || `The server returned error ${response.status}.`
-      );
+      throw new Error(extractErrorMessage(detail, response.status));
     }
 
     if (response.status === 204) return null;
@@ -167,6 +209,7 @@
   // ---------- Add / edit modal ----------
   function openModal(mode, user) {
     form.reset();
+    clearFieldErrors();
     setMessage(formMessage, "");
 
     if (mode === "edit") {
@@ -190,14 +233,25 @@
     }
 
     modalOverlay.hidden = false;
+    document.body.classList.add("modal-open");
     nameInput.focus();
   }
 
   function closeModal() {
     modalOverlay.hidden = true;
+    document.body.classList.remove("modal-open");
     form.reset();
+    clearFieldErrors();
     setMessage(formMessage, "");
   }
+
+  // Clear the error as soon as the user starts fixing the field.
+  form.addEventListener("input", event => {
+    event.target.classList?.remove("invalid");
+    if (form.querySelectorAll(".invalid").length === 0) {
+      setMessage(formMessage, "");
+    }
+  });
 
   document.getElementById("add-user-btn")
     .addEventListener("click", () => openModal("add"));
@@ -217,10 +271,13 @@
     confirmMessage.textContent =
       `Are you sure you want to remove ${user.name} (${user.email})? This action cannot be undone.`;
     confirmOverlay.hidden = false;
+    document.body.classList.add("modal-open");
+    confirmDeleteBtn.focus();
   }
 
   function closeConfirmModal() {
     confirmOverlay.hidden = true;
+    if (modalOverlay.hidden) document.body.classList.remove("modal-open");
     pendingDeleteUser = null;
     confirmDeleteBtn.disabled = false;
     confirmDeleteBtn.textContent = "Remove";
@@ -284,38 +341,39 @@
     const password = passwordInput.value;
     const role = roleInput.value;
 
-    if (!name || !email) {
-      setMessage(
-        formMessage,
-        "Please enter the user's name and email address.",
-        true
-      );
+    if (!name) {
+      showFieldError(nameInput, "Please enter the user's full name.");
+      return;
+    }
+
+    if (!email) {
+      showFieldError(emailInput, "Please enter the user's email address.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFieldError(emailInput, "Please enter a valid email address, e.g. name@example.com.");
       return;
     }
 
     // Password is required only when adding a user.
     if (!isEditing && !password) {
-      setMessage(
-        formMessage,
-        "A password is required when adding a user.",
-        true
-      );
+      showFieldError(passwordInput, "A password is required when adding a user.");
       return;
     }
 
     if (password && password.length < 8) {
-      setMessage(
-        formMessage,
-        "The password must contain at least 8 characters.",
-        true
-      );
+      showFieldError(passwordInput, "The password must contain at least 8 characters.");
       return;
     }
 
     if (role !== "Farmer" && role !== "Admin") {
-      setMessage(formMessage, "Please select a valid role.", true);
+      showFieldError(roleInput, "Please select a valid role.");
       return;
     }
+
+    clearFieldErrors();
+    setMessage(formMessage, "");
 
     const requestBody = { name, email, role };
     if (password) requestBody.password = password;
