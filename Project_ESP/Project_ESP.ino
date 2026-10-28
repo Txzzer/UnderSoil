@@ -14,11 +14,11 @@
 
 // --- Wi-Fi & API Configuration (NEW) ---
 // IMPORTANT: ESP32 only connects to 2.4GHz Wi-Fi. (Use a mobile hotspot for the easiest setup!)
-const char* ssid = "Chris_2.4GHz";
-const char* password = "Travi$304";
+const char* ssid = "YOUR-2.4GHZ-WIFI-SSID";
+const char* password = "YOUR-2.4GHZ-WIFI-PASSWORD";
 
 // Replace the IP with Student 2's computer IP address on the network!
-const char* apiEndpoint = "https://hm3f7s1s-7124.inc1.devtunnels.ms/api/v1/Telemetry/ingest"; 
+const char* apiEndpoint = "YOUR-DEV-TUNNELS-LINK"; 
 
 // --- Pin Definitions (Updated for ESP-WROOM-32) ---
 const int POT_PIN = 34;    // ADC1 pin for Trimmer Potentiometer
