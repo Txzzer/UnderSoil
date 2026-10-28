@@ -11,14 +11,14 @@
 #include <DHT.h> // NEW: Adafruit DHT Library
 
 // --- Wi-Fi & MQTT Configuration ---
-const char* ssid = "Chris_2.4GHz";
-const char* password = "Travi$304";
+const char* ssid = "YOUR-2.4GHZ-WIFI-SSID";
+const char* password = "YOUR-2.4GHZ-WIFI-PASSWORD";
 
-const char* mqtt_server = "fe7c1a0013c74b819748355010956172.s1.eu.hivemq.cloud";
+const char* mqtt_server = "YOUR-HIVEMQ-SERVER-LINK";
 const int mqtt_port = 8883;
 
-const char* mqtt_user = "esp32-device"; // From your HiveMQ Cloud Access Management
-const char* mqtt_pass = "Travi$304"; // From your HiveMQ Cloud Access Management
+const char* mqtt_user = "YOUR-HIVEMQ-USERNAME"; // From your HiveMQ Cloud Access Management
+const char* mqtt_pass = "YOUR-HIVEMQ-PASSWORD"; // From your HiveMQ Cloud Access Management
 
 const char* telemetryTopic = "undersoil/telemetry";
 const char* commandTopic = "undersoil/commands";
